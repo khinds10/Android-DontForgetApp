@@ -1,4 +1,6 @@
-package com.example.gmailme;
+package com.kevinhinds.messageme;
+
+import com.kevinhinds.messageme.R;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -19,6 +21,4 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
-
-    
 }
