@@ -14,25 +14,25 @@
             android:id="@+id/AppTitle"
             android:layout_width="wrap_content"
             android:layout_height="70dp"
+            android:layout_weight="0.5"
             android:drawableLeft="@drawable/ic_launcher"
-            android:drawablePadding="10dp"
+            android:drawablePadding="5dp"
             android:gravity="center"
             android:padding="10dp"
             android:text="@string/app_name"
             android:textColor="#FFFFFF"
             android:textSize="19dp" />
 
-        <Button
-            android:id="@+id/dateButton"
-            android:layout_width="fill_parent"
-            android:layout_height="25dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="15dp"
-            android:background="@drawable/custom_button"
-            android:text="Save"
-            android:textColor="#000000"
-            android:textSize="8dp"
-            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/AppTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="1 New Message(s)"
+            android:textColor="#FFFFFF"
+            android:textSize="12dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -43,29 +43,29 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/lastUpdated"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:padding="8dp"
-            android:paddingLeft="10dp"
-            android:text="Last Updated"
-            android:textColor="#000000"
-            android:textSize="10dp" />
+            android:id="@+id/CurrentMessages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Current Messages" >
+        </TextView>
 
         <TextView
-            android:id="@+id/lastUpdatedDate"
+            android:id="@+id/ArchivedMessages"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:padding="8dp"
-            android:paddingLeft="10dp"
-            android:text="Never"
-            android:textColor="#000000"
-            android:textSize="10dp" />
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Archived" >
+        </TextView>
     </LinearLayout>
 
     <ScrollView
