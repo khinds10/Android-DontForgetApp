@@ -10,8 +10,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save Item Title"
-        android:textColor="#FFFFFF"
+        android:text="Add New Message"
+        android:textColor="#000000"
         android:textSize="14dp" />
 
     <LinearLayout
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.02"
             android:text="Date"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textSize="12dp" />
 
         <Button

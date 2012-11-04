@@ -1,11 +1,5 @@
 package com.kevinhinds.messageme;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -22,7 +16,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -41,7 +34,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 /**
- * daycare main Activity screen
+ * XXX
  * 
  * @author khinds
  */
@@ -51,8 +44,6 @@ public class ItemsActivity extends Activity {
 	private ItemlistDataSource itemlistDataSource;
 	private TextView tvDisplayDate;
 	private Button btnChangeDate;
-	private FileOutputStream fos;
-	private String lastUpdated;
 	private PopupWindow pw;
 
 	private int year;
@@ -60,7 +51,6 @@ public class ItemsActivity extends Activity {
 	private int day;
 
 	private static final int DATE_DIALOG_ID = 999;
-	private final String FILENAME = "lastUpdatedFile";
 	private View layout = null;
 
 	/** Called when the activity is first created. */
@@ -68,9 +58,6 @@ public class ItemsActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.items);
-
-		/** set last updated text view when the application starts */
-		setLastUpdatedDateTextViewStart();
 
 		/** open data connections */
 		openDataConnections();
@@ -85,7 +72,7 @@ public class ItemsActivity extends Activity {
 		final List<Itemlist> itemlist = itemlistDataSource.getAllItems();
 
 		/** attach to the LinearLayout to add TextViews dynamically via menuValues */
-		LinearLayout ll = (LinearLayout) findViewById(R.id.mainMenuLayout);
+		LinearLayout ll = (LinearLayout) findViewById(R.id.itemsLayout);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 
 		Iterator<Itemlist> itemlistiterator = itemlist.iterator();
@@ -130,23 +117,32 @@ public class ItemsActivity extends Activity {
 		/** add the add/remove text button at the bottom */
 		TextView addRemoveOption = new TextView(this);
 		addRemoveOption.setTextSize(15);
-		addRemoveOption.setText((CharSequence) "Add/Remove Items...");
+		addRemoveOption.setText((CharSequence) "Add Message...");
 		addRemoveOption.setLayoutParams(lp);
 		addRemoveOption.setClickable(true);
 		addRemoveOption.setPadding(10, 10, 10, 10);
 		addRemoveOption.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				Intent intent = new Intent(ItemsActivity.this, EditActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				startActivity(intent);
+				initiatePopupWindow();
 			}
 		});
 		ll.addView(addRemoveOption);
 
-		Button menu = (Button) findViewById(R.id.dateButton);
-		menu.setOnClickListener(new OnClickListener() {
+		TextView CurrentMessages = (TextView) findViewById(R.id.CurrentMessages);
+		CurrentMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				initiatePopupWindow();
+				Intent intent = new Intent(ItemsActivity.this, ItemsActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				startActivity(intent);
+			}
+		});
+
+		TextView ArchivedMessages = (TextView) findViewById(R.id.ArchivedMessages);
+		ArchivedMessages.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(ItemsActivity.this, ArchiveActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				startActivity(intent);
 			}
 		});
 	}
@@ -172,16 +168,6 @@ public class ItemsActivity extends Activity {
 		itemsDataSource.open();
 		itemlistDataSource = new ItemlistDataSource(this);
 		itemlistDataSource.open();
-	}
-
-	/**
-	 * set the last updated date text view
-	 * 
-	 * @param lastUpdatedValue
-	 */
-	protected void setLastUpdatedDateTextView(String lastUpdatedValue) {
-		final TextView lastUpdatedDate = (TextView) findViewById(R.id.lastUpdatedDate);
-		lastUpdatedDate.setText((CharSequence) lastUpdatedValue);
 	}
 
 	@Override
@@ -256,29 +242,6 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * when application begins set the initial value for the lastUpdated textView
-	 */
-	private void setLastUpdatedDateTextViewStart() {
-		try {
-			/** in the saved date from the local application text file else it will be "never" value if any problems */
-			FileInputStream in = openFileInput(FILENAME);
-			InputStreamReader inputStreamReader = new InputStreamReader(in);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				sb.append(line);
-			}
-			lastUpdated = sb.toString();
-		} catch (FileNotFoundException e) {
-			lastUpdated = "Never";
-		} catch (IOException e) {
-			lastUpdated = "Never";
-		}
-		setLastUpdatedDateTextView(lastUpdated);
-	}
-
-	/**
 	 * show the popup window
 	 */
 	private void initiatePopupWindow() {
@@ -290,9 +253,9 @@ public class ItemsActivity extends Activity {
 		int width = displaymetrics.widthPixels;
 
 		/** adjust the popup WxH */
-		float popupWidth = (float) (width * .75);
-		float popupHeight = (float) (height * .60);
-		float popupButtonPadding = (float) (height * .38);
+		float popupWidth = (float) (width * .85);
+		float popupHeight = (float) (height * .75);
+		float popupButtonPadding = (float) (height * .55);
 
 		/** We need to get the instance of the LayoutInflater, use the context of this activity */
 		LayoutInflater inflater = (LayoutInflater) ItemsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -324,29 +287,6 @@ public class ItemsActivity extends Activity {
 		btnChangeDate.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				showDialog(DATE_DIALOG_ID);
-			}
-		});
-
-		/**
-		 * make the saveButton on the layout click-able to save the date last updated
-		 */
-		final TextView saveButton = (TextView) layout.findViewById(R.id.saveButton);
-		saveButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				try {
-					final TextView lastUpdatedDate = (TextView) layout.findViewById(R.id.tvDate);
-					lastUpdated = (String) lastUpdatedDate.getText();
-					fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-					fos.write(lastUpdated.getBytes());
-					fos.close();
-				} catch (FileNotFoundException e) {
-					lastUpdated = "Never";
-				} catch (IOException e) {
-					lastUpdated = "Never";
-				}
-				setLastUpdatedDateTextView(lastUpdated);
-				pw.dismiss();
-				System.exit(0);
 			}
 		});
 	}

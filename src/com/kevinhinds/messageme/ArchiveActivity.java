@@ -17,7 +17,6 @@ import android.text.Editable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,7 +26,7 @@ import android.widget.TextView;
  * 
  * @author khinds
  */
-public class EditActivity extends Activity {
+public class ArchiveActivity extends Activity {
 
 	private ItemsDataSource itemsDataSource;
 	private ItemlistDataSource itemlistDataSource;
@@ -36,7 +35,7 @@ public class EditActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.edit);
+		setContentView(R.layout.archive);
 
 		/** open data connections */
 		openDataConnections();
@@ -44,15 +43,24 @@ public class EditActivity extends Activity {
 		/** setup the list of items to show the user */
 		setupItemsList();
 
-		Button backButton = (Button) findViewById(R.id.backButton);
-		backButton.setOnClickListener(new OnClickListener() {
+		TextView CurrentMessages = (TextView) findViewById(R.id.CurrentMessages);
+		CurrentMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				Intent intent = new Intent(EditActivity.this, ItemsActivity.class);
+				Intent intent = new Intent(ArchiveActivity.this, ItemsActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 				startActivity(intent);
-				finish();
 			}
 		});
+
+		TextView ArchivedMessages = (TextView) findViewById(R.id.ArchivedMessages);
+		ArchivedMessages.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(ArchiveActivity.this, ArchiveActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				startActivity(intent);
+			}
+		});
+
 	}
 
 	/**
@@ -64,7 +72,7 @@ public class EditActivity extends Activity {
 		final List<Itemlist> itemlist = itemlistDataSource.getAllItems();
 
 		/** attach to the LinearLayout to add TextViews dynamically via menuValues */
-		LinearLayout ll = (LinearLayout) findViewById(R.id.editLayout);
+		LinearLayout ll = (LinearLayout) findViewById(R.id.archiveLayout);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 
 		/** start with a clean slate */
@@ -93,18 +101,18 @@ public class EditActivity extends Activity {
 					TextView tv = (TextView) v;
 					String itemValue = (String) tv.getText();
 
-					final TextView itemInQuestion = new TextView(EditActivity.this);
+					final TextView itemInQuestion = new TextView(ArchiveActivity.this);
 					itemInQuestion.setPadding(10, 0, 10, 10);
 					itemInQuestion.setText((CharSequence) itemValue);
 					itemInQuestion.setTextSize(18);
-					new AlertDialog.Builder(EditActivity.this).setTitle("Remove Item").setMessage((CharSequence) "Sure you with to remove?").setView(itemInQuestion)
+					new AlertDialog.Builder(ArchiveActivity.this).setTitle("Remove Item").setMessage((CharSequence) "Sure you with to remove?").setView(itemInQuestion)
 							.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int whichButton) {
 									String enterValue = (String) itemInQuestion.getText();
 									if (enterValue.length() != 0) {
 										itemlistDataSource.deleteItemByName(enterValue);
 										itemsDataSource.deleteItemByName(enterValue);
-										EditActivity.this.setupItemsList();
+										ArchiveActivity.this.setupItemsList();
 									}
 								}
 							}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -126,15 +134,15 @@ public class EditActivity extends Activity {
 		addItemButton.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.add), null, null, null);
 		addItemButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				final EditText input = new EditText(EditActivity.this);
-				new AlertDialog.Builder(EditActivity.this).setTitle("Add Item").setMessage((CharSequence) "Enter item name").setView(input)
+				final EditText input = new EditText(ArchiveActivity.this);
+				new AlertDialog.Builder(ArchiveActivity.this).setTitle("Add Item").setMessage((CharSequence) "Enter item name").setView(input)
 						.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int whichButton) {
 								Editable value = input.getText();
 								String enterValue = value.toString();
 								if (enterValue.length() != 0) {
 									itemlistDataSource.createItem(value.toString());
-									EditActivity.this.setupItemsList();
+									ArchiveActivity.this.setupItemsList();
 								}
 							}
 						}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
