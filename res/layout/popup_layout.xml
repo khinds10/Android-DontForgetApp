@@ -3,63 +3,112 @@
     android:id="@+id/popup_element"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/custom_background"
     android:orientation="vertical"
-    android:background="@drawable/popup_border"
-    android:padding="10dp" >
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add New Message"
-        android:textColor="#000000"
-        android:textSize="14dp" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp" >
-
-        <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.02"
-            android:text="Date"
-            android:textColor="#000000"
-            android:textSize="12dp" />
-
-        <Button
-            android:id="@+id/btnChangeDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="0.01"
-            android:background="@drawable/custom_button"
-            android:text="Change Date"
-            android:textSize="9dp" />
-    </LinearLayout>
+    android:padding="2dp" >
 
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content"
+        android:minHeight="35dp" >
 
-        <Button
-            android:id="@+id/saveButton"
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.02"
-            android:background="@drawable/custom_button"
-            android:text="Save and Close" />
+            android:layout_weight=".8"
+            android:padding="5dp"
+            android:paddingBottom="15dp"
+            android:paddingRight="10dp"
+            android:text="Create / Edit Message"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp" />
 
         <Button
             android:id="@+id/cancelButton"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.01"
+            android:layout_marginRight="5dp"
+            android:layout_weight=".2"
             android:background="@drawable/custom_button"
+            android:padding="2dp"
             android:text="Cancel" >
         </Button>
     </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/messageFormContainer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp" >
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:textColor="#FFFFFF"
+                android:text="Title" />
+
+            <EditText
+                android:id="@+id/editTextTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:paddingTop="10dp"
+                android:textSize="22dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/messageTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:text="Message"
+                android:textColor="#FFFFFF"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/messageContent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:ems="10"
+                android:minLines="10" >
+            </EditText>
+
+            <LinearLayout
+                android:id="@+id/buttonContainer2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp" >
+
+                <Button
+                    android:id="@+id/SaveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="@drawable/custom_button"
+                    android:minHeight="35dp"
+                    android:text="Save"
+                    android:textSize="12dp" />
+
+                <Button
+                    android:id="@+id/DeleteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:background="@drawable/custom_button"
+                    android:minHeight="35dp"
+                    android:text="Delete"
+                    android:textSize="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

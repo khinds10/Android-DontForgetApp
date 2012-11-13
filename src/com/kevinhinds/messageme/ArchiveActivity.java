@@ -13,16 +13,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * daycare edit Activity screen
+ * Archived Activity for items
  * 
  * @author khinds
  */
@@ -123,35 +121,6 @@ public class ArchiveActivity extends Activity {
 			});
 			ll.addView(tv);
 		}
-
-		/** add the Go Back text button at the bottom */
-		TextView addItemButton = new TextView(this);
-		addItemButton.setTextSize(15);
-		addItemButton.setText((CharSequence) "Add New");
-		addItemButton.setLayoutParams(lp);
-		addItemButton.setClickable(true);
-		addItemButton.setPadding(10, 10, 10, 10);
-		addItemButton.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.add), null, null, null);
-		addItemButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				final EditText input = new EditText(ArchiveActivity.this);
-				new AlertDialog.Builder(ArchiveActivity.this).setTitle("Add Item").setMessage((CharSequence) "Enter item name").setView(input)
-						.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int whichButton) {
-								Editable value = input.getText();
-								String enterValue = value.toString();
-								if (enterValue.length() != 0) {
-									itemlistDataSource.createItem(value.toString());
-									ArchiveActivity.this.setupItemsList();
-								}
-							}
-						}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int whichButton) {
-							}
-						}).show();
-			}
-		});
-		ll.addView(addItemButton);
 	}
 
 	/**
