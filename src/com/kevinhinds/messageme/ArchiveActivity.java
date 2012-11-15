@@ -3,13 +3,10 @@ package com.kevinhinds.messageme;
 import java.util.Iterator;
 import java.util.List;
 
+import com.kevinhinds.messageme.item.Item;
 import com.kevinhinds.messageme.item.ItemsDataSource;
-import com.kevinhinds.messageme.itemlist.Itemlist;
-import com.kevinhinds.messageme.itemlist.ItemlistDataSource;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -27,7 +24,6 @@ import android.widget.TextView;
 public class ArchiveActivity extends Activity {
 
 	private ItemsDataSource itemsDataSource;
-	private ItemlistDataSource itemlistDataSource;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -67,7 +63,7 @@ public class ArchiveActivity extends Activity {
 	private void setupItemsList() {
 
 		/** get all the itemlist items saved in the DB */
-		final List<Itemlist> itemlist = itemlistDataSource.getAllItems();
+		final List<Item> itemlist = itemsDataSource.getAllItems();
 
 		/** attach to the LinearLayout to add TextViews dynamically via menuValues */
 		LinearLayout ll = (LinearLayout) findViewById(R.id.archiveLayout);
@@ -77,11 +73,11 @@ public class ArchiveActivity extends Activity {
 		ll.removeAllViews();
 
 		/** iterate over the itemlist to build the menu items to show */
-		Iterator<Itemlist> itemlistiterator = itemlist.iterator();
+		Iterator<Item> itemlistiterator = itemlist.iterator();
 		int i = 0;
 		while (itemlistiterator.hasNext()) {
 			i++;
-			Itemlist itemlistitem = itemlistiterator.next();
+			Item itemlistitem = itemlistiterator.next();
 			String itemName = itemlistitem.getName();
 
 			TextView tv = new TextView(this);
@@ -92,9 +88,8 @@ public class ArchiveActivity extends Activity {
 			tv.setClickable(true);
 			tv.setTextColor(Color.BLACK);
 			tv.setPadding(10, 8, 0, 8);
-			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.remove), null, null, null);
+			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_launcher), null, null, null);
 			tv.setOnClickListener(new OnClickListener() {
-				/** depending on the item clicked, send it over to the searchActivity with the item clicked as "searchType" */
 				public void onClick(View v) {
 					TextView tv = (TextView) v;
 					String itemValue = (String) tv.getText();
@@ -103,20 +98,7 @@ public class ArchiveActivity extends Activity {
 					itemInQuestion.setPadding(10, 0, 10, 10);
 					itemInQuestion.setText((CharSequence) itemValue);
 					itemInQuestion.setTextSize(18);
-					new AlertDialog.Builder(ArchiveActivity.this).setTitle("Remove Item").setMessage((CharSequence) "Sure you with to remove?").setView(itemInQuestion)
-							.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int whichButton) {
-									String enterValue = (String) itemInQuestion.getText();
-									if (enterValue.length() != 0) {
-										itemlistDataSource.deleteItemByName(enterValue);
-										itemsDataSource.deleteItemByName(enterValue);
-										ArchiveActivity.this.setupItemsList();
-									}
-								}
-							}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int whichButton) {
-								}
-							}).show();
+
 				}
 			});
 			ll.addView(tv);
@@ -129,7 +111,5 @@ public class ArchiveActivity extends Activity {
 	private void openDataConnections() {
 		itemsDataSource = new ItemsDataSource(this);
 		itemsDataSource.open();
-		itemlistDataSource = new ItemlistDataSource(this);
-		itemlistDataSource.open();
 	}
 }

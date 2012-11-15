@@ -2,9 +2,9 @@ package com.kevinhinds.messageme;
 
 import java.util.Iterator;
 import java.util.List;
+
+import com.kevinhinds.messageme.item.Item;
 import com.kevinhinds.messageme.item.ItemsDataSource;
-import com.kevinhinds.messageme.itemlist.Itemlist;
-import com.kevinhinds.messageme.itemlist.ItemlistDataSource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,10 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,7 +21,6 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -37,14 +33,19 @@ import android.widget.TextView;
 public class ItemsActivity extends Activity {
 
 	private ItemsDataSource itemsDataSource;
-	private ItemlistDataSource itemlistDataSource;
 
 	private View layout = null;
 	private PopupWindow pw;
 
-	private String timerTitle;
 	private int screenHeight;
 	private int screenWidth;
+
+	protected TextView editTextTitle;
+	protected TextView messageContent;
+
+	protected long currentID;
+	protected String currentTitleValue;
+	protected String currentMessageValue;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -90,7 +91,7 @@ public class ItemsActivity extends Activity {
 	private void setupItemsList() {
 
 		/** get all the itemlist items saved in the DB */
-		final List<Itemlist> itemlist = itemlistDataSource.getAllItems();
+		final List<Item> itemlist = itemsDataSource.getAllItems();
 
 		/** attach to the LinearLayout to add TextViews dynamically via menuValues */
 		LinearLayout ll = (LinearLayout) findViewById(R.id.archiveLayout);
@@ -100,46 +101,29 @@ public class ItemsActivity extends Activity {
 		ll.removeAllViews();
 
 		/** iterate over the itemlist to build the menu items to show */
-		Iterator<Itemlist> itemlistiterator = itemlist.iterator();
-		int i = 0;
+		Iterator<Item> itemlistiterator = itemlist.iterator();
 		while (itemlistiterator.hasNext()) {
-			i++;
-			Itemlist itemlistitem = itemlistiterator.next();
+			Item itemlistitem = itemlistiterator.next();
 			String itemName = itemlistitem.getName();
-
+			long ID = itemlistitem.getId();
 			TextView tv = new TextView(this);
-			tv.setId(i);
+			tv.setId((int) ID);
 			tv.setTextSize(18);
 			tv.setText((CharSequence) itemName);
 			tv.setLayoutParams(lp);
 			tv.setClickable(true);
 			tv.setTextColor(Color.BLACK);
 			tv.setPadding(10, 8, 0, 8);
-			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.remove), null, null, null);
+			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_title), null, null, null);
 			tv.setOnClickListener(new OnClickListener() {
-				/** depending on the item clicked, send it over to the searchActivity with the item clicked as "searchType" */
 				public void onClick(View v) {
-					TextView tv = (TextView) v;
-					String itemValue = (String) tv.getText();
+					currentID = v.getId();
+					Item currentEditItem = itemsDataSource.getById(currentID);
+					currentTitleValue = currentEditItem.name;
+					currentMessageValue = currentEditItem.content;
 
-					final TextView itemInQuestion = new TextView(ItemsActivity.this);
-					itemInQuestion.setPadding(10, 0, 10, 10);
-					itemInQuestion.setText((CharSequence) itemValue);
-					itemInQuestion.setTextSize(18);
-					new AlertDialog.Builder(ItemsActivity.this).setTitle("Remove Item").setMessage((CharSequence) "Sure you with to remove?").setView(itemInQuestion)
-							.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int whichButton) {
-									String enterValue = (String) itemInQuestion.getText();
-									if (enterValue.length() != 0) {
-										itemlistDataSource.deleteItemByName(enterValue);
-										itemsDataSource.deleteItemByName(enterValue);
-										ItemsActivity.this.setupItemsList();
-									}
-								}
-							}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int whichButton) {
-								}
-							}).show();
+					/** popup to edit the item */
+					initiateEditMessagePopup(true);
 				}
 			});
 			ll.addView(tv);
@@ -155,15 +139,8 @@ public class ItemsActivity extends Activity {
 		addItemButton.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.add), null, null, null);
 		addItemButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-
-				initiateEditMessagePopup();
-				// add edit the value in the DB
-				// Editable value = input.getText();
-				// String enterValue = value.toString();
-				// if (enterValue.length() != 0) {
-				// itemlistDataSource.createItem(value.toString());
-				// ItemsActivity.this.setupItemsList();
-
+				/** popup to add the new item */
+				initiateEditMessagePopup(false);
 			}
 		});
 		ll.addView(addItemButton);
@@ -172,7 +149,7 @@ public class ItemsActivity extends Activity {
 	/**
 	 * show the popup window for the "set" timer preset
 	 */
-	private void initiateEditMessagePopup() {
+	private void initiateEditMessagePopup(final boolean editMode) {
 
 		/** adjust the popup WxH */
 		float popupWidth = (float) (screenWidth * .90);
@@ -187,13 +164,26 @@ public class ItemsActivity extends Activity {
 		/** display the popup in the center */
 		pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
+		editTextTitle = (TextView) layout.findViewById(R.id.editTextTitle);
+		messageContent = (TextView) layout.findViewById(R.id.messageContent);
+		Button deleteButton = (Button) layout.findViewById(R.id.DeleteButton);
+		if (editMode) {
+			editTextTitle.setText(currentTitleValue);
+			messageContent.setText(currentMessageValue);
+			deleteButton.setVisibility(View.VISIBLE);
+		} else {
+			deleteButton.setVisibility(View.INVISIBLE);
+		}
+
 		/** set button is pressed, set the timer and close the popup */
 		Button setButton = (Button) layout.findViewById(R.id.SaveButton);
 		setButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				// TextView mainTimerCount = (TextView) findViewById(R.id.mainTimerCount);
-				// TextView currentTimerName = (TextView) findViewById(R.id.currentTimerName);
-				// currentTimerName.setText(timerTitle);
+				if (editMode) {
+					editEntryDB();
+				} else {
+					addEntryDB();
+				}
 				pw.dismiss();
 			}
 		});
@@ -205,6 +195,73 @@ public class ItemsActivity extends Activity {
 				pw.dismiss();
 			}
 		});
+
+		/** delete button is pressed, confirm and delete */
+		deleteButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ItemsActivity.this);
+				builder.setTitle("Delete Message");
+				builder.setMessage("Are you sure you want to delete this message?").setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						deleteEntryDB();
+						dialog.dismiss();
+						pw.dismiss();
+					}
+				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+				builder.setIcon(R.drawable.ic_launcher);
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
+		});
+	}
+
+	/**
+	 * add entry to DB based on user input
+	 */
+	private void addEntryDB() {
+		/** add edit the value in the DB */
+		currentTitleValue = editTextTitle.getText().toString();
+		currentMessageValue = messageContent.getText().toString();
+		if (currentTitleValue.length() != 0) {
+			itemsDataSource.createItem(currentTitleValue, currentMessageValue);
+		}
+		setupItemsList();
+	}
+
+	/**
+	 * edit existing item in the DB
+	 */
+	private void editEntryDB() {
+		currentTitleValue = editTextTitle.getText().toString();
+		currentMessageValue = messageContent.getText().toString();
+		if (currentTitleValue.length() != 0) {
+			Item editItem = new Item();
+			editItem.setId(currentID);
+			editItem.setName(currentTitleValue);
+			editItem.setContent(currentMessageValue);
+			itemsDataSource.editItem(editItem);
+		}
+		setupItemsList();
+	}
+
+	/**
+	 * delete existing item from the DB
+	 */
+	private void deleteEntryDB() {
+		currentTitleValue = editTextTitle.getText().toString();
+		currentMessageValue = messageContent.getText().toString();
+		if (currentTitleValue.length() != 0) {
+			Item deleteItem = new Item();
+			deleteItem.setId(currentID);
+			deleteItem.setName(currentTitleValue);
+			deleteItem.setContent(currentMessageValue);
+			itemsDataSource.deleteItem(deleteItem);
+		}
+		setupItemsList();
 	}
 
 	/**
@@ -213,7 +270,5 @@ public class ItemsActivity extends Activity {
 	private void openDataConnections() {
 		itemsDataSource = new ItemsDataSource(this);
 		itemsDataSource.open();
-		itemlistDataSource = new ItemlistDataSource(this);
-		itemlistDataSource.open();
 	}
 }

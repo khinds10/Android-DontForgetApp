@@ -69,13 +69,25 @@ public class ItemsDataSource {
 	}
 
 	/**
+	 * edit item by identifier
+	 * 
+	 * @param item
+	 */
+	public void editItem(Item item) {
+		long id = item.getId();
+	    ContentValues args = new ContentValues();
+	    args.put(MySQLiteHelper.COLUMN_NAME, item.getName());
+	    args.put(MySQLiteHelper.COLUMN_CONTENT, item.getContent());
+	    database.update(MySQLiteHelper.TABLE_ITEM, args, MySQLiteHelper.COLUMN_ID + " = " + id, null);
+	}
+	
+	/**
 	 * delete item by identifier
 	 * 
 	 * @param item
 	 */
 	public void deleteItem(Item item) {
 		long id = item.getId();
-		System.out.println("Item deleted with id: " + id);
 		database.delete(MySQLiteHelper.TABLE_ITEM, MySQLiteHelper.COLUMN_ID + " = " + id, null);
 	}
 
@@ -85,7 +97,6 @@ public class ItemsDataSource {
 	 * @param name
 	 */
 	public void deleteItemByName(String name) {
-		System.out.println("Item deleted with name: " + name);
 		try {
 			database.delete(MySQLiteHelper.TABLE_ITEM, MySQLiteHelper.COLUMN_NAME + "=?", new String[] { name });
 		} catch (Exception e) {
