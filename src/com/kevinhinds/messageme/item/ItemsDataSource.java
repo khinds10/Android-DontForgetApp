@@ -75,12 +75,26 @@ public class ItemsDataSource {
 	 */
 	public void editItem(Item item) {
 		long id = item.getId();
-	    ContentValues args = new ContentValues();
-	    args.put(MySQLiteHelper.COLUMN_NAME, item.getName());
-	    args.put(MySQLiteHelper.COLUMN_CONTENT, item.getContent());
-	    database.update(MySQLiteHelper.TABLE_ITEM, args, MySQLiteHelper.COLUMN_ID + " = " + id, null);
+		ContentValues args = new ContentValues();
+		args.put(MySQLiteHelper.COLUMN_NAME, item.getName());
+		args.put(MySQLiteHelper.COLUMN_CONTENT, item.getContent());
+		database.update(MySQLiteHelper.TABLE_ITEM, args, MySQLiteHelper.COLUMN_ID + " = " + id, null);
 	}
-	
+
+	/**
+	 * archive item by identifier
+	 * 
+	 * @param item
+	 *            1 or 0 value based if the items returned should be true or false
+	 * @param archivedOption
+	 */
+	public void archiveItembyOption(Item item, int archivedOption) {
+		long id = item.getId();
+		ContentValues args = new ContentValues();
+		args.put(MySQLiteHelper.COLUMN_ARCHIVED, archivedOption);
+		database.update(MySQLiteHelper.TABLE_ITEM, args, MySQLiteHelper.COLUMN_ID + " = " + id, null);
+	}
+
 	/**
 	 * delete item by identifier
 	 * 
@@ -110,10 +124,44 @@ public class ItemsDataSource {
 	 * @return
 	 */
 	public Item getById(long id) {
-		Cursor cursor = database.rawQuery("select * from " + MySQLiteHelper.TABLE_ITEM + " where " + MySQLiteHelper.COLUMN_ID + "='" + id + "'", null);
+		Cursor cursor = database.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_ITEM + " WHERE " + MySQLiteHelper.COLUMN_ID + "='" + id + "'", null);
 		cursor.moveToFirst();
 		Item item = cursorToItem(cursor);
 		return item;
+	}
+
+	/**
+	 * get all items in a list from datasource that are not set to be archived
+	 * 
+	 * @param archiveType
+	 *            1 or 0 value based if the items returned should be true or false
+	 * @return
+	 */
+	public List<Item> getAllItemsbyArchiveType(int archiveType) {
+		List<Item> items = new ArrayList<Item>();
+		Cursor cursor = database.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_ITEM + " WHERE " + MySQLiteHelper.COLUMN_ARCHIVED + "='" + archiveType + "'", null);
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			Item item = cursorToItem(cursor);
+			items.add(item);
+			cursor.moveToNext();
+		}
+		/** Make sure to close the cursor */
+		cursor.close();
+		return items;
+	}
+
+	/**
+	 * get how many items are archived or not
+	 * 
+	 * @param archiveType
+	 *            1 or 0 value based if the items returned should be true or false
+	 * @return
+	 */
+	public int getCountItemsbyArchiveType(int archiveType) {
+		Cursor cursor = database.rawQuery("SELECT COUNT(*) FROM " + MySQLiteHelper.TABLE_ITEM + " WHERE " + MySQLiteHelper.COLUMN_ARCHIVED + "='" + archiveType + "'", null);
+		cursor.moveToFirst();
+		return cursor.getInt(0);
 	}
 
 	/**

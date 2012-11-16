@@ -3,7 +3,7 @@
     android:id="@+id/popup_element"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/custom_background"
+    android:background="@drawable/custom_border"
     android:orientation="vertical"
     android:padding="2dp" >
 
@@ -11,6 +11,7 @@
         android:id="@+id/buttonContainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/background_div"
         android:minHeight="35dp" >
 
         <TextView
@@ -53,8 +54,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:textColor="#FFFFFF"
-                android:text="Title" />
+                android:text="Title"
+                android:textColor="#000000" />
 
             <EditText
                 android:id="@+id/editTextTitle"
@@ -71,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:text="Message"
-                android:textColor="#FFFFFF"
+                android:textColor="#000000"
                 android:textSize="14dp" />
 
             <EditText
@@ -79,7 +80,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:ems="10"
-                android:minLines="10" >
+                android:minLines="3" >
             </EditText>
 
             <LinearLayout
@@ -92,17 +93,48 @@
                     android:id="@+id/SaveButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".7"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".5"
                     android:background="@drawable/custom_button"
                     android:minHeight="35dp"
                     android:text="Save"
                     android:textSize="12dp" />
 
                 <Button
+                    android:id="@+id/sendButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:minHeight="35dp"
+                    android:text="Send"
+                    android:textSize="12dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/buttonContainer3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp" >
+
+                <Button
+                    android:id="@+id/ArchiveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:minHeight="35dp"
+                    android:text="Archive"
+                    android:textSize="12dp" />
+
+                <Button
                     android:id="@+id/DeleteButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".3"
+                    android:layout_margin="5dp"
+                    android:layout_weight=".5"
                     android:background="@drawable/custom_button"
                     android:minHeight="35dp"
                     android:text="Delete"

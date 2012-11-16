@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -47,11 +46,22 @@ public class ItemsActivity extends Activity {
 	protected String currentTitleValue;
 	protected String currentMessageValue;
 
+	protected int isArchivedMessageView;
+
+	protected TextView CurrentMessagesLabel;
+	protected TextView ArchivedMessagesLabel;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.archive);
+		setContentView(R.layout.items);
+
+		CurrentMessagesLabel = (TextView) findViewById(R.id.CurrentMessages);
+		ArchivedMessagesLabel = (TextView) findViewById(R.id.ArchivedMessages);
+
+		/** non-archived messages by default */
+		isArchivedMessageView = 0;
 
 		/** open data connections */
 		openDataConnections();
@@ -68,21 +78,22 @@ public class ItemsActivity extends Activity {
 		TextView CurrentMessages = (TextView) findViewById(R.id.CurrentMessages);
 		CurrentMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				Intent intent = new Intent(ItemsActivity.this, ItemsActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				startActivity(intent);
+				isArchivedMessageView = 0;
+				CurrentMessagesLabel.setTextColor(Color.BLACK);
+				ArchivedMessagesLabel.setTextColor(Color.GRAY);
+				setupItemsList();
 			}
 		});
 
 		TextView ArchivedMessages = (TextView) findViewById(R.id.ArchivedMessages);
 		ArchivedMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				Intent intent = new Intent(ItemsActivity.this, ArchiveActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				startActivity(intent);
+				isArchivedMessageView = 1;
+				CurrentMessagesLabel.setTextColor(Color.GRAY);
+				ArchivedMessagesLabel.setTextColor(Color.BLACK);
+				setupItemsList();
 			}
 		});
-
 	}
 
 	/**
@@ -90,11 +101,15 @@ public class ItemsActivity extends Activity {
 	 */
 	private void setupItemsList() {
 
-		/** get all the itemlist items saved in the DB */
-		final List<Item> itemlist = itemsDataSource.getAllItems();
+		/** the message count text fields should reflect how many archived / non-archived messages */
+		CurrentMessagesLabel.setText("[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "] Messages");
+		ArchivedMessagesLabel.setText("[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "] Archived");
+
+		/** get all the itemlist items saved in the DB set to archived = false */
+		final List<Item> itemlist = itemsDataSource.getAllItemsbyArchiveType(isArchivedMessageView);
 
 		/** attach to the LinearLayout to add TextViews dynamically via menuValues */
-		LinearLayout ll = (LinearLayout) findViewById(R.id.archiveLayout);
+		LinearLayout ll = (LinearLayout) findViewById(R.id.itemsLayout);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 
 		/** start with a clean slate */
@@ -167,12 +182,24 @@ public class ItemsActivity extends Activity {
 		editTextTitle = (TextView) layout.findViewById(R.id.editTextTitle);
 		messageContent = (TextView) layout.findViewById(R.id.messageContent);
 		Button deleteButton = (Button) layout.findViewById(R.id.DeleteButton);
+		Button archiveButton = (Button) layout.findViewById(R.id.ArchiveButton);
+
+		/** if we're editing an existing entry the other buttons are enabled, else you can't use them yet */
 		if (editMode) {
 			editTextTitle.setText(currentTitleValue);
 			messageContent.setText(currentMessageValue);
-			deleteButton.setVisibility(View.VISIBLE);
+			deleteButton.setEnabled(true);
+			archiveButton.setEnabled(true);
 		} else {
-			deleteButton.setVisibility(View.INVISIBLE);
+			deleteButton.setEnabled(false);
+			archiveButton.setEnabled(false);
+		}
+
+		/** set the button text to Archived/Un-Archived by what you're able to do */
+		if (isArchivedMessageView == 1) {
+			archiveButton.setText("Un-Archive");
+		} else {
+			archiveButton.setText("Archive");
 		}
 
 		/** set button is pressed, set the timer and close the popup */
@@ -183,6 +210,20 @@ public class ItemsActivity extends Activity {
 					editEntryDB();
 				} else {
 					addEntryDB();
+				}
+				pw.dismiss();
+			}
+		});
+
+		/** set button is pressed, set the timer and close the popup */
+		Button archiveOptionButton = (Button) layout.findViewById(R.id.ArchiveButton);
+		archiveOptionButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				/** set archive / un-archive by user request */
+				if (isArchivedMessageView == 1) {
+					archiveOptionEntryDB(0);
+				} else {
+					archiveOptionEntryDB(1);
 				}
 				pw.dismiss();
 			}
@@ -244,6 +285,22 @@ public class ItemsActivity extends Activity {
 			editItem.setName(currentTitleValue);
 			editItem.setContent(currentMessageValue);
 			itemsDataSource.editItem(editItem);
+		}
+		setupItemsList();
+	}
+
+	/**
+	 * archive existing item in the DB
+	 */
+	private void archiveOptionEntryDB(int archiveOption) {
+		currentTitleValue = editTextTitle.getText().toString();
+		currentMessageValue = messageContent.getText().toString();
+		if (currentTitleValue.length() != 0) {
+			Item archiveItem = new Item();
+			archiveItem.setId(currentID);
+			archiveItem.setName(currentTitleValue);
+			archiveItem.setContent(currentMessageValue);
+			itemsDataSource.archiveItembyOption(archiveItem, archiveOption);
 		}
 		setupItemsList();
 	}

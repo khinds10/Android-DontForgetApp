@@ -20,7 +20,7 @@
             android:padding="10dp"
             android:text="@string/app_name"
             android:textColor="#FFFFFF"
-            android:textSize="19dp" />
+            android:textSize="25dp" />
 
         <TextView
             android:id="@+id/MessageCount"
@@ -29,7 +29,6 @@
             android:layout_weight="0.5"
             android:gravity="center"
             android:padding="10dp"
-            android:text="1 New Message(s)"
             android:textColor="#FFFFFF"
             android:textSize="12dp" />
     </LinearLayout>
@@ -53,7 +52,8 @@
             android:layout_weight="0.4"
             android:gravity="center"
             android:padding="10dp"
-            android:text="My Messages" >
+            android:text="[0] Messages"
+            android:textColor="#000000" >
         </TextView>
 
         <TextView
@@ -63,7 +63,7 @@
             android:layout_weight="0.6"
             android:gravity="center"
             android:padding="10dp"
-            android:text="Archived" >
+            android:text="[0] Archived" >
         </TextView>
     </LinearLayout>
 
