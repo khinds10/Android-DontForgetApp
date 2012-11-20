@@ -129,7 +129,9 @@ public class ItemsActivity extends Activity {
 			tv.setClickable(true);
 			tv.setTextColor(Color.BLACK);
 			tv.setPadding(10, 8, 0, 8);
-			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_title), null, null, null);
+			tv.setGravity(Gravity.CENTER_VERTICAL);
+			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.bubble), null, null, null);
+			tv.setCompoundDrawablePadding(10);
 			tv.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					currentID = v.getId();
@@ -181,8 +183,8 @@ public class ItemsActivity extends Activity {
 
 		editTextTitle = (TextView) layout.findViewById(R.id.editTextTitle);
 		messageContent = (TextView) layout.findViewById(R.id.messageContent);
-		Button deleteButton = (Button) layout.findViewById(R.id.DeleteButton);
-		Button archiveButton = (Button) layout.findViewById(R.id.ArchiveButton);
+		TextView deleteButton = (TextView) layout.findViewById(R.id.DeleteButton);
+		TextView archiveButton = (TextView) layout.findViewById(R.id.ArchiveButton);
 
 		/** if we're editing an existing entry the other buttons are enabled, else you can't use them yet */
 		if (editMode) {
@@ -203,7 +205,7 @@ public class ItemsActivity extends Activity {
 		}
 
 		/** set button is pressed, set the timer and close the popup */
-		Button setButton = (Button) layout.findViewById(R.id.SaveButton);
+		TextView setButton = (TextView) layout.findViewById(R.id.SaveButton);
 		setButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (editMode) {
@@ -216,7 +218,7 @@ public class ItemsActivity extends Activity {
 		});
 
 		/** set button is pressed, set the timer and close the popup */
-		Button archiveOptionButton = (Button) layout.findViewById(R.id.ArchiveButton);
+		TextView archiveOptionButton = (TextView) layout.findViewById(R.id.ArchiveButton);
 		archiveOptionButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				/** set archive / un-archive by user request */
@@ -230,7 +232,7 @@ public class ItemsActivity extends Activity {
 		});
 
 		/** cancel button to close */
-		Button cancelButton = (Button) layout.findViewById(R.id.cancelButton);
+		TextView cancelButton = (TextView) layout.findViewById(R.id.cancelButton);
 		cancelButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				pw.dismiss();

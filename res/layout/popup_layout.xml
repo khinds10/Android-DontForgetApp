@@ -10,9 +10,8 @@
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_div"
-        android:minHeight="35dp" >
+        android:layout_height="42dp"
+        android:background="@drawable/background_div" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,7 +22,7 @@
             android:paddingRight="10dp"
             android:text="Create / Edit Message"
             android:textColor="#FFFFFF"
-            android:textSize="18dp" />
+            android:textSize="22dp" />
 
         <Button
             android:id="@+id/cancelButton"
@@ -33,7 +32,7 @@
             android:layout_weight=".2"
             android:background="@drawable/custom_button"
             android:padding="2dp"
-            android:text="Cancel" >
+            android:text="Close" >
         </Button>
     </LinearLayout>
 
@@ -89,27 +88,33 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="15dp" >
 
-                <Button
+                <TextView
                     android:id="@+id/SaveButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/save"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:text="Save"
-                    android:textSize="12dp" />
+                    android:textColor="#000000"
+                    android:textSize="18dp" />
 
-                <Button
+                <TextView
                     android:id="@+id/sendButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/send"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:text="Send"
-                    android:textSize="12dp" />
+                    android:textColor="#000000"
+                    android:textSize="18dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -118,27 +123,33 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp" >
 
-                <Button
+                <TextView
                     android:id="@+id/ArchiveButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/archive"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:text="Archive"
-                    android:textSize="12dp" />
+                    android:textColor="#000000"
+                    android:textSize="18dp" />
 
-                <Button
+                <TextView
                     android:id="@+id/DeleteButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/delete"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:text="Delete"
-                    android:textSize="12dp" />
+                    android:textColor="#000000"
+                    android:textSize="18dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
