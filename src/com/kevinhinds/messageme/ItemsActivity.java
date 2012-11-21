@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -190,18 +189,20 @@ public class ItemsActivity extends Activity {
 		if (editMode) {
 			editTextTitle.setText(currentTitleValue);
 			messageContent.setText(currentMessageValue);
-			deleteButton.setEnabled(true);
-			archiveButton.setEnabled(true);
+			deleteButton.setVisibility(View.VISIBLE);
+			archiveButton.setVisibility(View.VISIBLE);
 		} else {
-			deleteButton.setEnabled(false);
-			archiveButton.setEnabled(false);
+			deleteButton.setVisibility(View.GONE);
+			archiveButton.setVisibility(View.GONE);
 		}
 
 		/** set the button text to Archived/Un-Archived by what you're able to do */
 		if (isArchivedMessageView == 1) {
 			archiveButton.setText("Un-Archive");
+			archiveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.unarchive, 0, 0, 0);
 		} else {
 			archiveButton.setText("Archive");
+			archiveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.archive, 0, 0, 0);
 		}
 
 		/** set button is pressed, set the timer and close the popup */

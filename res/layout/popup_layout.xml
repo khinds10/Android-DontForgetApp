@@ -82,75 +82,75 @@
                 android:minLines="3" >
             </EditText>
 
-            <LinearLayout
-                android:id="@+id/buttonContainer2"
-                android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="15dp" >
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:drawableLeft="@drawable/send"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:minHeight="35dp"
+                android:text="Quick Send"
+                android:textColor="#000000"
+                android:textSize="14dp" />
 
-                <TextView
-                    android:id="@+id/SaveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight=".5"
-                    android:drawableLeft="@drawable/save"
-                    android:drawablePadding="10dp"
-                    android:gravity="center_vertical"
-                    android:minHeight="35dp"
-                    android:text="Save"
-                    android:textColor="#000000"
-                    android:textSize="18dp" />
-
-                <TextView
-                    android:id="@+id/sendButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight=".5"
-                    android:drawableLeft="@drawable/send"
-                    android:drawablePadding="10dp"
-                    android:gravity="center_vertical"
-                    android:minHeight="35dp"
-                    android:text="Send"
-                    android:textColor="#000000"
-                    android:textSize="18dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/buttonContainer3"
-                android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/RemindButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp" >
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:drawableLeft="@drawable/remind"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:minHeight="35dp"
+                android:text="Remind me later"
+                android:textColor="#000000"
+                android:textSize="14dp" />
 
-                <TextView
-                    android:id="@+id/ArchiveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight=".5"
-                    android:drawableLeft="@drawable/archive"
-                    android:drawablePadding="10dp"
-                    android:gravity="center_vertical"
-                    android:minHeight="35dp"
-                    android:text="Archive"
-                    android:textColor="#000000"
-                    android:textSize="18dp" />
+            <TextView
+                android:id="@+id/SaveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:drawableLeft="@drawable/save"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:minHeight="35dp"
+                android:text="Save"
+                android:textColor="#000000"
+                android:textSize="14dp" />
 
-                <TextView
-                    android:id="@+id/DeleteButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight=".5"
-                    android:drawableLeft="@drawable/delete"
-                    android:drawablePadding="10dp"
-                    android:gravity="center_vertical"
-                    android:minHeight="35dp"
-                    android:text="Delete"
-                    android:textColor="#000000"
-                    android:textSize="18dp" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/ArchiveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:drawableLeft="@drawable/archive"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:minHeight="35dp"
+                android:text="Archive"
+                android:textColor="#000000"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/DeleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:drawableLeft="@drawable/delete"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:minHeight="35dp"
+                android:text="Delete"
+                android:textColor="#000000"
+                android:textSize="14dp" />
         </LinearLayout>
     </ScrollView>
 
