@@ -66,6 +66,15 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/readOnlyTitletextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Item Title"
+                android:textColor="#000000"
+                android:textSize="20dp" />
+
+            <TextView
                 android:id="@+id/messageTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,7 +92,42 @@
             </EditText>
 
             <TextView
-                android:id="@+id/sendButton"
+                android:id="@+id/readOnlyMessagetextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="Item Message"
+                android:textColor="#000000"
+                android:textSize="20dp" />
+
+            <LinearLayout
+                android:id="@+id/editButtonContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/editMemoButton"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="Edit" />
+
+                <Button
+                    android:id="@+id/cancelEditMemoButton"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel Edit" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/sendEmailButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -92,7 +136,21 @@
                 android:drawablePadding="5dp"
                 android:gravity="center_vertical"
                 android:minHeight="35dp"
-                android:text="Quick Send"
+                android:text="Quick Send Email"
+                android:textColor="#000000"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/sendSMSButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:drawableLeft="@drawable/send"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:minHeight="35dp"
+                android:text="Quick Send Text Message"
                 android:textColor="#000000"
                 android:textSize="14dp" />
 

@@ -3,15 +3,22 @@ package com.kevinhinds.messageme;
 import java.util.Iterator;
 import java.util.List;
 
+import com.kevinhinds.messageme.email.GMailSender;
 import com.kevinhinds.messageme.item.Item;
 import com.kevinhinds.messageme.item.ItemsDataSource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,9 +26,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Main Activity for items
@@ -184,17 +193,77 @@ public class ItemsActivity extends Activity {
 		messageContent = (TextView) layout.findViewById(R.id.messageContent);
 		TextView deleteButton = (TextView) layout.findViewById(R.id.DeleteButton);
 		TextView archiveButton = (TextView) layout.findViewById(R.id.ArchiveButton);
+		final TextView readOnlyTitletextView = (TextView) layout.findViewById(R.id.readOnlyTitletextView);
+		final TextView readOnlyMessagetextView = (TextView) layout.findViewById(R.id.readOnlyMessagetextView);
+
+		/** edit existing memo buttons and container */
+		final LinearLayout editButtonContainer = (LinearLayout) layout.findViewById(R.id.editButtonContainer);
+		final Button editMemoButton = (Button) layout.findViewById(R.id.editMemoButton);
+		final Button cancelEditMemoButton = (Button) layout.findViewById(R.id.cancelEditMemoButton);
 
 		/** if we're editing an existing entry the other buttons are enabled, else you can't use them yet */
 		if (editMode) {
-			editTextTitle.setText(currentTitleValue);
-			messageContent.setText(currentMessageValue);
+
 			deleteButton.setVisibility(View.VISIBLE);
 			archiveButton.setVisibility(View.VISIBLE);
+
+			editButtonContainer.setVisibility(View.VISIBLE);
+			editMemoButton.setVisibility(View.VISIBLE);
+			cancelEditMemoButton.setVisibility(View.GONE);
+
+			readOnlyTitletextView.setVisibility(View.VISIBLE);
+			readOnlyMessagetextView.setVisibility(View.VISIBLE);
+			readOnlyTitletextView.setText(currentTitleValue);
+			readOnlyMessagetextView.setText(currentMessageValue);
+
+			editTextTitle.setVisibility(View.GONE);
+			messageContent.setVisibility(View.GONE);
+			editTextTitle.setText(currentTitleValue);
+			messageContent.setText(currentMessageValue);
+
 		} else {
+
 			deleteButton.setVisibility(View.GONE);
 			archiveButton.setVisibility(View.GONE);
+
+			editButtonContainer.setVisibility(View.GONE);
+			editMemoButton.setVisibility(View.GONE);
+			cancelEditMemoButton.setVisibility(View.GONE);
+
+			readOnlyTitletextView.setVisibility(View.GONE);
+			readOnlyMessagetextView.setVisibility(View.GONE);
+
+			editTextTitle.setVisibility(View.VISIBLE);
+			messageContent.setVisibility(View.VISIBLE);
 		}
+
+		/** edit button is pressed, change the popup to be able to edit */
+		editMemoButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				readOnlyTitletextView.setVisibility(View.GONE);
+				readOnlyMessagetextView.setVisibility(View.GONE);
+				editTextTitle.setVisibility(View.VISIBLE);
+				messageContent.setVisibility(View.VISIBLE);
+				editMemoButton.setVisibility(View.GONE);
+				cancelEditMemoButton.setVisibility(View.VISIBLE);
+				editTextTitle.setText(currentTitleValue);
+				messageContent.setText(currentMessageValue);
+			}
+		});
+
+		/** cancel edit button is pressed, change the popup to be able to edit */
+		cancelEditMemoButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				readOnlyTitletextView.setVisibility(View.VISIBLE);
+				readOnlyMessagetextView.setVisibility(View.VISIBLE);
+				editTextTitle.setVisibility(View.GONE);
+				messageContent.setVisibility(View.GONE);
+				editMemoButton.setVisibility(View.VISIBLE);
+				cancelEditMemoButton.setVisibility(View.GONE);
+				editTextTitle.setText(currentTitleValue);
+				messageContent.setText(currentMessageValue);
+			}
+		});
 
 		/** set the button text to Archived/Un-Archived by what you're able to do */
 		if (isArchivedMessageView == 1) {
@@ -259,6 +328,45 @@ public class ItemsActivity extends Activity {
 				builder.setIcon(R.drawable.ic_launcher);
 				AlertDialog alert = builder.create();
 				alert.show();
+			}
+		});
+
+		/** email yourself button */
+		TextView sendButton = (TextView) layout.findViewById(R.id.sendEmailButton);
+		sendButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				try {
+					String currentTitle = editTextTitle.getText().toString();
+					String currentMessage = messageContent.getText().toString();
+					GMailSender sender = new GMailSender("khinds10@gmail.com", "$ecurity!123");
+					sender.sendMail(currentTitle + "   (Don't Forget! for Android)", currentMessage + "\n\n--\nDon't Forget! for Android", "khinds10@gmail.com", "khinds10@gmail.com");
+					if (editMode) {
+						editEntryDB();
+					} else {
+						addEntryDB();
+					}
+					pw.dismiss();
+				} catch (Exception e) {
+				}
+			}
+		});
+
+		/** SMS yourself button */
+		TextView sendSMSButton = (TextView) layout.findViewById(R.id.sendSMSButton);
+		sendSMSButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				try {
+					String currentTitle = editTextTitle.getText().toString();
+					String currentMessage = messageContent.getText().toString();
+					if (editMode) {
+						editEntryDB();
+					} else {
+						addEntryDB();
+					}
+					sendSMS("16467159249", currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
+					pw.dismiss();
+				} catch (Exception e) {
+				}
 			}
 		});
 	}
@@ -330,5 +438,56 @@ public class ItemsActivity extends Activity {
 	private void openDataConnections() {
 		itemsDataSource = new ItemsDataSource(this);
 		itemsDataSource.open();
+	}
+
+	/** sends an SMS message to another device */
+	private void sendSMS(String phoneNumber, String message) {
+		String SENT = "SMS_SENT";
+		String DELIVERED = "SMS_DELIVERED";
+
+		PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
+		PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0, new Intent(DELIVERED), 0);
+
+		/** when the SMS has been sent */
+		registerReceiver(new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context arg0, Intent arg1) {
+				switch (getResultCode()) {
+				case Activity.RESULT_OK:
+					Toast.makeText(getBaseContext(), "SMS sent", Toast.LENGTH_SHORT).show();
+					break;
+				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+					Toast.makeText(getBaseContext(), "Text Message Could not be Sent", Toast.LENGTH_SHORT).show();
+					break;
+				case SmsManager.RESULT_ERROR_NO_SERVICE:
+					Toast.makeText(getBaseContext(), "Text Message Could not be Sent", Toast.LENGTH_SHORT).show();
+					break;
+				case SmsManager.RESULT_ERROR_NULL_PDU:
+					Toast.makeText(getBaseContext(), "Text Message Could not be Sent", Toast.LENGTH_SHORT).show();
+					break;
+				case SmsManager.RESULT_ERROR_RADIO_OFF:
+					Toast.makeText(getBaseContext(), "Text Message Could not be Sent", Toast.LENGTH_SHORT).show();
+					break;
+				}
+			}
+		}, new IntentFilter(SENT));
+
+		/** when the SMS has been delivered */
+		registerReceiver(new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context arg0, Intent arg1) {
+				switch (getResultCode()) {
+				case Activity.RESULT_OK:
+					Toast.makeText(getBaseContext(), "SMS delivered", Toast.LENGTH_SHORT).show();
+					break;
+				case Activity.RESULT_CANCELED:
+					Toast.makeText(getBaseContext(), "SMS not delivered", Toast.LENGTH_SHORT).show();
+					break;
+				}
+			}
+		}, new IntentFilter(DELIVERED));
+
+		SmsManager sms = SmsManager.getDefault();
+		sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
 	}
 }
