@@ -6,7 +6,6 @@ import java.util.List;
 import com.kevinhinds.messageme.email.GMailSender;
 import com.kevinhinds.messageme.item.Item;
 import com.kevinhinds.messageme.item.ItemsDataSource;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -17,11 +16,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -59,6 +61,8 @@ public class ItemsActivity extends Activity {
 	protected TextView CurrentMessagesLabel;
 	protected TextView ArchivedMessagesLabel;
 
+	protected ProgressDialog progressDialog;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -83,22 +87,32 @@ public class ItemsActivity extends Activity {
 		screenHeight = displaymetrics.heightPixels;
 		screenWidth = displaymetrics.widthPixels;
 
+		/** we start with the current messages view */
+		CurrentMessagesLabel.setTextColor(Color.BLACK);
+		CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
+
+		/** if you click the current messages option */
 		TextView CurrentMessages = (TextView) findViewById(R.id.CurrentMessages);
 		CurrentMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				isArchivedMessageView = 0;
 				CurrentMessagesLabel.setTextColor(Color.BLACK);
+				CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
 				ArchivedMessagesLabel.setTextColor(Color.GRAY);
+				ArchivedMessagesLabel.setTypeface(null, Typeface.NORMAL);
 				setupItemsList();
 			}
 		});
 
+		/** if you click the archive messages option */
 		TextView ArchivedMessages = (TextView) findViewById(R.id.ArchivedMessages);
 		ArchivedMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				isArchivedMessageView = 1;
 				CurrentMessagesLabel.setTextColor(Color.GRAY);
+				CurrentMessagesLabel.setTypeface(null, Typeface.NORMAL);
 				ArchivedMessagesLabel.setTextColor(Color.BLACK);
+				ArchivedMessagesLabel.setTypeface(null, Typeface.BOLD);
 				setupItemsList();
 			}
 		});
@@ -336,15 +350,24 @@ public class ItemsActivity extends Activity {
 		sendButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				try {
-					String currentTitle = editTextTitle.getText().toString();
-					String currentMessage = messageContent.getText().toString();
-					GMailSender sender = new GMailSender("khinds10@gmail.com", "$ecurity!123");
-					sender.sendMail(currentTitle + "   (Don't Forget! for Android)", currentMessage + "\n\n--\nDon't Forget! for Android", "khinds10@gmail.com", "khinds10@gmail.com");
-					if (editMode) {
-						editEntryDB();
-					} else {
-						addEntryDB();
-					}
+					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + "khinds10@gmail.com");
+					new Thread() {
+						public void run() {
+							try {
+								String currentTitle = editTextTitle.getText().toString();
+								String currentMessage = messageContent.getText().toString();
+								GMailSender sender = new GMailSender("khinds10@gmail.com", "$ecurity!123");
+								sender.sendMail(currentTitle + "   (Don't Forget! for Android)", currentMessage + "\n\n--\nDon't Forget! for Android", "khinds10@gmail.com", "khinds10@gmail.com");
+								if (editMode) {
+									editEntryDB();
+								} else {
+									addEntryDB();
+								}
+							} catch (Exception e) {
+							}
+							progressDialog.dismiss();
+						}
+					}.start();
 					pw.dismiss();
 				} catch (Exception e) {
 				}
@@ -356,14 +379,27 @@ public class ItemsActivity extends Activity {
 		sendSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				try {
-					String currentTitle = editTextTitle.getText().toString();
-					String currentMessage = messageContent.getText().toString();
-					if (editMode) {
-						editEntryDB();
-					} else {
-						addEntryDB();
-					}
-					sendSMS("16467159249", currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
+					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + "16467159249");
+					new Thread() {
+						public void run() {
+							try {
+								String currentTitle = editTextTitle.getText().toString();
+								String currentMessage = messageContent.getText().toString();
+								sendSMS("16467159249", currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
+								if (editMode) {
+									editEntryDB();
+								} else {
+									addEntryDB();
+								}
+							} catch (Exception e) {
+							}
+							try {
+								sleep(1000);
+							} catch (InterruptedException e) {
+							}
+							progressDialog.dismiss();
+						}
+					}.start();
 					pw.dismiss();
 				} catch (Exception e) {
 				}
@@ -489,5 +525,24 @@ public class ItemsActivity extends Activity {
 
 		SmsManager sms = SmsManager.getDefault();
 		sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		/** Handle item selection */
+		switch (item.getItemId()) {
+		case R.id.menu_settings:
+			Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
+			startActivity(intent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }
