@@ -6,6 +6,7 @@ import java.util.List;
 import com.kevinhinds.messageme.email.GMailSender;
 import com.kevinhinds.messageme.item.Item;
 import com.kevinhinds.messageme.item.ItemsDataSource;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -15,9 +16,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -63,11 +67,25 @@ public class ItemsActivity extends Activity {
 
 	protected ProgressDialog progressDialog;
 
+	protected String usersEmail = "";
+	protected String usersPhone = "";
+	protected String usersPassword = "";
+	SharedPreferences wmbPreference;
+
+	boolean emailSent;
+	boolean textSent;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.items);
+
+		/** get the sharedPreferences to edit via user's request */
+		wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
+		usersEmail = wmbPreference.getString("USER_EMAIL", "");
+		usersPhone = wmbPreference.getString("USER_PHONE", "");
+		usersPassword = wmbPreference.getString("USER_PASSWORD", "");
 
 		CurrentMessagesLabel = (TextView) findViewById(R.id.CurrentMessages);
 		ArchivedMessagesLabel = (TextView) findViewById(R.id.ArchivedMessages);
@@ -116,6 +134,13 @@ public class ItemsActivity extends Activity {
 				setupItemsList();
 			}
 		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		/** get all the data and build the activity */
+		setupItemsList();
 	}
 
 	/**
@@ -349,28 +374,16 @@ public class ItemsActivity extends Activity {
 		TextView sendButton = (TextView) layout.findViewById(R.id.sendEmailButton);
 		sendButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				try {
-					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + "khinds10@gmail.com");
-					new Thread() {
-						public void run() {
-							try {
-								String currentTitle = editTextTitle.getText().toString();
-								String currentMessage = messageContent.getText().toString();
-								GMailSender sender = new GMailSender("khinds10@gmail.com", "$ecurity!123");
-								sender.sendMail(currentTitle + "   (Don't Forget! for Android)", currentMessage + "\n\n--\nDon't Forget! for Android", "khinds10@gmail.com", "khinds10@gmail.com");
-								if (editMode) {
-									editEntryDB();
-								} else {
-									addEntryDB();
-								}
-							} catch (Exception e) {
-							}
-							progressDialog.dismiss();
-						}
-					}.start();
-					pw.dismiss();
-				} catch (Exception e) {
+				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + usersEmail);
+				if (editMode) {
+					editEntryDB();
+				} else {
+					addEntryDB();
 				}
+				EmailUserTask task = new EmailUserTask();
+				task.execute();
+				pw.dismiss();
+				setupItemsList();
 			}
 		});
 
@@ -379,18 +392,18 @@ public class ItemsActivity extends Activity {
 		sendSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				try {
-					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + "16467159249");
+					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
 					new Thread() {
 						public void run() {
 							try {
-								String currentTitle = editTextTitle.getText().toString();
-								String currentMessage = messageContent.getText().toString();
-								sendSMS("16467159249", currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
 								if (editMode) {
 									editEntryDB();
 								} else {
 									addEntryDB();
 								}
+								String currentTitle = editTextTitle.getText().toString();
+								String currentMessage = messageContent.getText().toString();
+								sendSMS(usersPhone, currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
 							} catch (Exception e) {
 							}
 							try {
@@ -401,6 +414,7 @@ public class ItemsActivity extends Activity {
 						}
 					}.start();
 					pw.dismiss();
+					setupItemsList();
 				} catch (Exception e) {
 				}
 			}
@@ -543,6 +557,49 @@ public class ItemsActivity extends Activity {
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private class EmailUserTask extends AsyncTask<String, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			emailSent = true;
+			try {
+				String currentTitle = editTextTitle.getText().toString();
+				String currentMessage = messageContent.getText().toString();
+				GMailSender sender = new GMailSender(usersEmail, usersPassword);
+				sender.sendMail(currentTitle + "   (Don't Forget! for Android)", currentMessage + "\n\n--\nDon't Forget! for Android", usersEmail, usersEmail);
+			} catch (Exception e) {
+				emailSent = false;
+			}
+			return emailSent;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			super.onPostExecute(success);
+			progressDialog.dismiss();
+			if (!success) {
+				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
+				alertDialog.setTitle("Email could not be sent...");
+				alertDialog.setMessage("Check your settings and try again.");
+				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				alertDialog.setButton2("Settings...", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
+						startActivity(intent);
+					}
+				});
+				alertDialog.setIcon(R.drawable.ic_launcher);
+				alertDialog.show();
+			} else {
+				Toast.makeText(getBaseContext(), "Email Sent", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 }

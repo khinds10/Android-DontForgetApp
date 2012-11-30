@@ -47,20 +47,16 @@ public class GMailSender extends javax.mail.Authenticator {
 	}
 
 	public synchronized void sendMail(String subject, String body, String sender, String recipients) throws Exception {
-		try {
-			MimeMessage message = new MimeMessage(session);
-			DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
-			message.setSender(new InternetAddress(sender));
-			message.setSubject(subject);
-			message.setDataHandler(handler);
-			if (recipients.indexOf(',') > 0)
-				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
-			else
-				message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
-			Transport.send(message);
-		} catch (Exception e) {
-
-		}
+		MimeMessage message = new MimeMessage(session);
+		DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+		message.setSender(new InternetAddress(sender));
+		message.setSubject(subject);
+		message.setDataHandler(handler);
+		if (recipients.indexOf(',') > 0)
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
+		else
+			message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
+		Transport.send(message);
 	}
 
 	public class ByteArrayDataSource implements DataSource {

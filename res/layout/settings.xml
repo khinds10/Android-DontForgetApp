@@ -36,7 +36,7 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@drawable/border"
-        android:orientation="vertical" >
+        android:orientation="horizontal" >
     </LinearLayout>
 
     <ScrollView
@@ -56,17 +56,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
+                android:paddingBottom="25dp"
+                android:paddingTop="5dp"
                 android:text="Settings"
                 android:textColor="#000000"
-                android:paddingTop="5dp"
-                android:paddingBottom="25dp"
                 android:textSize="22dp" />
 
             <TextView
                 android:id="@+id/emailTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your Gmail Address" />
+                android:text="Your Gmail Address"
+                android:textColor="#000000" />
 
             <EditText
                 android:id="@+id/emailAddress"
@@ -74,6 +75,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textEmailAddress" >
+
                 <requestFocus />
             </EditText>
 
@@ -81,7 +83,8 @@
                 android:id="@+id/passwordTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your Gmail Password" />
+                android:text="Your Gmail Password"
+                android:textColor="#000000" />
 
             <EditText
                 android:id="@+id/emailPassword"
@@ -95,7 +98,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="Your Phone Number" />
+                android:text="Your Phone Number"
+                android:textColor="#000000" />
 
             <EditText
                 android:id="@+id/phoneNumber"
@@ -104,6 +108,24 @@
                 android:ems="10"
                 android:inputType="phone" />
 
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/buttonPaddingPlaceholder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.75" />
+
+                <Button
+                    android:id="@+id/saveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.25"
+                    android:text="Save" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
