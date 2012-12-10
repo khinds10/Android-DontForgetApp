@@ -1,4 +1,4 @@
-package com.kevinhinds.messageme.item;
+package com.kevinhinds.dontforget.item;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

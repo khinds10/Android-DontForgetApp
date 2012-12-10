@@ -1,4 +1,4 @@
-package com.kevinhinds.messageme.email;
+package com.kevinhinds.dontforget.email;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -17,17 +17,17 @@ import java.util.Properties;
 
 public class GMailSender extends javax.mail.Authenticator {
 	private String mailhost = "smtp.gmail.com";
-	private String user;
-	private String password;
+	public String user;
+	public String password;
 	private Session session;
 
 	static {
 		Security.addProvider(new JSSEProvider());
 	}
 
-	public GMailSender(String user, String password) {
-		this.user = user;
-		this.password = password;
+	public GMailSender(String userName, String userPassword) {
+		user = userName;
+		password = userPassword;
 
 		Properties props = new Properties();
 		props.setProperty("mail.transport.protocol", "smtp");
@@ -38,8 +38,7 @@ public class GMailSender extends javax.mail.Authenticator {
 		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		props.put("mail.smtp.socketFactory.fallback", "false");
 		props.setProperty("mail.smtp.quitwait", "false");
-
-		session = Session.getDefaultInstance(props, this);
+		session = Session.getInstance(props, this);
 	}
 
 	protected PasswordAuthentication getPasswordAuthentication() {

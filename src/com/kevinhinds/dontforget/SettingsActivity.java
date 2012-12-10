@@ -1,7 +1,6 @@
-package com.kevinhinds.messageme;
+package com.kevinhinds.dontforget;
 
 import java.util.regex.Pattern;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -33,7 +32,7 @@ public class SettingsActivity extends Activity {
 	EditText emailPassword;
 	EditText phoneNumber;
 	EditText emailAddress;
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,7 @@ public class SettingsActivity extends Activity {
 		emailPassword = (EditText) findViewById(R.id.emailPassword);
 		phoneNumber = (EditText) findViewById(R.id.phoneNumber);
 		emailAddress = (EditText) findViewById(R.id.emailAddress);
-		
+
 		/** get the sharedPreferences to edit via user's request */
 		wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -80,13 +79,13 @@ public class SettingsActivity extends Activity {
 	private void setValues() {
 		/** get the preferences editor */
 		SharedPreferences.Editor editor = wmbPreference.edit();
-		
+
 		/** save the values in the user preferences */
 		editor.putString("USER_EMAIL", emailAddress.getText().toString());
 		editor.putString("USER_PHONE", phoneNumber.getText().toString());
 		editor.putString("USER_PASSWORD", emailPassword.getText().toString());
-		editor.commit();	
-		
+		editor.commit();
+
 		Intent intent = new Intent(SettingsActivity.this, ItemsActivity.class);
 		startActivity(intent);
 	}

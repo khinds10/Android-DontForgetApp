@@ -1,4 +1,4 @@
-package com.kevinhinds.messageme.email;
+package com.kevinhinds.dontforget.email;
 
 /*
  *  Licensed to the Apache Software Foundation (ASF) under one or more

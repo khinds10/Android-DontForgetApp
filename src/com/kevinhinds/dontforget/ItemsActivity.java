@@ -1,11 +1,11 @@
-package com.kevinhinds.messageme;
+package com.kevinhinds.dontforget;
 
 import java.util.Iterator;
 import java.util.List;
 
-import com.kevinhinds.messageme.email.GMailSender;
-import com.kevinhinds.messageme.item.Item;
-import com.kevinhinds.messageme.item.ItemsDataSource;
+import com.kevinhinds.dontforget.email.GMailSender;
+import com.kevinhinds.dontforget.item.Item;
+import com.kevinhinds.dontforget.item.ItemsDataSource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,6 +35,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,6 +75,8 @@ public class ItemsActivity extends Activity {
 
 	boolean emailSent;
 	boolean textSent;
+	boolean textSentNotify;
+	boolean textDeliveredNotify;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -81,11 +84,8 @@ public class ItemsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.items);
 
-		/** get the sharedPreferences to edit via user's request */
-		wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
-		usersEmail = wmbPreference.getString("USER_EMAIL", "");
-		usersPhone = wmbPreference.getString("USER_PHONE", "");
-		usersPassword = wmbPreference.getString("USER_PASSWORD", "");
+		/** get the current settings for the user */
+		getUserSettings();
 
 		CurrentMessagesLabel = (TextView) findViewById(R.id.CurrentMessages);
 		ArchivedMessagesLabel = (TextView) findViewById(R.id.ArchivedMessages);
@@ -197,6 +197,7 @@ public class ItemsActivity extends Activity {
 		TextView addItemButton = new TextView(this);
 		addItemButton.setTextSize(15);
 		addItemButton.setText((CharSequence) "Add New");
+		addItemButton.setTextColor(Color.BLACK);
 		addItemButton.setLayoutParams(lp);
 		addItemButton.setClickable(true);
 		addItemButton.setPadding(10, 10, 10, 10);
@@ -211,9 +212,12 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * show the popup window for the "set" timer preset
+	 * show the popup window for the editing of don't forget messages
 	 */
 	private void initiateEditMessagePopup(final boolean editMode) {
+
+		/** get any recent changes to the user settings */
+		getUserSettings();
 
 		/** adjust the popup WxH */
 		float popupWidth = (float) (screenWidth * .90);
@@ -391,32 +395,60 @@ public class ItemsActivity extends Activity {
 		TextView sendSMSButton = (TextView) layout.findViewById(R.id.sendSMSButton);
 		sendSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				try {
-					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
-					new Thread() {
-						public void run() {
-							try {
-								if (editMode) {
-									editEntryDB();
-								} else {
-									addEntryDB();
-								}
-								String currentTitle = editTextTitle.getText().toString();
-								String currentMessage = messageContent.getText().toString();
-								sendSMS(usersPhone, currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
-							} catch (Exception e) {
-							}
-							try {
-								sleep(1000);
-							} catch (InterruptedException e) {
-							}
-							progressDialog.dismiss();
-						}
-					}.start();
-					pw.dismiss();
-					setupItemsList();
-				} catch (Exception e) {
+				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
+				if (editMode) {
+					editEntryDB();
+				} else {
+					addEntryDB();
 				}
+				SMSUserTask task = new SMSUserTask();
+				task.execute();
+				pw.dismiss();
+				setupItemsList();
+
+			}
+		});
+	}
+
+	/**
+	 * get the most recent settings for the user
+	 */
+	private void getUserSettings() {
+
+		/** get the sharedPreferences to edit via user's request */
+		wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
+		usersEmail = wmbPreference.getString("USER_EMAIL", "");
+		usersPhone = wmbPreference.getString("USER_PHONE", "");
+		usersPassword = wmbPreference.getString("USER_PASSWORD", "");
+
+		/** show the user the most current email settings */
+		TextView userGmail = (TextView) findViewById(R.id.userGmail);
+		String displayEmail = "";
+		if (usersEmail.equals("")) {
+			userGmail.setTextColor(Color.BLACK);
+			displayEmail = "(Please configure)";
+		} else {
+			displayEmail = usersEmail;
+		}
+		userGmail.setText(displayEmail);
+
+		/** show the user the most current phone number */
+		TextView userPhoneNumber = (TextView) findViewById(R.id.userPhoneNumber);
+		String displayPhone = "";
+		if (usersPhone.equals("")) {
+			userPhoneNumber.setTextColor(Color.BLACK);
+			displayPhone = "(Please configure)";
+		} else {
+			displayPhone = usersPhone;
+		}
+		userPhoneNumber.setText(displayPhone);
+
+		/** click the layout to edit settings */
+		LinearLayout subContentAccountSettings = (LinearLayout) findViewById(R.id.subContentAccountSettings);
+		subContentAccountSettings.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
+				startActivity(intent);
 			}
 		});
 	}
@@ -490,10 +522,16 @@ public class ItemsActivity extends Activity {
 		itemsDataSource.open();
 	}
 
-	/** sends an SMS message to another device */
-	private void sendSMS(String phoneNumber, String message) {
+	/**
+	 * sends an SMS message to another device
+	 * 
+	 * @throws Exception
+	 */
+	private void sendSMS(String phoneNumber, String message) throws Exception {
 		String SENT = "SMS_SENT";
 		String DELIVERED = "SMS_DELIVERED";
+		textSentNotify = false;
+		textDeliveredNotify = false;
 
 		PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
 		PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0, new Intent(DELIVERED), 0);
@@ -504,19 +542,22 @@ public class ItemsActivity extends Activity {
 			public void onReceive(Context arg0, Intent arg1) {
 				switch (getResultCode()) {
 				case Activity.RESULT_OK:
-					Toast.makeText(getBaseContext(), "SMS sent", Toast.LENGTH_SHORT).show();
+					if (!textSentNotify) {
+						Toast.makeText(getBaseContext(), "SMS sent", Toast.LENGTH_SHORT).show();
+						textSentNotify = true;
+					}
 					break;
 				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-					Toast.makeText(getBaseContext(), "Text Message Could not be Sent", Toast.LENGTH_SHORT).show();
+					textSent = false;
 					break;
 				case SmsManager.RESULT_ERROR_NO_SERVICE:
-					Toast.makeText(getBaseContext(), "Text Message Could not be Sent", Toast.LENGTH_SHORT).show();
+					textSent = false;
 					break;
 				case SmsManager.RESULT_ERROR_NULL_PDU:
-					Toast.makeText(getBaseContext(), "Text Message Could not be Sent", Toast.LENGTH_SHORT).show();
+					textSent = false;
 					break;
 				case SmsManager.RESULT_ERROR_RADIO_OFF:
-					Toast.makeText(getBaseContext(), "Text Message Could not be Sent", Toast.LENGTH_SHORT).show();
+					textSent = false;
 					break;
 				}
 			}
@@ -528,10 +569,13 @@ public class ItemsActivity extends Activity {
 			public void onReceive(Context arg0, Intent arg1) {
 				switch (getResultCode()) {
 				case Activity.RESULT_OK:
-					Toast.makeText(getBaseContext(), "SMS delivered", Toast.LENGTH_SHORT).show();
+					if (!textDeliveredNotify) {
+						Toast.makeText(getBaseContext(), "SMS delivered", Toast.LENGTH_SHORT).show();
+						textDeliveredNotify = true;
+					}
 					break;
 				case Activity.RESULT_CANCELED:
-					Toast.makeText(getBaseContext(), "SMS not delivered", Toast.LENGTH_SHORT).show();
+					textSent = false;
 					break;
 				}
 			}
@@ -539,6 +583,9 @@ public class ItemsActivity extends Activity {
 
 		SmsManager sms = SmsManager.getDefault();
 		sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+		if (!textSent) {
+			throw new Exception();
+		}
 	}
 
 	@Override
@@ -557,6 +604,46 @@ public class ItemsActivity extends Activity {
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private class SMSUserTask extends AsyncTask<String, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			textSent = true;
+			try {
+				String currentTitle = editTextTitle.getText().toString();
+				String currentMessage = messageContent.getText().toString();
+				sendSMS(usersPhone, currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
+			} catch (Exception e) {
+				textSent = false;
+			}
+			return textSent;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			super.onPostExecute(success);
+			progressDialog.dismiss();
+			if (!success) {
+				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
+				alertDialog.setTitle("SMS could not be sent...");
+				alertDialog.setMessage("Check your settings and try again.");
+				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				alertDialog.setButton2("Settings...", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
+						startActivity(intent);
+					}
+				});
+				alertDialog.setIcon(R.drawable.ic_launcher);
+				alertDialog.show();
+			}
 		}
 	}
 

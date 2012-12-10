@@ -1,4 +1,4 @@
-package com.kevinhinds.messageme.item;
+package com.kevinhinds.dontforget.item;
 
 import java.util.ArrayList;
 import java.util.List;

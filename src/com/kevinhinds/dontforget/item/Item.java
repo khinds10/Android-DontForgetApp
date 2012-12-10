@@ -1,4 +1,4 @@
-package com.kevinhinds.messageme.item;
+package com.kevinhinds.dontforget.item;
 
 /**
  * Item class related to the SQLiteDB table "item"
