@@ -35,7 +35,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,6 +98,10 @@ public class ItemsActivity extends Activity {
 		/** setup the list of items to show the user */
 		setupItemsList();
 
+		/** apply font to title */
+		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
+		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
+
 		/** get screen metrics */
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -116,8 +119,10 @@ public class ItemsActivity extends Activity {
 				isArchivedMessageView = 0;
 				CurrentMessagesLabel.setTextColor(Color.BLACK);
 				CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
+				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#E0E0E0"));
 				ArchivedMessagesLabel.setTextColor(Color.GRAY);
 				ArchivedMessagesLabel.setTypeface(null, Typeface.NORMAL);
+				ArchivedMessagesLabel.setBackgroundColor(Color.parseColor("#F0F0F0"));
 				setupItemsList();
 			}
 		});
@@ -129,8 +134,10 @@ public class ItemsActivity extends Activity {
 				isArchivedMessageView = 1;
 				CurrentMessagesLabel.setTextColor(Color.GRAY);
 				CurrentMessagesLabel.setTypeface(null, Typeface.NORMAL);
+				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#F0F0F0"));
 				ArchivedMessagesLabel.setTextColor(Color.BLACK);
 				ArchivedMessagesLabel.setTypeface(null, Typeface.BOLD);
+				ArchivedMessagesLabel.setBackgroundColor(Color.parseColor("#E0E0E0"));
 				setupItemsList();
 			}
 		});
@@ -179,6 +186,7 @@ public class ItemsActivity extends Activity {
 			tv.setGravity(Gravity.CENTER_VERTICAL);
 			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.bubble), null, null, null);
 			tv.setCompoundDrawablePadding(10);
+			tv.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
 			tv.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					currentID = v.getId();
@@ -195,13 +203,14 @@ public class ItemsActivity extends Activity {
 
 		/** add the Go Back text button at the bottom */
 		TextView addItemButton = new TextView(this);
-		addItemButton.setTextSize(15);
+		addItemButton.setTextSize(18);
 		addItemButton.setText((CharSequence) "Add New");
 		addItemButton.setTextColor(Color.BLACK);
 		addItemButton.setLayoutParams(lp);
 		addItemButton.setClickable(true);
-		addItemButton.setPadding(10, 10, 10, 10);
-		addItemButton.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.add), null, null, null);
+		addItemButton.setPadding(10, 18, 10, 10);
+		addItemButton.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.add_lg), null, null, null);
+		addItemButton.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
 		addItemButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				/** popup to add the new item */
@@ -231,6 +240,9 @@ public class ItemsActivity extends Activity {
 		pw = new PopupWindow(layout, (int) popupWidth, (int) popupHeight, true);
 		/** display the popup in the center */
 		pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+		TextView popupTitle = (TextView) layout.findViewById(R.id.popupTitle);
+		popupTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
 
 		editTextTitle = (TextView) layout.findViewById(R.id.editTextTitle);
 		messageContent = (TextView) layout.findViewById(R.id.messageContent);
@@ -278,6 +290,7 @@ public class ItemsActivity extends Activity {
 
 			editTextTitle.setVisibility(View.VISIBLE);
 			messageContent.setVisibility(View.VISIBLE);
+			editTextTitle.requestFocus();
 		}
 
 		/** edit button is pressed, change the popup to be able to edit */
@@ -291,6 +304,7 @@ public class ItemsActivity extends Activity {
 				cancelEditMemoButton.setVisibility(View.VISIBLE);
 				editTextTitle.setText(currentTitleValue);
 				messageContent.setText(currentMessageValue);
+				editTextTitle.requestFocus();
 			}
 		});
 

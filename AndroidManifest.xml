@@ -36,15 +36,37 @@
         </activity>
 
         <receiver
-            android:name=".widget.AddWidget"
-            android:label="Don't Forget Add" >
+            android:name=".widget.ListWidget"
+            android:label="Don&apos;t Forget List" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/add_widget_provider" />
+                android:resource="@xml/list_widget_provider" />
+        </receiver>
+        <receiver
+            android:name=".widget.CountWidget"
+            android:label="Don&apos;t Forget Count" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/count_widget_provider" />
+        </receiver>
+        <receiver
+            android:name=".widget.QuickWidget"
+            android:label="Don&apos;t Forget Quick Add" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_widget_provider" />
         </receiver>
 
         <!-- Service to perform web API queries -->

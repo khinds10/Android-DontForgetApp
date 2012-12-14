@@ -88,7 +88,7 @@ public class UpdateService extends Service implements Runnable {
 		super.onStart(intent, startId);
 
 		AppWidgetManager manager = AppWidgetManager.getInstance(this);
-		requestUpdate(manager.getAppWidgetIds(new ComponentName(this, AddWidget.class)));
+		requestUpdate(manager.getAppWidgetIds(new ComponentName(this, QuickWidget.class)));
 
 		/** Only start processing thread if not already running */
 		synchronized (sLock) {
@@ -115,7 +115,7 @@ public class UpdateService extends Service implements Runnable {
 			RemoteViews updateViews = null;
 
 			/**
-			 * based on providerName update the correct widget if (providerName.equals(AddWidget.class.getName())) { updateViews = AddWidget.buildUpdate(this, appWidgetUri); } else if
+			 * based on providerName update the correct widget if (providerName.equals(QuickWidget.class.getName())) { updateViews = QuickWidget.buildUpdate(this, appWidgetUri); } else if
 			 * (providerName.equals(EarthSunWidget.class.getName())) { updateViews = EarthSunWidget.buildUpdate(this, appWidgetUri); } else if (providerName.equals(EarthMoonWidget.class.getName())) {
 			 * updateViews = EarthMoonWidget.buildUpdate(this, appWidgetUri); } else if (providerName.equals(TripleWidget.class.getName())) { updateViews = TripleWidget.buildUpdate(this,
 			 * appWidgetUri); }
