@@ -1,7 +1,12 @@
 package com.kevinhinds.dontforget.widget;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.kevinhinds.dontforget.ItemsActivity;
 import com.kevinhinds.dontforget.R;
+import com.kevinhinds.dontforget.item.Item;
+import com.kevinhinds.dontforget.item.ItemsDataSource;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -39,6 +44,39 @@ public class ListWidget extends AppWidgetProvider {
 
 		/** update the widget UI elements based on on the current situation */
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.list_widget);
+
+		/** update the current count of the archived and non-archived messages */
+		ItemsDataSource itemsDataSource = new ItemsDataSource(context);
+		itemsDataSource.open();
+
+		/** get recent non-archived items to show in the widget as line items */
+		final List<Item> itemlist = itemsDataSource.getAllItemsbyArchiveType(0);
+
+		/** iterate over the itemlist to build the menu items to show */
+		Iterator<Item> itemlistiterator = itemlist.iterator();
+		int count = 0;
+		String previousName = "";
+		views.setTextViewText(R.id.recentItem1, "");
+		views.setTextViewText(R.id.recentItem2, "");
+		views.setTextViewText(R.id.recentItem3, "");
+		views.setTextViewText(R.id.recentItem4, "");
+		while (itemlistiterator.hasNext()) {
+			count++;
+			Item itemlistitem = itemlistiterator.next();
+			String itemName = itemlistitem.getName();
+			if (!previousName.equals(itemName)) {
+				if (count == 1) {
+					views.setTextViewText(R.id.recentItem1, itemName);
+				} else if (count == 2) {
+					views.setTextViewText(R.id.recentItem2, itemName);
+				} else if (count == 3) {
+					views.setTextViewText(R.id.recentItem3, itemName);
+				} else if (count == 4) {
+					views.setTextViewText(R.id.recentItem4, itemName);
+				}
+			}
+			previousName = itemName;
+		}
 
 		/** apply an intent to the widget as a whole to launch the MainActivity */
 		Intent intent = new Intent(context, ItemsActivity.class);

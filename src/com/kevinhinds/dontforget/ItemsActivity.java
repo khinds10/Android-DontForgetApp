@@ -6,12 +6,16 @@ import java.util.List;
 import com.kevinhinds.dontforget.email.GMailSender;
 import com.kevinhinds.dontforget.item.Item;
 import com.kevinhinds.dontforget.item.ItemsDataSource;
+import com.kevinhinds.dontforget.widget.CountWidget;
+import com.kevinhinds.dontforget.widget.ListWidget;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +39,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -102,6 +107,10 @@ public class ItemsActivity extends Activity {
 		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
 		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
 
+		/** apply font to add new button */
+		TextView addNewButtonText = (TextView) findViewById(R.id.addNewButtonText);
+		addNewButtonText.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
+
 		/** get screen metrics */
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -141,13 +150,15 @@ public class ItemsActivity extends Activity {
 				setupItemsList();
 			}
 		});
-	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		/** get all the data and build the activity */
-		setupItemsList();
+		/** if you click the add new messages button */
+		LinearLayout addNewButton = (LinearLayout) findViewById(R.id.addNewButton);
+		addNewButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				/** popup to add the new item */
+				initiateEditMessagePopup(false);
+			}
+		});
 	}
 
 	/**
@@ -201,23 +212,8 @@ public class ItemsActivity extends Activity {
 			ll.addView(tv);
 		}
 
-		/** add the Go Back text button at the bottom */
-		TextView addItemButton = new TextView(this);
-		addItemButton.setTextSize(18);
-		addItemButton.setText((CharSequence) "Add New");
-		addItemButton.setTextColor(Color.BLACK);
-		addItemButton.setLayoutParams(lp);
-		addItemButton.setClickable(true);
-		addItemButton.setPadding(10, 18, 10, 10);
-		addItemButton.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.add_lg), null, null, null);
-		addItemButton.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
-		addItemButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				/** popup to add the new item */
-				initiateEditMessagePopup(false);
-			}
-		});
-		ll.addView(addItemButton);
+		/** update the external widgets with any changes that have happened */
+		updateWidgets();
 	}
 
 	/**
@@ -702,5 +698,48 @@ public class ItemsActivity extends Activity {
 				Toast.makeText(getBaseContext(), "Email Sent", Toast.LENGTH_LONG).show();
 			}
 		}
+	}
+
+	/**
+	 * update any currently running widgets with the latest and greatest from this activity that was loaded
+	 */
+	private void updateWidgets() {
+
+		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+
+		/** update the count widget */
+		RemoteViews countViews = new RemoteViews(this.getPackageName(), R.layout.count_widget);
+		countViews.setTextViewText(R.id.messageCount, "[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "] Messages");
+		countViews.setTextViewText(R.id.archiveCount, "[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "] Archived");
+		appWidgetManager.updateAppWidget(new ComponentName(this.getPackageName(), CountWidget.class.getName()), countViews);
+
+		/** update the list widget */
+		RemoteViews listViews = new RemoteViews(this.getPackageName(), R.layout.list_widget);
+		final List<Item> itemlist = itemsDataSource.getAllItemsbyArchiveType(0);
+		Iterator<Item> itemlistiterator = itemlist.iterator();
+		int count = 0;
+		String previousName = "";
+		listViews.setTextViewText(R.id.recentItem1, "");
+		listViews.setTextViewText(R.id.recentItem2, "");
+		listViews.setTextViewText(R.id.recentItem3, "");
+		listViews.setTextViewText(R.id.recentItem4, "");
+		while (itemlistiterator.hasNext()) {
+			count++;
+			Item itemlistitem = itemlistiterator.next();
+			String itemName = itemlistitem.getName();
+			if (!previousName.equals(itemName)) {
+				if (count == 1) {
+					listViews.setTextViewText(R.id.recentItem1, itemName);
+				} else if (count == 2) {
+					listViews.setTextViewText(R.id.recentItem2, itemName);
+				} else if (count == 3) {
+					listViews.setTextViewText(R.id.recentItem3, itemName);
+				} else if (count == 4) {
+					listViews.setTextViewText(R.id.recentItem4, itemName);
+				}
+			}
+			previousName = itemName;
+		}
+		appWidgetManager.updateAppWidget(new ComponentName(this.getPackageName(), ListWidget.class.getName()), listViews);
 	}
 }

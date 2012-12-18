@@ -86,7 +86,7 @@
             android:id="@+id/scrollViewMenu"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="0.30" >
+            android:layout_weight="0.28" >
 
             <LinearLayout
                 android:id="@+id/itemsLayout"
@@ -98,10 +98,44 @@
         </ScrollView>
 
         <LinearLayout
+            android:id="@+id/addButtonContainer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/border"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/addNewButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#E0E0E0"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <TextView
+                    android:id="@+id/addNewButtonText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:drawableLeft="@drawable/add_lg"
+                    android:gravity="center_vertical"
+                    android:text="Add New"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/subContentAccountSettings"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="0.70"
+            android:layout_weight="0.98"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -128,35 +162,31 @@
                 android:orientation="vertical" >
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/userGmailTitle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/itemsLayout"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="10dp"
-                android:text="Gmail:" />
+                android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/userGmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:textColor="#999999" />
+                <TextView
+                    android:id="@+id/userGmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:textColor="#999999" />
 
-            <TextView
-                android:id="@+id/userPhoneNumberTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="4dp"
-                android:paddingTop="5dp"
-                android:text="Phone Number:" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" / "
+                    android:textColor="#999999" />
 
-            <TextView
-                android:id="@+id/userPhoneNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:textColor="#999999" />
+                <TextView
+                    android:id="@+id/userPhoneNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#999999" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

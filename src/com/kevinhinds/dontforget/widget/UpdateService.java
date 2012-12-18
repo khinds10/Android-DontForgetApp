@@ -114,12 +114,14 @@ public class UpdateService extends Service implements Runnable {
 			String providerName = info.provider.getClassName();
 			RemoteViews updateViews = null;
 
-			/**
-			 * based on providerName update the correct widget if (providerName.equals(QuickWidget.class.getName())) { updateViews = QuickWidget.buildUpdate(this, appWidgetUri); } else if
-			 * (providerName.equals(EarthSunWidget.class.getName())) { updateViews = EarthSunWidget.buildUpdate(this, appWidgetUri); } else if (providerName.equals(EarthMoonWidget.class.getName())) {
-			 * updateViews = EarthMoonWidget.buildUpdate(this, appWidgetUri); } else if (providerName.equals(TripleWidget.class.getName())) { updateViews = TripleWidget.buildUpdate(this,
-			 * appWidgetUri); }
-			 */
+			/** based on providerName update the correct widget */
+			if (providerName.equals(QuickWidget.class.getName())) {
+				updateViews = QuickWidget.buildUpdate(this, appWidgetUri);
+			} else if (providerName.equals(ListWidget.class.getName())) {
+				updateViews = ListWidget.buildUpdate(this, appWidgetUri);
+			} else if (providerName.equals(CountWidget.class.getName())) {
+				updateViews = CountWidget.buildUpdate(this, appWidgetUri);
+			}
 
 			/** Push this update to surface */
 			if (updateViews != null) {

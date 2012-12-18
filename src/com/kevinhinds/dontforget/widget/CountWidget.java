@@ -2,6 +2,7 @@ package com.kevinhinds.dontforget.widget;
 
 import com.kevinhinds.dontforget.ItemsActivity;
 import com.kevinhinds.dontforget.R;
+import com.kevinhinds.dontforget.item.ItemsDataSource;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -39,6 +40,12 @@ public class CountWidget extends AppWidgetProvider {
 
 		/** update the widget UI elements based on on the current situation */
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.count_widget);
+
+		/** update the current count of the archived and non-archived messages */
+		ItemsDataSource itemsDataSource = new ItemsDataSource(context);
+		itemsDataSource.open();
+		views.setTextViewText(R.id.messageCount, "[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "] Messages");
+		views.setTextViewText(R.id.archiveCount, "[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "] Archived");
 
 		/** apply an intent to the widget as a whole to launch the MainActivity */
 		Intent intent = new Intent(context, ItemsActivity.class);

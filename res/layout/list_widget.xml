@@ -44,34 +44,34 @@
             android:textStyle="italic" />
 
         <TextView
+            android:id="@+id/recentItem1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="Remember to get Floss"
             android:textColor="#333333"
             android:textSize="15dp" />
 
         <TextView
+            android:id="@+id/recentItem2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="Diapers and Wipes at the drugstore"
             android:textColor="#000000"
             android:textSize="15dp" />
 
         <TextView
+            android:id="@+id/recentItem3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="Put in sick time and vacation days"
             android:textColor="#000000"
             android:textSize="15dp" />
 
         <TextView
+            android:id="@+id/recentItem4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="remember to do something that is really really long"
             android:textColor="#000000"
             android:textSize="15dp" />
     </LinearLayout>
