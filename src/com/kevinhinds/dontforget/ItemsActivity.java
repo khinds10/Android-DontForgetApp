@@ -21,8 +21,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -42,6 +44,8 @@ import android.widget.PopupWindow;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.CommonDataKinds.Email;
 
 /**
  * Main Activity for items
@@ -50,6 +54,7 @@ import android.widget.Toast;
  */
 public class ItemsActivity extends Activity {
 
+	private static final int CONTACT_PICKER_RESULT = 1001;
 	private ItemsDataSource itemsDataSource;
 
 	private View layout = null;
@@ -81,6 +86,11 @@ public class ItemsActivity extends Activity {
 	boolean textSent;
 	boolean textSentNotify;
 	boolean textDeliveredNotify;
+	boolean currentEditMode;
+
+	/** friends email and SMS information */
+	protected String friendsEmail;
+	protected String friendsSMS;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -220,6 +230,9 @@ public class ItemsActivity extends Activity {
 	 * show the popup window for the editing of don't forget messages
 	 */
 	private void initiateEditMessagePopup(final boolean editMode) {
+
+		/** keep the most recent value of if we're editing global for more involved workflows below */
+		currentEditMode = editMode;
 
 		/** get any recent changes to the user settings */
 		getUserSettings();
@@ -395,9 +408,19 @@ public class ItemsActivity extends Activity {
 					addEntryDB();
 				}
 				EmailUserTask task = new EmailUserTask();
-				task.execute();
+				task.execute(new String[] { usersEmail });
 				pw.dismiss();
 				setupItemsList();
+			}
+		});
+
+		/** email friend button */
+		TextView sendContactEmailButton = (TextView) layout.findViewById(R.id.sendContactEmailButton);
+		sendContactEmailButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				/** select a friends email to send a reminder to */
+				Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+				startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
 			}
 		});
 
@@ -418,6 +441,89 @@ public class ItemsActivity extends Activity {
 
 			}
 		});
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		friendsEmail = "";
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case CONTACT_PICKER_RESULT:
+				Cursor cursor = null;
+				String email = "";
+				try {
+					Uri result = data.getData();
+
+					/** get the contact id from the Uri */
+					String id = result.getLastPathSegment();
+
+					/** query for everything email */
+					cursor = getContentResolver().query(Email.CONTENT_URI, null, Email.CONTACT_ID + "=?", new String[] { id }, null);
+					int emailIdx = cursor.getColumnIndex(Email.DATA);
+
+					/** let's just get the first email */
+					if (cursor.moveToFirst()) {
+						email = cursor.getString(emailIdx);
+					} else {
+						/** no results */
+					}
+				} catch (Exception e) {
+					/** failed to get email data */
+				} finally {
+					if (cursor != null) {
+						cursor.close();
+					}
+					if (email.length() != 0) {
+						friendsEmail = email;
+					} else {
+						/** failed to get email for contact */
+					}
+				}
+				break;
+			}
+		} else {
+			/** activity result is bad */
+		}
+
+		/** if we have an email for our friend, then send it out to them, else show the error */
+		if (friendsEmail.length() != 0) {
+			AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
+			alertDialog.setTitle("Send Reminder to Friend");
+			alertDialog.setMessage("Send Message to -> " + friendsEmail);
+			alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + friendsEmail);
+					if (currentEditMode) {
+						editEntryDB();
+					} else {
+						addEntryDB();
+					}
+					EmailUserTask task = new EmailUserTask();
+					task.execute(new String[] { friendsEmail });
+					pw.dismiss();
+					setupItemsList();
+					dialog.dismiss();
+				}
+			});
+			alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			alertDialog.setIcon(R.drawable.ic_launcher);
+			alertDialog.show();
+		} else {
+			AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
+			alertDialog.setTitle("Send Reminder to Friend");
+			alertDialog.setMessage("Email address couldn't be located for contact");
+			alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			alertDialog.setIcon(R.drawable.ic_launcher);
+			alertDialog.show();
+		}
 	}
 
 	/**
@@ -661,12 +767,13 @@ public class ItemsActivity extends Activity {
 
 		@Override
 		protected Boolean doInBackground(String... params) {
+			String recipient = params[0];
 			emailSent = true;
 			try {
 				String currentTitle = editTextTitle.getText().toString();
 				String currentMessage = messageContent.getText().toString();
 				GMailSender sender = new GMailSender(usersEmail, usersPassword);
-				sender.sendMail(currentTitle + "   (Don't Forget! for Android)", currentMessage + "\n\n--\nDon't Forget! for Android", usersEmail, usersEmail);
+				sender.sendMail(currentTitle + "   (Don't Forget! for Android)", currentMessage + "\n\n--\nDon't Forget! for Android", usersEmail, recipient);
 			} catch (Exception e) {
 				emailSent = false;
 			}
