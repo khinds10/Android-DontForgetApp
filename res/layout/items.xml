@@ -86,7 +86,7 @@
             android:id="@+id/scrollViewMenu"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="0.28" >
+            android:layout_weight="0.35" >
 
             <LinearLayout
                 android:id="@+id/itemsLayout"
@@ -104,17 +104,10 @@
             android:orientation="vertical" >
 
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="@drawable/border"
-                android:orientation="vertical" >
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/addNewButton"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#E0E0E0"
+                android:layout_margin="10dp"
                 android:orientation="vertical"
                 android:padding="5dp" >
 
@@ -122,7 +115,8 @@
                     android:id="@+id/addNewButtonText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_gravity="left"
+                    android:background="@drawable/custom_button"
                     android:drawableLeft="@drawable/add_lg"
                     android:gravity="center_vertical"
                     android:text="Add New"

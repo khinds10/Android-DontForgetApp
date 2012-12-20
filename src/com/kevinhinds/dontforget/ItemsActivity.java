@@ -44,6 +44,7 @@ import android.widget.PopupWindow;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 
@@ -91,6 +92,9 @@ public class ItemsActivity extends Activity {
 	/** friends email and SMS information */
 	protected String friendsEmail;
 	protected String friendsSMS;
+
+	/** which type of activity for result request wishes, either to email or SMS */
+	protected String activityForResultType = "email";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -419,6 +423,18 @@ public class ItemsActivity extends Activity {
 		sendContactEmailButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				/** select a friends email to send a reminder to */
+				activityForResultType = "email";
+				Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+				startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+			}
+		});
+
+		/** SMS friend button */
+		TextView sendContactSMSButton = (TextView) layout.findViewById(R.id.sendContactSMSButton);
+		sendContactSMSButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				/** select a friends email to send a reminder to */
+				activityForResultType = "SMS";
 				Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
 				startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
 			}
@@ -435,7 +451,7 @@ public class ItemsActivity extends Activity {
 					addEntryDB();
 				}
 				SMSUserTask task = new SMSUserTask();
-				task.execute();
+				task.execute(new String[] { usersPhone });
 				pw.dismiss();
 				setupItemsList();
 
@@ -445,84 +461,139 @@ public class ItemsActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		/** values to get for contact to continue with the activity for result */
 		friendsEmail = "";
+		friendsSMS = "";
+		String id = "";
+
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
-				Cursor cursor = null;
-				String email = "";
 				try {
+
+					/**
+					 * get email for contact, basically for now, the first one found
+					 */
 					Uri result = data.getData();
-
-					/** get the contact id from the Uri */
-					String id = result.getLastPathSegment();
-
-					/** query for everything email */
-					cursor = getContentResolver().query(Email.CONTENT_URI, null, Email.CONTACT_ID + "=?", new String[] { id }, null);
+					id = result.getLastPathSegment();
+					Cursor cursor = getContentResolver().query(Email.CONTENT_URI, null, Email.CONTACT_ID + "=?", new String[] { id }, null);
 					int emailIdx = cursor.getColumnIndex(Email.DATA);
-
 					/** let's just get the first email */
+					String email = "";
 					if (cursor.moveToFirst()) {
 						email = cursor.getString(emailIdx);
-					} else {
-						/** no results */
-					}
-				} catch (Exception e) {
-					/** failed to get email data */
-				} finally {
-					if (cursor != null) {
-						cursor.close();
 					}
 					if (email.length() != 0) {
 						friendsEmail = email;
-					} else {
-						/** failed to get email for contact */
 					}
+					cursor.close();
+
+					/**
+					 * get SMS phone number for contact, based on the contacts "primary" phone number set
+					 */
+					String phoneNo = "";
+					int isPrimaryNumber = 0;
+					Cursor pCur = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[] { id },
+							null);
+					while (pCur.moveToNext()) {
+						isPrimaryNumber = pCur.getInt(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.IS_PRIMARY));
+						phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+						if (isPrimaryNumber == 1) {
+							friendsSMS = phoneNo;
+						}
+					}
+					pCur.close();
+				} catch (Exception e) {
 				}
 				break;
 			}
-		} else {
-			/** activity result is bad */
 		}
 
-		/** if we have an email for our friend, then send it out to them, else show the error */
-		if (friendsEmail.length() != 0) {
-			AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-			alertDialog.setTitle("Send Reminder to Friend");
-			alertDialog.setMessage("Send Message to -> " + friendsEmail);
-			alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + friendsEmail);
-					if (currentEditMode) {
-						editEntryDB();
-					} else {
-						addEntryDB();
+		/** based on recent activityForResultType requested, send an SMS or Email respectively */
+		if (activityForResultType.equals("SMS")) {
+
+			/** if we have an primary phone number for our friend, then send it out to them, else show the error */
+			if (friendsSMS.length() != 0) {
+				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
+				alertDialog.setTitle("Send Reminder to Friend");
+				alertDialog.setMessage("Send text to contact's primary number -> " + friendsSMS);
+				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Text Message", "Texting contact's primary number: \n" + friendsSMS);
+						if (currentEditMode) {
+							editEntryDB();
+						} else {
+							addEntryDB();
+						}
+						SMSUserTask task = new SMSUserTask();
+						task.execute(new String[] { friendsSMS });
+						pw.dismiss();
+						setupItemsList();
+						dialog.dismiss();
 					}
-					EmailUserTask task = new EmailUserTask();
-					task.execute(new String[] { friendsEmail });
-					pw.dismiss();
-					setupItemsList();
-					dialog.dismiss();
-				}
-			});
-			alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-			});
-			alertDialog.setIcon(R.drawable.ic_launcher);
-			alertDialog.show();
+				});
+				alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				alertDialog.setIcon(R.drawable.ic_launcher);
+				alertDialog.show();
+			} else {
+				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
+				alertDialog.setTitle("Send Reminder to Friend");
+				alertDialog.setMessage("Primary phone number couldn't be located for contact");
+				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				alertDialog.setIcon(R.drawable.ic_launcher);
+				alertDialog.show();
+			}
+
 		} else {
-			AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-			alertDialog.setTitle("Send Reminder to Friend");
-			alertDialog.setMessage("Email address couldn't be located for contact");
-			alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-			});
-			alertDialog.setIcon(R.drawable.ic_launcher);
-			alertDialog.show();
+			
+			/** if we have an email for our friend, then send it out to them, else show the error */
+			if (friendsEmail.length() != 0) {
+				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
+				alertDialog.setTitle("Send Reminder to Friend");
+				alertDialog.setMessage("Send Message to -> " + friendsEmail);
+				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + friendsEmail);
+						if (currentEditMode) {
+							editEntryDB();
+						} else {
+							addEntryDB();
+						}
+						EmailUserTask task = new EmailUserTask();
+						task.execute(new String[] { friendsEmail });
+						pw.dismiss();
+						setupItemsList();
+						dialog.dismiss();
+					}
+				});
+				alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				alertDialog.setIcon(R.drawable.ic_launcher);
+				alertDialog.show();
+			} else {
+				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
+				alertDialog.setTitle("Send Reminder to Friend");
+				alertDialog.setMessage("Email address couldn't be located for contact");
+				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				alertDialog.setIcon(R.drawable.ic_launcher);
+				alertDialog.show();
+			}
 		}
 	}
 
@@ -727,11 +798,12 @@ public class ItemsActivity extends Activity {
 
 		@Override
 		protected Boolean doInBackground(String... params) {
+			String recipient = params[0];
 			textSent = true;
 			try {
 				String currentTitle = editTextTitle.getText().toString();
 				String currentMessage = messageContent.getText().toString();
-				sendSMS(usersPhone, currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
+				sendSMS(recipient, currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
 			} catch (Exception e) {
 				textSent = false;
 			}
