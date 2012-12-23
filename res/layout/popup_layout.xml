@@ -137,131 +137,187 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/sendEmailButton"
+                android:id="@+id/processMessageTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/custom_button"
-                android:drawableLeft="@drawable/send"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:minHeight="35dp"
-                android:minWidth="200dp"
-                android:text="Quick Send Email"
-                android:textColor="#000000"
-                android:textSize="14dp" />
+                android:paddingTop="10dp"
+                android:text="Process Message"
+                android:textColor="#999999" />
+
+            <LinearLayout
+                android:id="@+id/saveButtonsContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:id="@+id/SaveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/save"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="35dp"
+                    android:minWidth="90dp"
+                    android:text="Save"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:id="@+id/ArchiveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/archive"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="35dp"
+                    android:minWidth="90dp"
+                    android:text="Archive"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/textButtonsContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:id="@+id/RemindButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/remind"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="35dp"
+                    android:text="Remind Me"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:id="@+id/DeleteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/delete"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="35dp"
+                    android:minWidth="90dp"
+                    android:text="Delete"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/sendContactEmailButton"
+                android:id="@+id/quickEmailTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/custom_button"
-                android:drawableLeft="@drawable/send"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:minHeight="35dp"
-                android:minWidth="200dp"
-                android:text="Send Friend an Email"
-                android:textColor="#000000"
-                android:textSize="14dp" />
+                android:paddingTop="10dp"
+                android:text="Quickly Email"
+                android:textColor="#999999" />
+
+            <LinearLayout
+                android:id="@+id/emailButtonsContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:id="@+id/sendEmailButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/send"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="35dp"
+                    android:minWidth="200dp"
+                    android:text="Yourself"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:id="@+id/sendContactEmailButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/send"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="35dp"
+                    android:minWidth="200dp"
+                    android:text="Contact"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/sendSMSButton"
+                android:id="@+id/quickTextTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/custom_button"
-                android:drawableLeft="@drawable/send"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:minHeight="35dp"
-                android:minWidth="200dp"
-                android:text="Quick Send Text Message"
-                android:textColor="#000000"
-                android:textSize="14dp" />
+                android:paddingTop="10dp"
+                android:text="Quickly Text"
+                android:textColor="#999999" />
 
-            <TextView
-                android:id="@+id/sendContactSMSButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/textButtonsContainer"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/custom_button"
-                android:drawableLeft="@drawable/send"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:minHeight="35dp"
-                android:minWidth="200dp"
-                android:text="Send Friend a Text Message"
-                android:textColor="#000000"
-                android:textSize="14dp" />
+                android:orientation="horizontal"
+                android:paddingTop="10dp" >
 
-            <TextView
-                android:id="@+id/RemindButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/custom_button"
-                android:drawableLeft="@drawable/remind"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:minHeight="35dp"
-                android:text="Remind me later"
-                android:textColor="#000000"
-                android:textSize="14dp" />
+                <TextView
+                    android:id="@+id/sendSMSButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/send"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="35dp"
+                    android:minWidth="200dp"
+                    android:text="Yourself"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
 
-            <TextView
-                android:id="@+id/SaveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/custom_button"
-                android:drawableLeft="@drawable/save"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:minHeight="35dp"
-                android:minWidth="90dp"
-                android:text="Save"
-                android:textColor="#000000"
-                android:textSize="14dp" />
-
-            <TextView
-                android:id="@+id/ArchiveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/custom_button"
-                android:drawableLeft="@drawable/archive"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:minHeight="35dp"
-                android:minWidth="90dp"
-                android:text="Archive"
-                android:textColor="#000000"
-                android:textSize="14dp" />
-
-            <TextView
-                android:id="@+id/DeleteButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/custom_button"
-                android:drawableLeft="@drawable/delete"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:minHeight="35dp"
-                android:minWidth="90dp"
-                android:text="Delete"
-                android:textColor="#000000"
-                android:textSize="14dp" />
+                <TextView
+                    android:id="@+id/sendContactSMSButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/custom_button"
+                    android:drawableLeft="@drawable/send"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="35dp"
+                    android:minWidth="200dp"
+                    android:text="Contact"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
