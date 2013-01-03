@@ -1,11 +1,14 @@
 package com.kevinhinds.dontforget;
 
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
 import com.kevinhinds.dontforget.email.GMailSender;
 import com.kevinhinds.dontforget.item.Item;
 import com.kevinhinds.dontforget.item.ItemsDataSource;
+import com.kevinhinds.dontforget.status.Status;
+import com.kevinhinds.dontforget.status.StatusDataSource;
 import com.kevinhinds.dontforget.widget.CountWidget;
 import com.kevinhinds.dontforget.widget.ListWidget;
 
@@ -57,6 +60,7 @@ public class ItemsActivity extends Activity {
 
 	private static final int CONTACT_PICKER_RESULT = 1001;
 	private ItemsDataSource itemsDataSource;
+	private StatusDataSource statusDataSource;
 
 	private View layout = null;
 	private PopupWindow pw;
@@ -70,6 +74,16 @@ public class ItemsActivity extends Activity {
 	protected long currentID;
 	protected String currentTitleValue;
 	protected String currentMessageValue;
+
+	/**
+	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can change the status to reflect as such
+	 */
+	protected long recentlyTriedItemID;
+
+	/**
+	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or "edit" type of operation to reflect in the status if it fails
+	 */
+	protected String recentlyTriedEditType;
 
 	protected int isArchivedMessageView;
 
@@ -224,6 +238,20 @@ public class ItemsActivity extends Activity {
 				}
 			});
 			ll.addView(tv);
+
+			/** show the status of the item by the current ID being processed */
+			TextView textStatus = new TextView(this);
+			textStatus.setTextSize(10);
+			Status Status = statusDataSource.getById(ID);
+			String currentStatusDetails = Status.content;
+			textStatus.setText((CharSequence) currentStatusDetails);
+			textStatus.setLayoutParams(lp);
+			textStatus.setClickable(true);
+			textStatus.setTextColor(Color.GRAY);
+			textStatus.setPadding(50, 8, 0, 8);
+			textStatus.setGravity(Gravity.CENTER_VERTICAL);
+			textStatus.setCompoundDrawablePadding(10);
+			ll.addView(textStatus);
 		}
 
 		/** update the external widgets with any changes that have happened */
@@ -347,11 +375,15 @@ public class ItemsActivity extends Activity {
 		/** set button is pressed, set the timer and close the popup */
 		TextView setButton = (TextView) layout.findViewById(R.id.SaveButton);
 		setButton.setOnClickListener(new OnClickListener() {
+			String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+
 			public void onClick(View v) {
 				if (editMode) {
-					editEntryDB();
+					recentlyTriedItemID = editEntryDB("[edited] " + statusDate);
+					recentlyTriedEditType = "edit";
 				} else {
-					addEntryDB();
+					recentlyTriedItemID = addEntryDB("[added] " + statusDate);
+					recentlyTriedEditType = "add";
 				}
 				pw.dismiss();
 			}
@@ -406,10 +438,13 @@ public class ItemsActivity extends Activity {
 		sendButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + usersEmail);
+				String statusValue = "[emailed yourself] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 				if (editMode) {
-					editEntryDB();
+					recentlyTriedItemID = editEntryDB(statusValue);
+					recentlyTriedEditType = "edit";
 				} else {
-					addEntryDB();
+					recentlyTriedItemID = addEntryDB(statusValue);
+					recentlyTriedEditType = "add";
 				}
 				EmailUserTask task = new EmailUserTask();
 				task.execute(new String[] { usersEmail });
@@ -445,10 +480,13 @@ public class ItemsActivity extends Activity {
 		sendSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
+				String statusValue = "[texted yourself] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 				if (editMode) {
-					editEntryDB();
+					recentlyTriedItemID = editEntryDB(statusValue);
+					recentlyTriedEditType = "edit";
 				} else {
-					addEntryDB();
+					recentlyTriedItemID = addEntryDB(statusValue);
+					recentlyTriedEditType = "add";
 				}
 				SMSUserTask task = new SMSUserTask();
 				task.execute(new String[] { usersPhone });
@@ -521,10 +559,13 @@ public class ItemsActivity extends Activity {
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Text Message", "Texting contact's primary number: \n" + friendsSMS);
+						String statusValue = "[texted: " + friendsSMS + "] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 						if (currentEditMode) {
-							editEntryDB();
+							recentlyTriedItemID = editEntryDB(statusValue);
+							recentlyTriedEditType = "edit";
 						} else {
-							addEntryDB();
+							recentlyTriedItemID = addEntryDB(statusValue);
+							recentlyTriedEditType = "add";
 						}
 						SMSUserTask task = new SMSUserTask();
 						task.execute(new String[] { friendsSMS });
@@ -544,6 +585,18 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle("Send Reminder to Friend");
 				alertDialog.setMessage("Primary phone number couldn't be located for contact");
+
+				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
+				Status status = new Status();
+				status.setId(recentlyTriedItemID);
+				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+				if (recentlyTriedEditType.equals("edit")) {
+					status.setContent("[edited] " + statusDate);
+				} else {
+					status.setContent("[added] " + statusDate);
+				}
+				statusDataSource.editStatus(status);
+
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
@@ -554,7 +607,7 @@ public class ItemsActivity extends Activity {
 			}
 
 		} else {
-			
+
 			/** if we have an email for our friend, then send it out to them, else show the error */
 			if (friendsEmail.length() != 0) {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
@@ -563,10 +616,13 @@ public class ItemsActivity extends Activity {
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + friendsEmail);
+						String statusValue = "[emailed: " + friendsEmail + "] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 						if (currentEditMode) {
-							editEntryDB();
+							recentlyTriedItemID = editEntryDB(statusValue);
+							recentlyTriedEditType = "edit";
 						} else {
-							addEntryDB();
+							recentlyTriedItemID = addEntryDB(statusValue);
+							recentlyTriedEditType = "add";
 						}
 						EmailUserTask task = new EmailUserTask();
 						task.execute(new String[] { friendsEmail });
@@ -586,6 +642,18 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle("Send Reminder to Friend");
 				alertDialog.setMessage("Email address couldn't be located for contact");
+
+				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email */
+				Status status = new Status();
+				status.setId(recentlyTriedItemID);
+				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+				if (recentlyTriedEditType.equals("edit")) {
+					status.setContent("[edited] " + statusDate);
+				} else {
+					status.setContent("[added] " + statusDate);
+				}
+				statusDataSource.editStatus(status);
+
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
@@ -642,31 +710,51 @@ public class ItemsActivity extends Activity {
 
 	/**
 	 * add entry to DB based on user input
+	 * 
+	 * @param statusType
+	 *            the message to be stored in the item's status table
+	 * @return the last entered ID of the item
 	 */
-	private void addEntryDB() {
+	private long addEntryDB(String statusType) {
 		/** add edit the value in the DB */
 		currentTitleValue = editTextTitle.getText().toString();
 		currentMessageValue = messageContent.getText().toString();
+		Item newItem = null;
 		if (currentTitleValue.length() != 0) {
-			itemsDataSource.createItem(currentTitleValue, currentMessageValue);
+			newItem = itemsDataSource.createItem(currentTitleValue, currentMessageValue);
+			statusDataSource.createStatus(newItem.getId(), statusType);
 		}
 		setupItemsList();
+		return newItem.getId();
 	}
 
 	/**
 	 * edit existing item in the DB
+	 * 
+	 * @param statusType
+	 *            the message to be stored in the item's status table
+	 * @return the last entered ID of the item
 	 */
-	private void editEntryDB() {
+	private long editEntryDB(String statusType) {
 		currentTitleValue = editTextTitle.getText().toString();
 		currentMessageValue = messageContent.getText().toString();
 		if (currentTitleValue.length() != 0) {
+
+			/** edit the existing item */
 			Item editItem = new Item();
 			editItem.setId(currentID);
 			editItem.setName(currentTitleValue);
 			editItem.setContent(currentMessageValue);
 			itemsDataSource.editItem(editItem);
+
+			/** edit the existing item's status */
+			Status status = new Status();
+			status.setId(currentID);
+			status.setContent(statusType);
+			statusDataSource.editStatus(status);
 		}
 		setupItemsList();
+		return currentID;
 	}
 
 	/**
@@ -706,7 +794,9 @@ public class ItemsActivity extends Activity {
 	 */
 	private void openDataConnections() {
 		itemsDataSource = new ItemsDataSource(this);
+		statusDataSource = new StatusDataSource(this);
 		itemsDataSource.open();
+		statusDataSource.open();
 	}
 
 	/**
@@ -818,6 +908,19 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle("SMS could not be sent...");
 				alertDialog.setMessage("Check your settings and try again.");
+				
+				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email */
+				Status status = new ItemsActivity.Status();
+				status.setId(recentlyTriedItemID);
+				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+				if (recentlyTriedEditType.equals("edit")) {
+					status.setContent("[edited] " + statusDate);
+				} else {
+					status.setContent("[added] " + statusDate);
+				}
+				statusDataSource.editStatus(status);
+				
+				
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();

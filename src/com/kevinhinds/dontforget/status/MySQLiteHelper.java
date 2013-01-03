@@ -11,17 +11,15 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
-	public static final String TABLE_ITEM = "status";
+	public static final String TABLE_STATUS = "status";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_NAME = "name";
 	public static final String COLUMN_CONTENT = "content";
 
 	private static final String DATABASE_NAME = "status.db";
 	private static final int DATABASE_VERSION = 1;
 
 	/** Database creation SQL statement */
-	private static final String DATABASE_CREATE = "create table " + TABLE_ITEM + "( " + COLUMN_ID + " integer primary key autoincrement, " + COLUMN_NAME + " text not null, " + COLUMN_CONTENT
-			+ " text not null);";
+	private static final String DATABASE_CREATE = "create table " + TABLE_STATUS + "( " + COLUMN_ID + " integer, " + COLUMN_CONTENT + " text not null);";
 
 	/**
 	 * construct the MySQLiteHelper
@@ -39,7 +37,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEM);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATUS);
 		onCreate(db);
 	}
 }

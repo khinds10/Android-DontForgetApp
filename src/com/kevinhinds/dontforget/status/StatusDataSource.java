@@ -49,17 +49,16 @@ public class StatusDataSource {
 	/**
 	 * create a new item by associated values
 	 * 
-	 * @param name
+	 * @param id
 	 * @param content
 	 * @return
 	 */
-	public Status createStatus(String name, String content) {
+	public Status createStatus(long id, String content) {
 		ContentValues values = new ContentValues();
-		values.put(MySQLiteHelper.COLUMN_NAME, name);
+		values.put(MySQLiteHelper.COLUMN_ID, id);
 		values.put(MySQLiteHelper.COLUMN_CONTENT, content);
-
-		long insertId = database.insert(MySQLiteHelper.TABLE_ITEM, null, values);
-		Cursor cursor = database.query(MySQLiteHelper.TABLE_ITEM, allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null, null, null, null);
+		long insertId = database.insert(MySQLiteHelper.TABLE_STATUS, null, values);
+		Cursor cursor = database.query(MySQLiteHelper.TABLE_STATUS, allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null, null, null, null);
 		cursor.moveToFirst();
 		Status newStatus = cursorToStatus(cursor);
 		cursor.close();
@@ -75,7 +74,7 @@ public class StatusDataSource {
 		long id = status.getId();
 		ContentValues args = new ContentValues();
 		args.put(MySQLiteHelper.COLUMN_CONTENT, status.getContent());
-		database.update(MySQLiteHelper.TABLE_ITEM, args, MySQLiteHelper.COLUMN_ID + " = " + id, null);
+		database.update(MySQLiteHelper.TABLE_STATUS, args, MySQLiteHelper.COLUMN_ID + " = " + id, null);
 	}
 
 	/**
@@ -85,19 +84,7 @@ public class StatusDataSource {
 	 */
 	public void deleteStatus(Status status) {
 		long id = status.getId();
-		database.delete(MySQLiteHelper.TABLE_ITEM, MySQLiteHelper.COLUMN_ID + " = " + id, null);
-	}
-
-	/**
-	 * delete item by its name
-	 * 
-	 * @param name
-	 */
-	public void deleteStatusByName(String name) {
-		try {
-			database.delete(MySQLiteHelper.TABLE_ITEM, MySQLiteHelper.COLUMN_NAME + "=?", new String[] { name });
-		} catch (Exception e) {
-		}
+		database.delete(MySQLiteHelper.TABLE_STATUS, MySQLiteHelper.COLUMN_ID + " = " + id, null);
 	}
 
 	/**
@@ -107,7 +94,7 @@ public class StatusDataSource {
 	 * @return
 	 */
 	public Status getById(long id) {
-		Cursor cursor = database.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_ITEM + " WHERE " + MySQLiteHelper.COLUMN_ID + "='" + id + "'", null);
+		Cursor cursor = database.rawQuery("SELECT * FROM " + MySQLiteHelper.TABLE_STATUS + " WHERE " + MySQLiteHelper.COLUMN_ID + "='" + id + "'", null);
 		cursor.moveToFirst();
 		Status status = cursorToStatus(cursor);
 		return status;
@@ -121,7 +108,7 @@ public class StatusDataSource {
 	public List<Status> getAllStatus() {
 		List<Status> items = new ArrayList<Status>();
 
-		Cursor cursor = database.query(MySQLiteHelper.TABLE_ITEM, allColumns, null, null, null, null, null);
+		Cursor cursor = database.query(MySQLiteHelper.TABLE_STATUS, allColumns, null, null, null, null, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			Status item = cursorToStatus(cursor);

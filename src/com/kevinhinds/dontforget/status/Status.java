@@ -2,7 +2,7 @@ package com.kevinhinds.dontforget.status;
 
 /**
  * Item class related to the SQLiteDB table "status"
- * status is a cooresponding update related to the item i.e. "last emailed to X on XX/YY/ZZZZ" 
+ * status is a corresponding update related to the item i.e. "last emailed to X on XX/YY/ZZZZ" 
  * 
  * @author khinds
  */
