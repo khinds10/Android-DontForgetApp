@@ -87,6 +87,8 @@ public class ItemsActivity extends Activity {
 
 	protected int isArchivedMessageView;
 
+	protected Status itemStatus;
+
 	protected TextView CurrentMessagesLabel;
 	protected TextView ArchivedMessagesLabel;
 
@@ -378,14 +380,18 @@ public class ItemsActivity extends Activity {
 			String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 
 			public void onClick(View v) {
-				if (editMode) {
-					recentlyTriedItemID = editEntryDB("[edited] " + statusDate);
-					recentlyTriedEditType = "edit";
+				if (isTitleEmpty(editTextTitle)) {
+					showEmptyTitleMessage();
 				} else {
-					recentlyTriedItemID = addEntryDB("[added] " + statusDate);
-					recentlyTriedEditType = "add";
+					if (editMode) {
+						recentlyTriedItemID = editEntryDB("[edited] " + statusDate);
+						recentlyTriedEditType = "edit";
+					} else {
+						recentlyTriedItemID = addEntryDB("[added] " + statusDate);
+						recentlyTriedEditType = "add";
+					}
+					pw.dismiss();
 				}
-				pw.dismiss();
 			}
 		});
 
@@ -393,13 +399,17 @@ public class ItemsActivity extends Activity {
 		TextView archiveOptionButton = (TextView) layout.findViewById(R.id.ArchiveButton);
 		archiveOptionButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				/** set archive / un-archive by user request */
-				if (isArchivedMessageView == 1) {
-					archiveOptionEntryDB(0);
+				if (isTitleEmpty(editTextTitle)) {
+					showEmptyTitleMessage();
 				} else {
-					archiveOptionEntryDB(1);
+					/** set archive / un-archive by user request */
+					if (isArchivedMessageView == 1) {
+						archiveOptionEntryDB(0);
+					} else {
+						archiveOptionEntryDB(1);
+					}
+					pw.dismiss();
 				}
-				pw.dismiss();
 			}
 		});
 
@@ -437,19 +447,24 @@ public class ItemsActivity extends Activity {
 		TextView sendButton = (TextView) layout.findViewById(R.id.sendEmailButton);
 		sendButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + usersEmail);
-				String statusValue = "[emailed yourself] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
-				if (editMode) {
-					recentlyTriedItemID = editEntryDB(statusValue);
-					recentlyTriedEditType = "edit";
+				if (isTitleEmpty(editTextTitle)) {
+					showEmptyTitleMessage();
 				} else {
-					recentlyTriedItemID = addEntryDB(statusValue);
-					recentlyTriedEditType = "add";
+					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + usersEmail);
+					String statusValue = "[emailed yourself] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+					if (editMode) {
+						recentlyTriedItemID = editEntryDB(statusValue);
+						recentlyTriedEditType = "edit";
+					} else {
+						recentlyTriedItemID = addEntryDB(statusValue);
+						recentlyTriedEditType = "add";
+					}
+					itemStatus = getStatus();
+					EmailUserTask task = new EmailUserTask();
+					task.execute(new String[] { usersEmail });
+					pw.dismiss();
+					setupItemsList();
 				}
-				EmailUserTask task = new EmailUserTask();
-				task.execute(new String[] { usersEmail });
-				pw.dismiss();
-				setupItemsList();
 			}
 		});
 
@@ -457,10 +472,14 @@ public class ItemsActivity extends Activity {
 		TextView sendContactEmailButton = (TextView) layout.findViewById(R.id.sendContactEmailButton);
 		sendContactEmailButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				/** select a friends email to send a reminder to */
-				activityForResultType = "email";
-				Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
-				startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+				if (isTitleEmpty(editTextTitle)) {
+					showEmptyTitleMessage();
+				} else {
+					/** select a friends email to send a reminder to */
+					activityForResultType = "email";
+					Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+					startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+				}
 			}
 		});
 
@@ -468,10 +487,14 @@ public class ItemsActivity extends Activity {
 		TextView sendContactSMSButton = (TextView) layout.findViewById(R.id.sendContactSMSButton);
 		sendContactSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				/** select a friends email to send a reminder to */
-				activityForResultType = "SMS";
-				Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
-				startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+				if (isTitleEmpty(editTextTitle)) {
+					showEmptyTitleMessage();
+				} else {
+					/** select a friends email to send a reminder to */
+					activityForResultType = "SMS";
+					Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
+					startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+				}
 			}
 		});
 
@@ -479,22 +502,39 @@ public class ItemsActivity extends Activity {
 		TextView sendSMSButton = (TextView) layout.findViewById(R.id.sendSMSButton);
 		sendSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
-				String statusValue = "[texted yourself] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
-				if (editMode) {
-					recentlyTriedItemID = editEntryDB(statusValue);
-					recentlyTriedEditType = "edit";
+				if (isTitleEmpty(editTextTitle)) {
+					showEmptyTitleMessage();
 				} else {
-					recentlyTriedItemID = addEntryDB(statusValue);
-					recentlyTriedEditType = "add";
+					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
+					String statusValue = "[texted yourself] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+					if (editMode) {
+						recentlyTriedItemID = editEntryDB(statusValue);
+						recentlyTriedEditType = "edit";
+					} else {
+						recentlyTriedItemID = addEntryDB(statusValue);
+						recentlyTriedEditType = "add";
+					}
+					itemStatus = getStatus();
+					SMSUserTask task = new SMSUserTask();
+					task.execute(new String[] { usersPhone });
+					pw.dismiss();
+					setupItemsList();
 				}
-				SMSUserTask task = new SMSUserTask();
-				task.execute(new String[] { usersPhone });
-				pw.dismiss();
-				setupItemsList();
-
 			}
 		});
+
+		/** remind me later button */
+		TextView RemindButton = (TextView) layout.findViewById(R.id.RemindButton);
+		RemindButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (isTitleEmpty(editTextTitle)) {
+					showEmptyTitleMessage();
+				} else {
+					// well we click, now to start with the alarm manager?
+				}
+			}
+		});
+
 	}
 
 	@Override
@@ -567,6 +607,7 @@ public class ItemsActivity extends Activity {
 							recentlyTriedItemID = addEntryDB(statusValue);
 							recentlyTriedEditType = "add";
 						}
+						itemStatus = getStatus();
 						SMSUserTask task = new SMSUserTask();
 						task.execute(new String[] { friendsSMS });
 						pw.dismiss();
@@ -587,7 +628,7 @@ public class ItemsActivity extends Activity {
 				alertDialog.setMessage("Primary phone number couldn't be located for contact");
 
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
-				Status status = new Status();
+				Status status = getStatus();
 				status.setId(recentlyTriedItemID);
 				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 				if (recentlyTriedEditType.equals("edit")) {
@@ -624,6 +665,7 @@ public class ItemsActivity extends Activity {
 							recentlyTriedItemID = addEntryDB(statusValue);
 							recentlyTriedEditType = "add";
 						}
+						itemStatus = getStatus();
 						EmailUserTask task = new EmailUserTask();
 						task.execute(new String[] { friendsEmail });
 						pw.dismiss();
@@ -644,7 +686,7 @@ public class ItemsActivity extends Activity {
 				alertDialog.setMessage("Email address couldn't be located for contact");
 
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email */
-				Status status = new Status();
+				Status status = getStatus();
 				status.setId(recentlyTriedItemID);
 				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 				if (recentlyTriedEditType.equals("edit")) {
@@ -748,7 +790,7 @@ public class ItemsActivity extends Activity {
 			itemsDataSource.editItem(editItem);
 
 			/** edit the existing item's status */
-			Status status = new Status();
+			Status status = getStatus();
 			status.setId(currentID);
 			status.setContent(statusType);
 			statusDataSource.editStatus(status);
@@ -908,19 +950,18 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle("SMS could not be sent...");
 				alertDialog.setMessage("Check your settings and try again.");
-				
-				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email */
-				Status status = new ItemsActivity.Status();
-				status.setId(recentlyTriedItemID);
+
+				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
+				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 				if (recentlyTriedEditType.equals("edit")) {
-					status.setContent("[edited] " + statusDate);
+					itemStatus.setContent("[edited] " + statusDate);
 				} else {
-					status.setContent("[added] " + statusDate);
+					itemStatus.setContent("[added] " + statusDate);
 				}
-				statusDataSource.editStatus(status);
-				
-				
+				statusDataSource.editStatus(itemStatus);
+				setupItemsList();
+
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
@@ -963,6 +1004,18 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle("Email could not be sent...");
 				alertDialog.setMessage("Check your settings and try again.");
+
+				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via Email */
+				itemStatus.setId(recentlyTriedItemID);
+				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+				if (recentlyTriedEditType.equals("edit")) {
+					itemStatus.setContent("[edited] " + statusDate);
+				} else {
+					itemStatus.setContent("[added] " + statusDate);
+				}
+				statusDataSource.editStatus(itemStatus);
+				setupItemsList();
+
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
@@ -1023,5 +1076,46 @@ public class ItemsActivity extends Activity {
 			previousName = itemName;
 		}
 		appWidgetManager.updateAppWidget(new ComponentName(this.getPackageName(), ListWidget.class.getName()), listViews);
+	}
+
+	/**
+	 * check if the textView for item title is empty or not
+	 * 
+	 * @param editTextTitle
+	 * @return
+	 */
+	@SuppressWarnings("null")
+	protected boolean isTitleEmpty(TextView editTextTitle) {
+		if (editTextTitle != null || !editTextTitle.getText().equals("")) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * show the missing title dialog to the user
+	 */
+	protected void showEmptyTitleMessage() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(ItemsActivity.this);
+		builder.setTitle("Please enter a title");
+		builder.setMessage("You must enter a title for you reminder item.").setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		builder.setIcon(R.drawable.ic_launcher);
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	/**
+	 * get a new instance of a Status object for use
+	 * 
+	 * @return Status
+	 */
+	protected Status getStatus() {
+		Status status = new Status();
+		return status;
 	}
 }
