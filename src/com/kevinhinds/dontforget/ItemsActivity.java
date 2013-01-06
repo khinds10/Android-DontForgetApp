@@ -1086,10 +1086,10 @@ public class ItemsActivity extends Activity {
 	 */
 	@SuppressWarnings("null")
 	protected boolean isTitleEmpty(TextView editTextTitle) {
-		if (editTextTitle != null || !editTextTitle.getText().equals("")) {
-			return false;
-		} else {
+		if (editTextTitle == null || editTextTitle.length() == 0) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -1099,7 +1099,7 @@ public class ItemsActivity extends Activity {
 	protected void showEmptyTitleMessage() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(ItemsActivity.this);
 		builder.setTitle("Please enter a title");
-		builder.setMessage("You must enter a title for you reminder item.").setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setMessage("You must enter a title for your reminder item.").setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.cancel();
 			}
