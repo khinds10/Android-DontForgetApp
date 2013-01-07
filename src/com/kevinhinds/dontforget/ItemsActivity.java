@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
+import com.kevinhinds.dontforget.alarmmanager.AlarmManagerBroadcastReceiver;
 import com.kevinhinds.dontforget.email.GMailSender;
 import com.kevinhinds.dontforget.item.Item;
 import com.kevinhinds.dontforget.item.ItemsDataSource;
@@ -74,6 +75,8 @@ public class ItemsActivity extends Activity {
 	protected long currentID;
 	protected String currentTitleValue;
 	protected String currentMessageValue;
+
+	private AlarmManagerBroadcastReceiver alarm;
 
 	/**
 	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can change the status to reflect as such
@@ -189,6 +192,9 @@ public class ItemsActivity extends Activity {
 				initiateEditMessagePopup(false);
 			}
 		});
+
+		/** setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future */
+		alarm = new AlarmManagerBroadcastReceiver();
 	}
 
 	/**
@@ -530,7 +536,38 @@ public class ItemsActivity extends Activity {
 				if (isTitleEmpty(editTextTitle)) {
 					showEmptyTitleMessage();
 				} else {
-					// well we click, now to start with the alarm manager?
+					Context context =getBaseContext();
+					alarm.setOnetimeTimer(context);
+					
+					
+					// public void onetimeTimer(View view){
+					// 
+					// if(alarm != null){
+					// alarm.setOnetimeTimer(context);
+					// }else{
+					// Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
+					// }
+					// }
+					
+					// public void startRepeatingTimer(View view) {
+					// Context context = this.getApplicationContext();
+					// if(alarm != null){
+					// alarm.SetAlarm(context);
+					// }else{
+					// Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
+					// }
+					// }
+					//
+					// public void cancelRepeatingTimer(View view){
+					// Context context = this.getApplicationContext();
+					// if(alarm != null){
+					// alarm.CancelAlarm(context);
+					// }else{
+					// Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
+					// }
+					// }
+					//
+
 				}
 			}
 		});

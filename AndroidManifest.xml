@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -72,6 +73,9 @@
 
         <!-- Service to perform web API queries -->
         <service android:name=".widget.UpdateService" />
+
+        <receiver android:name="com.kevinhinds.dontforget.alarmmanager.AlarmManagerBroadcastReceiver" >
+        </receiver>
     </application>
 
 </manifest>
