@@ -536,42 +536,19 @@ public class ItemsActivity extends Activity {
 				if (isTitleEmpty(editTextTitle)) {
 					showEmptyTitleMessage();
 				} else {
-					Context context =getBaseContext();
-					alarm.setOnetimeTimer(context);
-					
-					
-					// public void onetimeTimer(View view){
-					// 
-					// if(alarm != null){
-					// alarm.setOnetimeTimer(context);
-					// }else{
-					// Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
-					// }
-					// }
-					
-					// public void startRepeatingTimer(View view) {
-					// Context context = this.getApplicationContext();
-					// if(alarm != null){
-					// alarm.SetAlarm(context);
-					// }else{
-					// Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
-					// }
-					// }
-					//
-					// public void cancelRepeatingTimer(View view){
-					// Context context = this.getApplicationContext();
-					// if(alarm != null){
-					// alarm.CancelAlarm(context);
-					// }else{
-					// Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
-					// }
-					// }
-					//
-
+					String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+					if (editMode) {
+						recentlyTriedItemID = editEntryDB("[remind me later] " + statusDate);
+						recentlyTriedEditType = "edit";
+					} else {
+						recentlyTriedItemID = addEntryDB("[remind me later] " + statusDate);
+						recentlyTriedEditType = "add";
+					}
+					alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), System.currentTimeMillis() + 1000 * 10);
+					pw.dismiss();
 				}
 			}
 		});
-
 	}
 
 	@Override

@@ -13,8 +13,10 @@ import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 /**
@@ -40,6 +42,18 @@ public class SettingsActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
+
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.array_times, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		Spinner morningSpinner = (Spinner) findViewById(R.id.morningSpinner);
+		morningSpinner.setAdapter(adapter);
+
+		Spinner afternoonSpinner = (Spinner) findViewById(R.id.afternoonSpinner);
+		afternoonSpinner.setAdapter(adapter);
+
+		Spinner eveningSpinner = (Spinner) findViewById(R.id.eveningSpinner);
+		eveningSpinner.setAdapter(adapter);
 
 		/** apply font to title */
 		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
