@@ -1,6 +1,8 @@
 package com.kevinhinds.dontforget;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +27,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -46,6 +50,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RemoteViews;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.ContactsContract;
@@ -121,6 +126,9 @@ public class ItemsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.items);
 
+		/** if first install then need some default options created */
+		checkFirstInstall();
+
 		/** get the current settings for the user */
 		getUserSettings();
 
@@ -195,6 +203,22 @@ public class ItemsActivity extends Activity {
 
 		/** setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future */
 		alarm = new AlarmManagerBroadcastReceiver();
+	}
+
+	/**
+	 * code that will run if it's the first time we've installed the application
+	 */
+	private void checkFirstInstall() {
+		/** run the code on install only */
+		SharedPreferences wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
+		if (wmbPreference.getBoolean("FIRSTRUN", true)) {
+			SharedPreferences.Editor editor = wmbPreference.edit();
+			editor.putString("MORNING", "9 AM");
+			editor.putString("AFTERNOON", "2 PM");
+			editor.putString("EVENING", "6 PM");
+			editor.putBoolean("FIRSTRUN", false);
+			editor.commit();
+		}
 	}
 
 	/**
@@ -544,11 +568,123 @@ public class ItemsActivity extends Activity {
 						recentlyTriedItemID = addEntryDB("[remind me later] " + statusDate);
 						recentlyTriedEditType = "add";
 					}
-					alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), System.currentTimeMillis() + 1000 * 10);
+					AlertDialog.Builder alert = new AlertDialog.Builder(ItemsActivity.this);
+					alert.setTitle("Choose Reminder Time:");
+					alert.setIcon(R.drawable.ic_launcher);
+					/** setup the list of choices with click events */
+					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int item) {
+							/** set the reminder for this item */
+							alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), System.currentTimeMillis() + 1000 * 10);
+							dialog.dismiss();
+						}
+					});
+					alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					});
+					AlertDialog ad = alert.create();
+					ad.show();
 					pw.dismiss();
 				}
 			}
 		});
+	}
+
+	/**
+	 * get the reminder options as CharSequence[] to pass to the dialog as choice items list
+	 * 
+	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't set "This Morning" if it's already passed the time that "This Morning" is supposed to remind you at
+	 * @return
+	 */
+	private CharSequence[] getReminderOptions() {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("H");
+		String currentDateandTime = sdf.format(new Date());
+
+		boolean isMorningPM = false;
+		String morning = wmbPreference.getString("MORNING", "9 AM");
+		if (morning.contains("PM")) {
+			isMorningPM = true;
+		}
+		morning = morning.replace("AM", "").replace("PM", "").trim();
+		int morningTime = 0;
+		if (isMorningPM) {
+			morningTime = Integer.parseInt(morning) + 12;
+		} else {
+			morningTime = Integer.parseInt(morning);
+		}
+
+		boolean isAfternoonPM = false;
+		String afternoon = wmbPreference.getString("AFTERNOON", "2 PM");
+		if (afternoon.contains("PM")) {
+			isAfternoonPM = true;
+		}
+		afternoon = afternoon.replace("AM", "").replace("PM", "").trim();
+		int afternoonTime = 0;
+		if (isAfternoonPM) {
+			afternoonTime = Integer.parseInt(afternoon) + 12;
+		} else {
+			afternoonTime = Integer.parseInt(afternoon);
+		}
+
+		boolean isEveningPM = false;
+		String evening = wmbPreference.getString("EVENING", "6 PM");
+		if (evening.contains("PM")) {
+			isEveningPM = true;
+		}
+		evening = evening.replace("AM", "").replace("PM", "").trim();
+		int eveningTime = 0;
+		if (isMorningPM) {
+			eveningTime = Integer.parseInt(evening) + 12;
+		} else {
+			eveningTime = Integer.parseInt(evening);
+		}
+
+		TypedArray reminderOptions = getBaseContext().getResources().obtainTypedArray(R.array.array_reminder_options);
+		int len = reminderOptions.length();
+		CharSequence[] items = new CharSequence[len];
+		int finalItemsCount = 0;
+		for (int i = 0; i < len; i++) {
+			if (reminderOptions.getString(i).equals("This Morning")) {
+				if (Integer.parseInt(currentDateandTime) < morningTime) {
+					items[i] = reminderOptions.getString(i);
+					finalItemsCount++;
+				} else {
+					items[i] = "NOT IN FUTURE";
+				}
+			} else if (reminderOptions.getString(i).equals("This Afternoon")) {
+				if (Integer.parseInt(currentDateandTime) < afternoonTime) {
+					items[i] = reminderOptions.getString(i);
+					finalItemsCount++;
+				} else {
+					items[i] = "NOT IN FUTURE";
+				}
+			} else if (reminderOptions.getString(i).equals("This Evening")) {
+				if (Integer.parseInt(currentDateandTime) < eveningTime) {
+					items[i] = reminderOptions.getString(i);
+					finalItemsCount++;
+				} else {
+					items[i] = "NOT IN FUTURE";
+				}
+			} else {
+				items[i] = reminderOptions.getString(i);
+				finalItemsCount++;
+			}
+		}
+		reminderOptions.recycle();
+
+		CharSequence[] finalItems = new CharSequence[finalItemsCount];
+		int finalItemsIteratorCount = 0;
+		for (int i = 0; i < len; i++) {
+			String checkedItemValue = (String) items[i];
+			if (!checkedItemValue.contains("NOT IN FUTURE")) {
+				finalItems[finalItemsIteratorCount++] = items[i];
+			}
+		}
+
+		return finalItems;
 	}
 
 	@Override

@@ -30,5 +30,13 @@
         <item>11 PM</item>
         <item>12 Midnight</item>
     </string-array>
+    <string-array name="array_reminder_options">
+        <item>This Morning</item>
+        <item>This Afternoon</item>
+        <item>This Evening</item>
+        <item>Tomorrow Morning</item>
+        <item>Tomorrow Afternoon</item>
+        <item>Tomorrow Evening</item>
+    </string-array>
 
 </resources>

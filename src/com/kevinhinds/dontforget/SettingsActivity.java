@@ -37,23 +37,43 @@ public class SettingsActivity extends Activity {
 	EditText phoneNumber;
 	EditText emailAddress;
 
+	/** references to the 3 spinners in activity */
+	Spinner morningSpinner;
+	Spinner afternoonSpinner;
+	Spinner eveningSpinner;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
 
+		/** get the sharedPreferences to edit via user's request */
+		wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
+
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.array_times, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-		Spinner morningSpinner = (Spinner) findViewById(R.id.morningSpinner);
+		/** create morning spinner values and set to the current use selection */
+		morningSpinner = (Spinner) findViewById(R.id.morningSpinner);
 		morningSpinner.setAdapter(adapter);
+		String morning = wmbPreference.getString("MORNING", "9 AM");
+		int morningPosition = adapter.getPosition(morning);
+		morningSpinner.setSelection(morningPosition);
 
-		Spinner afternoonSpinner = (Spinner) findViewById(R.id.afternoonSpinner);
+		/** create afternoon spinner values and set to the current use selection */
+		afternoonSpinner = (Spinner) findViewById(R.id.afternoonSpinner);
 		afternoonSpinner.setAdapter(adapter);
+		String afternoon = wmbPreference.getString("AFTERNOON", "2 PM");
+		int afternoonPosition = adapter.getPosition(afternoon);
+		afternoonSpinner.setSelection(afternoonPosition);
 
-		Spinner eveningSpinner = (Spinner) findViewById(R.id.eveningSpinner);
+		/** create evening spinner values and set to the current use selection */
+		eveningSpinner = (Spinner) findViewById(R.id.eveningSpinner);
 		eveningSpinner.setAdapter(adapter);
+		String evening = wmbPreference.getString("EVENING", "6 PM");
+		int eveningPosition = adapter.getPosition(evening);
+		eveningSpinner.setSelection(eveningPosition);
 
 		/** apply font to title */
 		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
@@ -63,9 +83,6 @@ public class SettingsActivity extends Activity {
 		emailPassword = (EditText) findViewById(R.id.emailPassword);
 		phoneNumber = (EditText) findViewById(R.id.phoneNumber);
 		emailAddress = (EditText) findViewById(R.id.emailAddress);
-
-		/** get the sharedPreferences to edit via user's request */
-		wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
 
 		/** populate the email from settings or accounts */
 		usersEmail = wmbPreference.getString("USER_EMAIL", "");
@@ -104,6 +121,11 @@ public class SettingsActivity extends Activity {
 		editor.putString("USER_EMAIL", emailAddress.getText().toString());
 		editor.putString("USER_PHONE", phoneNumber.getText().toString());
 		editor.putString("USER_PASSWORD", emailPassword.getText().toString());
+
+		/** set selected spinner values */
+		editor.putString("MORNING", morningSpinner.getSelectedItem().toString());
+		editor.putString("AFTERNOON",  afternoonSpinner.getSelectedItem().toString());
+		editor.putString("EVENING", eveningSpinner.getSelectedItem().toString());
 		editor.commit();
 
 		Intent intent = new Intent(SettingsActivity.this, ItemsActivity.class);
