@@ -1,5 +1,7 @@
 package com.kevinhinds.dontforget;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,7 +29,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -50,7 +51,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RemoteViews;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.ContactsContract;
@@ -82,6 +82,9 @@ public class ItemsActivity extends Activity {
 	protected String currentMessageValue;
 
 	private AlarmManagerBroadcastReceiver alarm;
+
+	/** the current options for future reminders can change during the day, keep track of the current list here */
+	private CharSequence[] currentReminderOptions = null;
 
 	/**
 	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can change the status to reflect as such
@@ -119,6 +122,11 @@ public class ItemsActivity extends Activity {
 
 	/** which type of activity for result request wishes, either to email or SMS */
 	protected String activityForResultType = "email";
+
+	/** current 24 hour time values for user reminder preferences without the "AM"/"PM" */
+	private int morningTime = 0;
+	private int afternoonTime = 0;
+	private int eveningTime = 0;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -562,10 +570,10 @@ public class ItemsActivity extends Activity {
 				} else {
 					String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 					if (editMode) {
-						recentlyTriedItemID = editEntryDB("[remind me later] " + statusDate);
+						recentlyTriedItemID = editEntryDB("[edited] " + statusDate);
 						recentlyTriedEditType = "edit";
 					} else {
-						recentlyTriedItemID = addEntryDB("[remind me later] " + statusDate);
+						recentlyTriedItemID = addEntryDB("[added] " + statusDate);
 						recentlyTriedEditType = "add";
 					}
 					AlertDialog.Builder alert = new AlertDialog.Builder(ItemsActivity.this);
@@ -574,8 +582,20 @@ public class ItemsActivity extends Activity {
 					/** setup the list of choices with click events */
 					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
+
+							/** get the amount of time until the future selected reminder datetime */
+							long diff = getFutureTime(currentReminderOptions[item]);
+
 							/** set the reminder for this item */
-							alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), System.currentTimeMillis() + 1000 * 10);
+							long futureDateTime = System.currentTimeMillis() + diff;
+							alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime);
+
+							/** get the future date as a string to save as status for the item, also */
+							Date futureDate = new Date(futureDateTime);
+							DateFormat todaysDateFormat = new SimpleDateFormat("EEE, d MMM h:mm a");
+							String todaysDate = todaysDateFormat.format(futureDate);
+							recentlyTriedItemID = editEntryDB("[remind me later on " + todaysDate + "]");
+
 							dialog.dismiss();
 						}
 					});
@@ -603,44 +623,8 @@ public class ItemsActivity extends Activity {
 		SimpleDateFormat sdf = new SimpleDateFormat("H");
 		String currentDateandTime = sdf.format(new Date());
 
-		boolean isMorningPM = false;
-		String morning = wmbPreference.getString("MORNING", "9 AM");
-		if (morning.contains("PM")) {
-			isMorningPM = true;
-		}
-		morning = morning.replace("AM", "").replace("PM", "").trim();
-		int morningTime = 0;
-		if (isMorningPM) {
-			morningTime = Integer.parseInt(morning) + 12;
-		} else {
-			morningTime = Integer.parseInt(morning);
-		}
-
-		boolean isAfternoonPM = false;
-		String afternoon = wmbPreference.getString("AFTERNOON", "2 PM");
-		if (afternoon.contains("PM")) {
-			isAfternoonPM = true;
-		}
-		afternoon = afternoon.replace("AM", "").replace("PM", "").trim();
-		int afternoonTime = 0;
-		if (isAfternoonPM) {
-			afternoonTime = Integer.parseInt(afternoon) + 12;
-		} else {
-			afternoonTime = Integer.parseInt(afternoon);
-		}
-
-		boolean isEveningPM = false;
-		String evening = wmbPreference.getString("EVENING", "6 PM");
-		if (evening.contains("PM")) {
-			isEveningPM = true;
-		}
-		evening = evening.replace("AM", "").replace("PM", "").trim();
-		int eveningTime = 0;
-		if (isMorningPM) {
-			eveningTime = Integer.parseInt(evening) + 12;
-		} else {
-			eveningTime = Integer.parseInt(evening);
-		}
+		/** get preference 24 hour time values without the "AM"/"PM" */
+		getTwentyFourHourTimeForPreferences();
 
 		TypedArray reminderOptions = getBaseContext().getResources().obtainTypedArray(R.array.array_reminder_options);
 		int len = reminderOptions.length();
@@ -676,15 +660,59 @@ public class ItemsActivity extends Activity {
 		reminderOptions.recycle();
 
 		CharSequence[] finalItems = new CharSequence[finalItemsCount];
+		currentReminderOptions = new CharSequence[finalItemsCount];
 		int finalItemsIteratorCount = 0;
 		for (int i = 0; i < len; i++) {
 			String checkedItemValue = (String) items[i];
 			if (!checkedItemValue.contains("NOT IN FUTURE")) {
-				finalItems[finalItemsIteratorCount++] = items[i];
+				finalItems[finalItemsIteratorCount] = items[i];
+				currentReminderOptions[finalItemsIteratorCount] = items[i];
+				finalItemsIteratorCount = finalItemsIteratorCount + 1;
 			}
 		}
-
 		return finalItems;
+	}
+
+	/**
+	 * get the 24 hour time for all three user reminder preferences
+	 */
+	private void getTwentyFourHourTimeForPreferences() {
+
+		boolean isMorningPM = false;
+		String morning = wmbPreference.getString("MORNING", "9 AM");
+		if (morning.contains("PM")) {
+			isMorningPM = true;
+		}
+		morning = morning.replace("AM", "").replace("PM", "").trim();
+		if (isMorningPM) {
+			morningTime = Integer.parseInt(morning) + 12;
+		} else {
+			morningTime = Integer.parseInt(morning);
+		}
+
+		boolean isAfternoonPM = false;
+		String afternoon = wmbPreference.getString("AFTERNOON", "2 PM");
+		if (afternoon.contains("PM")) {
+			isAfternoonPM = true;
+		}
+		afternoon = afternoon.replace("AM", "").replace("PM", "").trim();
+		if (isAfternoonPM) {
+			afternoonTime = Integer.parseInt(afternoon) + 12;
+		} else {
+			afternoonTime = Integer.parseInt(afternoon);
+		}
+
+		boolean isEveningPM = false;
+		String evening = wmbPreference.getString("EVENING", "6 PM");
+		if (evening.contains("PM")) {
+			isEveningPM = true;
+		}
+		evening = evening.replace("AM", "").replace("PM", "").trim();
+		if (isEveningPM) {
+			eveningTime = Integer.parseInt(evening) + 12;
+		} else {
+			eveningTime = Integer.parseInt(evening);
+		}
 	}
 
 	@Override
@@ -1267,5 +1295,47 @@ public class ItemsActivity extends Activity {
 	protected Status getStatus() {
 		Status status = new Status();
 		return status;
+	}
+
+	/**
+	 * get the current amount of seconds until the future reminder time selected
+	 * 
+	 * @param currentReminderOption
+	 * @return
+	 */
+	private long getFutureTime(CharSequence currentReminderOption) {
+
+		/** get current datetime and format for today in time */
+		Date currentTime = new Date();
+		DateFormat todaysDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		String todaysDate = todaysDateFormat.format(currentTime);
+
+		/** get preference 24 hour time values without the "AM"/"PM" */
+		getTwentyFourHourTimeForPreferences();
+
+		/** build datetime string out of the current date plus the hour in the future the reminder is scheduled for */
+		String reminderDateString = "";
+		if (currentReminderOption.equals("This Morning") || currentReminderOption.equals("Tomorrow Morning")) {
+			reminderDateString = todaysDate + " " + Integer.toString(morningTime) + ":00:00";
+		} else if (currentReminderOption.equals("This Afternoon") || currentReminderOption.equals("Tomorrow Afternoon")) {
+			reminderDateString = todaysDate + " " + Integer.toString(afternoonTime) + ":00:00";
+		} else if (currentReminderOption.equals("This Evening") || currentReminderOption.equals("Tomorrow Evening")) {
+			reminderDateString = todaysDate + " " + Integer.toString(eveningTime) + ":00:00";
+		}
+
+		/** convert the reminder time in the future to milleseconds for time diff */
+		Date reminderTime = null;
+		try {
+			DateFormat completedDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			reminderTime = completedDateFormat.parse(reminderDateString);
+		} catch (ParseException e) {
+		}
+		long reminderTimeMilleseconds = reminderTime.getTime();
+
+		/** if it's tomorrow we need to add 24 hours of time in milleseconds to it */
+		if (currentReminderOption.equals("Tomorrow Morning") || currentReminderOption.equals("Tomorrow Afternoon") || currentReminderOption.equals("Tomorrow Evening")) {
+			reminderTimeMilleseconds = reminderTimeMilleseconds + 86400000;
+		}
+		return reminderTimeMilleseconds - currentTime.getTime();
 	}
 }
