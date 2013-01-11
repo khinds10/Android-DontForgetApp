@@ -47,7 +47,7 @@ public class StatusDataSource {
 	}
 
 	/**
-	 * create a new item by associated values
+	 * create a new status by associated values
 	 * 
 	 * @param id
 	 * @param content
@@ -66,7 +66,7 @@ public class StatusDataSource {
 	}
 
 	/**
-	 * edit item by identifier
+	 * edit status by identifier
 	 * 
 	 * @param status
 	 */
@@ -78,7 +78,7 @@ public class StatusDataSource {
 	}
 
 	/**
-	 * delete item by identifier
+	 * delete status by identifier
 	 * 
 	 * @param status
 	 */
@@ -88,7 +88,7 @@ public class StatusDataSource {
 	}
 
 	/**
-	 * get item by ID
+	 * get status by ID
 	 * 
 	 * @param id
 	 * @return
@@ -101,27 +101,27 @@ public class StatusDataSource {
 	}
 
 	/**
-	 * get all items in a list from datasource
+	 * get all status in a list from datasource
 	 * 
 	 * @return
 	 */
 	public List<Status> getAllStatus() {
-		List<Status> items = new ArrayList<Status>();
+		List<Status> statuses = new ArrayList<Status>();
 
 		Cursor cursor = database.query(MySQLiteHelper.TABLE_STATUS, allColumns, null, null, null, null, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
-			Status item = cursorToStatus(cursor);
-			items.add(item);
+			Status status = cursorToStatus(cursor);
+			statuses.add(status);
 			cursor.moveToNext();
 		}
 		/** Make sure to close the cursor */
 		cursor.close();
-		return items;
+		return statuses;
 	}
 
 	/**
-	 * point the datasource cursor to the item in question
+	 * point the datasource cursor to the status in question
 	 * 
 	 * @param cursor
 	 * @return

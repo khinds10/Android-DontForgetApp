@@ -23,6 +23,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 	public NotificationManager myNotificationManager;
 	public static final String TITLE = "title";
 	public static final String MESSAGE = "message";
+	public static final String ID = "id";
 	public static final CharSequence TICKERTEXT = "Don't Forget! Reminder";
 
 	/**
@@ -81,14 +82,16 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 	 *            contents of the item for the future reminder
 	 * @param futureTime
 	 *            time in milliseconds into the future for the alarm to be set at
+	 * @param recentlyTriedItemID 
 	 */
-	public void setReminder(Context context, String title, String message, long futureTime) {
+	public void setReminder(Context context, String title, String message, long futureTime, long recentlyTriedItemID) {
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
+		intent.putExtra(ID, recentlyTriedItemID);
 		intent.putExtra(TITLE, title);
 		intent.putExtra(MESSAGE, message);
 		/** make the intent unique by adding system time to it */
-		intent.setData((Uri.parse("custom://" + System.currentTimeMillis())));
+		intent.setData((Uri.parse("custom://" + Long.toString(recentlyTriedItemID))));
 		PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
 		am.set(AlarmManager.RTC_WAKEUP, futureTime, pi);
 	}

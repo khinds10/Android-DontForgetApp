@@ -12,6 +12,8 @@ import com.kevinhinds.dontforget.alarmmanager.AlarmManagerBroadcastReceiver;
 import com.kevinhinds.dontforget.email.GMailSender;
 import com.kevinhinds.dontforget.item.Item;
 import com.kevinhinds.dontforget.item.ItemsDataSource;
+import com.kevinhinds.dontforget.reminder.Reminder;
+import com.kevinhinds.dontforget.reminder.ReminderDataSource;
 import com.kevinhinds.dontforget.status.Status;
 import com.kevinhinds.dontforget.status.StatusDataSource;
 import com.kevinhinds.dontforget.widget.CountWidget;
@@ -67,6 +69,7 @@ public class ItemsActivity extends Activity {
 	private static final int CONTACT_PICKER_RESULT = 1001;
 	private ItemsDataSource itemsDataSource;
 	private StatusDataSource statusDataSource;
+	private ReminderDataSource reminderDataSource;
 
 	private View layout = null;
 	private PopupWindow pw;
@@ -292,6 +295,21 @@ public class ItemsActivity extends Activity {
 			textStatus.setGravity(Gravity.CENTER_VERTICAL);
 			textStatus.setCompoundDrawablePadding(10);
 			ll.addView(textStatus);
+
+			/** show the possible reminder of the item by the current ID being processed */
+			Reminder reminder = reminderDataSource.getById(ID);
+			if (reminder != null) {
+				TextView textReminder = new TextView(this);
+				textReminder.setTextSize(10);
+				textReminder.setText("Reminder Set for: " + (CharSequence) reminder.time);
+				textReminder.setLayoutParams(lp);
+				textReminder.setClickable(true);
+				textReminder.setTextColor(Color.BLUE);
+				textReminder.setPadding(50, 8, 0, 8);
+				textReminder.setGravity(Gravity.CENTER_VERTICAL);
+				textReminder.setCompoundDrawablePadding(10);
+				ll.addView(textReminder);
+			}
 		}
 
 		/** update the external widgets with any changes that have happened */
@@ -586,18 +604,21 @@ public class ItemsActivity extends Activity {
 							/** get the amount of time until the future selected reminder datetime */
 							long diff = getFutureTime(currentReminderOptions[item]);
 
-							/** set the reminder for this item */
-							long futureDateTime = System.currentTimeMillis() + diff;
-							alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime);
-
 							/** get the future date as a string to save as status for the item, also */
+							long futureDateTime = System.currentTimeMillis() + diff;
 							Date futureDate = new Date(futureDateTime);
 							DateFormat todaysDateFormat = new SimpleDateFormat("EEE, d MMM h:mm a");
 							String todaysDate = todaysDateFormat.format(futureDate);
-							recentlyTriedItemID = editEntryDB("[remind me later on " + todaysDate + "]");
+							recentlyTriedItemID = editEntryDB("[remind me later]");
+
+							/** set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated */
+							alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, recentlyTriedItemID);
+							deleteReminderEntry(recentlyTriedItemID);
+							addReminderEntry(recentlyTriedItemID, todaysDate);
 
 							dialog.dismiss();
 						}
+
 					});
 					alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
@@ -610,6 +631,32 @@ public class ItemsActivity extends Activity {
 				}
 			}
 		});
+	}
+
+	/**
+	 * remove the reminder entry and setup the items list with the new situation
+	 * 
+	 * @param recentlyTriedItemID
+	 */
+	private void deleteReminderEntry(long recentlyTriedItemID) {
+		try {
+			Reminder reminder = new Reminder();
+			reminder.setId(recentlyTriedItemID);
+			reminderDataSource.deleteReminder(reminder);
+			setupItemsList();
+		} catch (Exception e) {
+		}
+	}
+
+	/**
+	 * add the existing reminder entry table for this particular item "id" and setup the items list with the new situation
+	 * 
+	 * @param recentlyTriedItemID
+	 * @param todaysDate
+	 */
+	private void addReminderEntry(long recentlyTriedItemID, String todaysDate) {
+		reminderDataSource.createReminder(recentlyTriedItemID, todaysDate);
+		setupItemsList();
 	}
 
 	/**
@@ -678,8 +725,16 @@ public class ItemsActivity extends Activity {
 	 */
 	private void getTwentyFourHourTimeForPreferences() {
 
-		boolean isMorningPM = false;
 		String morning = wmbPreference.getString("MORNING", "9 AM");
+		morning = parseSpecialHours(morning);
+
+		String afternoon = wmbPreference.getString("AFTERNOON", "2 PM");
+		afternoon = parseSpecialHours(afternoon);
+
+		String evening = wmbPreference.getString("EVENING", "6 PM");
+		evening = parseSpecialHours(evening);
+
+		boolean isMorningPM = false;
 		if (morning.contains("PM")) {
 			isMorningPM = true;
 		}
@@ -691,7 +746,6 @@ public class ItemsActivity extends Activity {
 		}
 
 		boolean isAfternoonPM = false;
-		String afternoon = wmbPreference.getString("AFTERNOON", "2 PM");
 		if (afternoon.contains("PM")) {
 			isAfternoonPM = true;
 		}
@@ -703,7 +757,6 @@ public class ItemsActivity extends Activity {
 		}
 
 		boolean isEveningPM = false;
-		String evening = wmbPreference.getString("EVENING", "6 PM");
 		if (evening.contains("PM")) {
 			isEveningPM = true;
 		}
@@ -713,6 +766,22 @@ public class ItemsActivity extends Activity {
 		} else {
 			eveningTime = Integer.parseInt(evening);
 		}
+	}
+
+	/**
+	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of "AM" / "PM"
+	 * 
+	 * @param hour
+	 * @return
+	 */
+	private String parseSpecialHours(String hour) {
+		if (hour.equals("12 Noon")) {
+			hour = "12 PM";
+		}
+		if (hour.equals("12 Midnight")) {
+			hour = "12 AM";
+		}
+		return hour;
 	}
 
 	@Override
@@ -1015,6 +1084,8 @@ public class ItemsActivity extends Activity {
 	private void openDataConnections() {
 		itemsDataSource = new ItemsDataSource(this);
 		statusDataSource = new StatusDataSource(this);
+		reminderDataSource = new ReminderDataSource(this);
+		reminderDataSource.open();
 		itemsDataSource.open();
 		statusDataSource.open();
 	}
