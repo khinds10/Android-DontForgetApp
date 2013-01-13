@@ -50,6 +50,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RemoteViews;
@@ -282,38 +283,48 @@ public class ItemsActivity extends Activity {
 			});
 			ll.addView(tv);
 
-			/** show the status of the item by the current ID being processed */
-			TextView textStatus = new TextView(this);
-			textStatus.setTextSize(10);
-			Status Status = statusDataSource.getById(ID);
-			String currentStatusDetails = Status.content;
-			textStatus.setText((CharSequence) currentStatusDetails);
-			textStatus.setLayoutParams(lp);
-			textStatus.setClickable(true);
-			textStatus.setTextColor(Color.GRAY);
-			textStatus.setPadding(50, 8, 0, 8);
-			textStatus.setGravity(Gravity.CENTER_VERTICAL);
-			textStatus.setCompoundDrawablePadding(10);
-			ll.addView(textStatus);
-
 			/** show the possible reminder of the item by the current ID being processed */
 			Reminder reminder = reminderDataSource.getById(ID);
 			if (reminder != null) {
 				TextView textReminder = new TextView(this);
 				textReminder.setTextSize(10);
-				textReminder.setText("Reminder Set for: " + (CharSequence) reminder.time);
+				textReminder.setText("Reminder: " + (CharSequence) reminder.time);
 				textReminder.setLayoutParams(lp);
 				textReminder.setClickable(true);
 				textReminder.setTextColor(Color.BLUE);
-				textReminder.setPadding(50, 8, 0, 8);
+				textReminder.setPadding(50, 2, 0, 2);
 				textReminder.setGravity(Gravity.CENTER_VERTICAL);
+				textReminder.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.reminder_icon), null, null, null);
 				textReminder.setCompoundDrawablePadding(10);
 				ll.addView(textReminder);
+			} else {
+				/** show the status of the item by the current ID being processed */
+				TextView textStatus = new TextView(this);
+				textStatus.setTextSize(10);
+				Status Status = statusDataSource.getById(ID);
+				String currentStatusDetails = Status.content;
+				textStatus.setText((CharSequence) currentStatusDetails);
+				textStatus.setLayoutParams(lp);
+				textStatus.setClickable(true);
+				textStatus.setTextColor(Color.GRAY);
+				textStatus.setPadding(50, 2, 0, 2);
+				textStatus.setGravity(Gravity.CENTER_VERTICAL);
+				ll.addView(textStatus);
 			}
 		}
 
 		/** update the external widgets with any changes that have happened */
 		updateWidgets();
+	}
+
+	/**
+	 * check if a current reminder exists for a certain item identifier
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private Reminder checkReminderEntry(long id) {
+		return reminderDataSource.getById(id);
 	}
 
 	/**
@@ -355,6 +366,12 @@ public class ItemsActivity extends Activity {
 		final Button editMemoButton = (Button) layout.findViewById(R.id.editMemoButton);
 		final Button cancelEditMemoButton = (Button) layout.findViewById(R.id.cancelEditMemoButton);
 
+		/** reminder reminder elements */
+		final Button cancelReminderButton = (Button) layout.findViewById(R.id.cancelReminderButton);
+		final LinearLayout reminderLayout = (LinearLayout) layout.findViewById(R.id.reminderReminder);
+		final TextView reminderReminderInfo = (TextView) layout.findViewById(R.id.reminderReminderInfo);
+		final ImageView reminderImage = (ImageView) layout.findViewById(R.id.reminderImage);
+
 		/** if we're editing an existing entry the other buttons are enabled, else you can't use them yet */
 		if (editMode) {
 
@@ -375,6 +392,20 @@ public class ItemsActivity extends Activity {
 			editTextTitle.setText(currentTitleValue);
 			messageContent.setText(currentMessageValue);
 
+			final Reminder currentReminder = checkReminderEntry(currentID);
+			if (currentReminder != null) {
+				reminderLayout.setVisibility(View.VISIBLE);
+				reminderReminderInfo.setText("Reminder set for: " + currentReminder.getTime());
+			}
+			cancelReminderButton.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					reminderDataSource.deleteReminder(currentReminder);
+					reminderImage.setVisibility(View.GONE);
+					cancelReminderButton.setVisibility(View.GONE);
+					reminderReminderInfo.setText("Reminder Cancelled");
+					setupItemsList();
+				}
+			});
 		} else {
 
 			deleteButton.setVisibility(View.GONE);
@@ -433,7 +464,7 @@ public class ItemsActivity extends Activity {
 		/** set button is pressed, set the timer and close the popup */
 		TextView setButton = (TextView) layout.findViewById(R.id.SaveButton);
 		setButton.setOnClickListener(new OnClickListener() {
-			String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+			String statusDate = getLastUpdateTime();
 
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
@@ -484,6 +515,7 @@ public class ItemsActivity extends Activity {
 				builder.setTitle("Delete Message");
 				builder.setMessage("Are you sure you want to delete this message?").setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
+						deleteReminderEntry(currentID);
 						deleteEntryDB();
 						dialog.dismiss();
 						pw.dismiss();
@@ -507,7 +539,7 @@ public class ItemsActivity extends Activity {
 					showEmptyTitleMessage();
 				} else {
 					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + usersEmail);
-					String statusValue = "[emailed yourself] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+					String statusValue = "[emailed yourself] " + getLastUpdateTime();
 					if (editMode) {
 						recentlyTriedItemID = editEntryDB(statusValue);
 						recentlyTriedEditType = "edit";
@@ -562,7 +594,7 @@ public class ItemsActivity extends Activity {
 					showEmptyTitleMessage();
 				} else {
 					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
-					String statusValue = "[texted yourself] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+					String statusValue = "[texted yourself] " + getLastUpdateTime();
 					if (editMode) {
 						recentlyTriedItemID = editEntryDB(statusValue);
 						recentlyTriedEditType = "edit";
@@ -586,12 +618,12 @@ public class ItemsActivity extends Activity {
 				if (isTitleEmpty(editTextTitle)) {
 					showEmptyTitleMessage();
 				} else {
-					String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+					String statusDate = getLastUpdateTime();
 					if (editMode) {
-						recentlyTriedItemID = editEntryDB("[edited] " + statusDate);
+						currentID = editEntryDB("[edited] " + statusDate);
 						recentlyTriedEditType = "edit";
 					} else {
-						recentlyTriedItemID = addEntryDB("[added] " + statusDate);
+						currentID = addEntryDB("[added] " + statusDate);
 						recentlyTriedEditType = "add";
 					}
 					AlertDialog.Builder alert = new AlertDialog.Builder(ItemsActivity.this);
@@ -609,12 +641,12 @@ public class ItemsActivity extends Activity {
 							Date futureDate = new Date(futureDateTime);
 							DateFormat todaysDateFormat = new SimpleDateFormat("EEE, d MMM h:mm a");
 							String todaysDate = todaysDateFormat.format(futureDate);
-							recentlyTriedItemID = editEntryDB("[remind me later]");
+							currentID = editEntryDB("[remind me later] " + getLastUpdateTime());
 
 							/** set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated */
-							alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, recentlyTriedItemID);
-							deleteReminderEntry(recentlyTriedItemID);
-							addReminderEntry(recentlyTriedItemID, todaysDate);
+							alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, currentID);
+							deleteReminderEntry(currentID);
+							addReminderEntry(currentID, todaysDate);
 
 							dialog.dismiss();
 						}
@@ -846,7 +878,7 @@ public class ItemsActivity extends Activity {
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Text Message", "Texting contact's primary number: \n" + friendsSMS);
-						String statusValue = "[texted: " + friendsSMS + "] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+						String statusValue = "[texted: " + friendsSMS + "] " + getLastUpdateTime();
 						if (currentEditMode) {
 							recentlyTriedItemID = editEntryDB(statusValue);
 							recentlyTriedEditType = "edit";
@@ -877,7 +909,7 @@ public class ItemsActivity extends Activity {
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
 				Status status = getStatus();
 				status.setId(recentlyTriedItemID);
-				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+				String statusDate = getLastUpdateTime();
 				if (recentlyTriedEditType.equals("edit")) {
 					status.setContent("[edited] " + statusDate);
 				} else {
@@ -904,7 +936,7 @@ public class ItemsActivity extends Activity {
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + friendsEmail);
-						String statusValue = "[emailed: " + friendsEmail + "] " + java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+						String statusValue = "[emailed: " + friendsEmail + "] " + getLastUpdateTime();
 						if (currentEditMode) {
 							recentlyTriedItemID = editEntryDB(statusValue);
 							recentlyTriedEditType = "edit";
@@ -935,7 +967,7 @@ public class ItemsActivity extends Activity {
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email */
 				Status status = getStatus();
 				status.setId(recentlyTriedItemID);
-				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+				String statusDate = getLastUpdateTime();
 				if (recentlyTriedEditType.equals("edit")) {
 					status.setContent("[edited] " + statusDate);
 				} else {
@@ -952,6 +984,16 @@ public class ItemsActivity extends Activity {
 				alertDialog.show();
 			}
 		}
+	}
+
+	/**
+	 * get a nicely formated datetime string to show in the activity for items recently added/edited
+	 * 
+	 * @return
+	 */
+	private String getLastUpdateTime() {
+		Date now = new Date();
+		return DateFormat.getInstance().format(now);
 	}
 
 	/**
@@ -1202,7 +1244,7 @@ public class ItemsActivity extends Activity {
 
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
 				itemStatus.setId(recentlyTriedItemID);
-				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+				String statusDate = getLastUpdateTime();
 				if (recentlyTriedEditType.equals("edit")) {
 					itemStatus.setContent("[edited] " + statusDate);
 				} else {
@@ -1256,7 +1298,7 @@ public class ItemsActivity extends Activity {
 
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via Email */
 				itemStatus.setId(recentlyTriedItemID);
-				String statusDate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+				String statusDate = getLastUpdateTime();
 				if (recentlyTriedEditType.equals("edit")) {
 					itemStatus.setContent("[edited] " + statusDate);
 				} else {

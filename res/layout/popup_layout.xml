@@ -136,6 +136,46 @@
                     android:text="Cancel Edit" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/reminderReminder"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp" >
+
+                    <ImageView
+                        android:id="@+id/reminderImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:paddingRight="4dp"
+                        android:src="@drawable/reminder_icon" />
+
+                    <TextView
+                        android:id="@+id/reminderReminderInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:paddingTop="10dp"
+                        android:textColor="#0000FF" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/cancelReminderButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Cancel Reminder" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/processMessageTitle"
                 android:layout_width="wrap_content"
