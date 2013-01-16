@@ -3,7 +3,6 @@ package com.kevinhinds.dontforget;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +20,7 @@ import com.kevinhinds.dontforget.widget.ListWidget;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
@@ -50,11 +50,13 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RemoteViews;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
@@ -395,7 +397,7 @@ public class ItemsActivity extends Activity {
 			final Reminder currentReminder = checkReminderEntry(currentID);
 			if (currentReminder != null) {
 				reminderLayout.setVisibility(View.VISIBLE);
-				reminderReminderInfo.setText("Reminder set for: " + currentReminder.getTime());
+				reminderReminderInfo.setText("Reminder: " + currentReminder.getTime());
 			}
 			cancelReminderButton.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
@@ -403,6 +405,7 @@ public class ItemsActivity extends Activity {
 					reminderImage.setVisibility(View.GONE);
 					cancelReminderButton.setVisibility(View.GONE);
 					reminderReminderInfo.setText("Reminder Cancelled");
+					alarm.cancelReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), currentID);
 					setupItemsList();
 				}
 			});
@@ -633,24 +636,45 @@ public class ItemsActivity extends Activity {
 					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 
-							/** get the amount of time until the future selected reminder datetime */
-							long diff = getFutureTime(currentReminderOptions[item]);
+							/** based on the dialog selection either set the reminder or continue to show the custom dialog if they chose "custom" */
+							String selectedItem = (String) currentReminderOptions[item];
+							if (selectedItem.equals("Custom...")) {
+								final Dialog customDialog = new Dialog(ItemsActivity.this);
+								customDialog.setContentView(R.layout.custom_time_dialog);
+								customDialog.setTitle("Choose Custom Reminder:");
+								customDialog.show();
+								Button cancelCustomReminderButton = (Button) customDialog.findViewById(R.id.cancelCustomReminderButton);
+								cancelCustomReminderButton.setOnClickListener(new OnClickListener() {
+									public void onClick(View v) {
+										customDialog.dismiss();
+									}
+								});
+								Button setCustomReminderButton = (Button) customDialog.findViewById(R.id.setCustomReminderButton);
+								setCustomReminderButton.setOnClickListener(new OnClickListener() {
+									public void onClick(View v) {
 
-							/** get the future date as a string to save as status for the item, also */
-							long futureDateTime = System.currentTimeMillis() + diff;
-							Date futureDate = new Date(futureDateTime);
-							DateFormat todaysDateFormat = new SimpleDateFormat("EEE, d MMM h:mm a");
-							String todaysDate = todaysDateFormat.format(futureDate);
-							currentID = editEntryDB("[remind me later] " + getLastUpdateTime());
+										/** get custom date and time selected */
+										DatePicker customDatePicker = (DatePicker) customDialog.findViewById(R.id.customDatePicker);
+										TimePicker customTimePicker = (TimePicker) customDialog.findViewById(R.id.customTimePicker);
+										Date currentTime = new Date();
+										Date customDate = new Date(customDatePicker.getYear() - 1900, customDatePicker.getMonth(), customDatePicker.getDayOfMonth(), customTimePicker.getCurrentHour(),
+												customTimePicker.getCurrentMinute());
 
-							/** set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated */
-							alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, currentID);
-							deleteReminderEntry(currentID);
-							addReminderEntry(currentID, todaysDate);
+										/** get the diff of the future custom time against the current time to set the future reminder */
+										long diff = customDate.getTime() - currentTime.getTime();
+										setReminder(diff);
+										customDialog.dismiss();
+									}
+								});
 
-							dialog.dismiss();
+								dialog.dismiss();
+							} else {
+								/** get the amount of time until the future selected reminder datetime */
+								long diff = getFutureTime(currentReminderOptions[item]);
+								setReminder(diff);
+								dialog.dismiss();
+							}
 						}
-
 					});
 					alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
@@ -663,6 +687,26 @@ public class ItemsActivity extends Activity {
 				}
 			}
 		});
+	}
+
+	/**
+	 * set reminder for current time plus the diff to time in the future
+	 * 
+	 * @param diff
+	 */
+	private void setReminder(long diff) {
+
+		/** get the future date as a string to save as status for the item, also */
+		long futureDateTime = System.currentTimeMillis() + diff;
+		Date futureDate = new Date(futureDateTime);
+		DateFormat todaysDateFormat = new SimpleDateFormat("EEE, d MMM h:mm a");
+		String todaysDate = todaysDateFormat.format(futureDate);
+		currentID = editEntryDB("[remind me later] " + getLastUpdateTime());
+
+		/** set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated */
+		alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, currentID);
+		deleteReminderEntry(currentID);
+		addReminderEntry(currentID, todaysDate);
 	}
 
 	/**
@@ -737,6 +781,7 @@ public class ItemsActivity extends Activity {
 			}
 		}
 		reminderOptions.recycle();
+		finalItemsCount++;
 
 		CharSequence[] finalItems = new CharSequence[finalItemsCount];
 		currentReminderOptions = new CharSequence[finalItemsCount];
@@ -749,6 +794,9 @@ public class ItemsActivity extends Activity {
 				finalItemsIteratorCount = finalItemsIteratorCount + 1;
 			}
 		}
+		String customOption = "Custom...";
+		finalItems[finalItemsIteratorCount] = customOption;
+		currentReminderOptions[finalItemsIteratorCount] = customOption;
 		return finalItems;
 	}
 

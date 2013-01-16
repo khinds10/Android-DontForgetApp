@@ -4,6 +4,8 @@ import java.util.Random;
 
 import com.kevinhinds.dontforget.ItemsActivity;
 import com.kevinhinds.dontforget.R;
+import com.kevinhinds.dontforget.reminder.Reminder;
+import com.kevinhinds.dontforget.reminder.ReminderDataSource;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -43,6 +45,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 		/** Make sure this intent has been sent by the one-time timer button. */
 		if (extras != null) {
 
+			Long NotificationID = extras.getLong(ID);
 			CharSequence NotificationTitle = extras.getString(TITLE);
 			CharSequence NotificationContent = extras.getString(MESSAGE);
 
@@ -56,7 +59,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 
 				/** we have more than one possible notification so we must have a random identifier for it */
 				Random randomGenerator = new Random();
-				int randomInt = randomGenerator.nextInt(100);
+				int randomInt = randomGenerator.nextInt(10000);
 				myNotificationManager.notify(randomInt, notification);
 
 				/** play the user's default notification sound */
@@ -64,6 +67,15 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 					Uri notification1 = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 					Ringtone r = RingtoneManager.getRingtone(context, notification1);
 					r.play();
+				} catch (Exception e) {
+				}
+
+				/** remove the reminder entry because the alarm went off */
+				try {
+					ReminderDataSource reminderDataSource = new ReminderDataSource(context);
+					reminderDataSource.open();
+					Reminder reminder = reminderDataSource.getById(NotificationID);
+					reminderDataSource.deleteReminder(reminder);
 				} catch (Exception e) {
 				}
 			}
@@ -82,7 +94,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 	 *            contents of the item for the future reminder
 	 * @param futureTime
 	 *            time in milliseconds into the future for the alarm to be set at
-	 * @param recentlyTriedItemID 
+	 * @param recentlyTriedItemID
 	 */
 	public void setReminder(Context context, String title, String message, long futureTime, long recentlyTriedItemID) {
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -90,10 +102,31 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 		intent.putExtra(ID, recentlyTriedItemID);
 		intent.putExtra(TITLE, title);
 		intent.putExtra(MESSAGE, message);
-		/** make the intent unique by adding system time to it */
+		/** make the intent unique item ID to it */
 		intent.setData((Uri.parse("custom://" + Long.toString(recentlyTriedItemID))));
 		PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
 		am.set(AlarmManager.RTC_WAKEUP, futureTime, pi);
+	}
+
+	/**
+	 * cancel a reminder for the future of a specific item
+	 * 
+	 * @param context
+	 * @param title
+	 * @param message
+	 * 
+	 * @param recentlyTriedItemID
+	 */
+	public void cancelReminder(Context context, String title, String message, long recentlyTriedItemID) {
+		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
+		intent.putExtra(ID, recentlyTriedItemID);
+		intent.putExtra(TITLE, title);
+		intent.putExtra(MESSAGE, message);
+		/** make the intent unique item ID to it */
+		intent.setData((Uri.parse("custom://" + Long.toString(recentlyTriedItemID))));
+		PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+		am.cancel(pi);
 	}
 
 	/**
