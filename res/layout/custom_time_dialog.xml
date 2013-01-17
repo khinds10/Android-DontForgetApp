@@ -3,18 +3,21 @@
     android:id="@+id/linearLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:padding="10dp">
 
     <DatePicker
         android:id="@+id/customDatePicker"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:padding="20dp" >
     </DatePicker>
 
     <TimePicker
         android:id="@+id/customTimePicker"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:padding="20dp" >
     </TimePicker>
 
     <LinearLayout
