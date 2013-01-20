@@ -21,7 +21,7 @@
             android:padding="5dp"
             android:paddingBottom="15dp"
             android:paddingRight="10dp"
-            android:text="Don&apos;t Forget! Message"
+            android:text="@string/Your_Message"
             android:textColor="#FFFFFF"
             android:textSize="20dp" />
 
@@ -32,8 +32,8 @@
             android:layout_marginRight="5dp"
             android:layout_weight=".4"
             android:background="@drawable/custom_button"
-            android:padding="2dp"
-            android:text="Cancel" >
+            android:padding="5dp"
+            android:text="@string/Cancel" >
         </Button>
     </LinearLayout>
 
@@ -54,13 +54,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="Title"
+                android:text="@string/Title"
                 android:textColor="#000000" />
 
             <EditText
                 android:id="@+id/editTextTitle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
                 android:maxLines="3"
                 android:paddingTop="10dp"
                 android:textSize="22dp"
@@ -74,7 +75,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:text="Item Title"
                 android:textColor="#000000"
                 android:textSize="20dp" />
 
@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
-                android:text="Message"
+                android:text="@string/Message"
                 android:textColor="#000000"
                 android:textSize="14dp" />
 
@@ -92,6 +92,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:ems="10"
+                android:inputType="textMultiLine"
                 android:minLines="3" >
             </EditText>
 
@@ -100,7 +101,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:text="Item Message"
                 android:textColor="#000000"
                 android:textSize="20dp" />
 
@@ -124,7 +124,7 @@
                     android:layout_margin="5dp"
                     android:background="@drawable/custom_button"
                     android:padding="10dp"
-                    android:text="Edit" />
+                    android:text="@string/Edit" />
 
                 <Button
                     android:id="@+id/cancelEditMemoButton"
@@ -133,7 +133,7 @@
                     android:layout_margin="5dp"
                     android:background="@drawable/custom_button"
                     android:padding="10dp"
-                    android:text="Cancel Edit" />
+                    android:text="@string/Cancel_Edit" />
             </LinearLayout>
 
             <LinearLayout
@@ -155,6 +155,7 @@
                         android:id="@+id/reminderImage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:contentDescription="@string/app_name"
                         android:gravity="center_vertical"
                         android:paddingRight="4dp"
                         android:src="@drawable/reminder_icon" />
@@ -173,7 +174,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="Cancel Reminder" />
+                    android:text="@string/Cancel_Reminder" />
             </LinearLayout>
 
             <TextView
@@ -181,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="Process Message"
+                android:text="@string/Process_Message"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -201,9 +202,10 @@
                     android:drawableLeft="@drawable/save"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
+                    android:maxWidth="90dp"
                     android:minHeight="35dp"
                     android:minWidth="90dp"
-                    android:text="Save"
+                    android:text="@string/Save"
                     android:textColor="#000000"
                     android:textSize="14dp" />
 
@@ -217,9 +219,10 @@
                     android:drawableLeft="@drawable/archive"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
+                    android:maxWidth="90dp"
                     android:minHeight="35dp"
                     android:minWidth="90dp"
-                    android:text="Archive"
+                    android:text="@string/Archive"
                     android:textColor="#000000"
                     android:textSize="14dp" />
             </LinearLayout>
@@ -241,8 +244,10 @@
                     android:drawableLeft="@drawable/remind"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
+                    android:maxWidth="90dp"
                     android:minHeight="35dp"
-                    android:text="Remind Me"
+                    android:minWidth="90dp"
+                    android:text="@string/Remind_Me"
                     android:textColor="#000000"
                     android:textSize="14dp" />
 
@@ -256,9 +261,10 @@
                     android:drawableLeft="@drawable/delete"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
+                    android:maxWidth="90dp"
                     android:minHeight="35dp"
                     android:minWidth="90dp"
-                    android:text="Delete"
+                    android:text="@string/Delete"
                     android:textColor="#000000"
                     android:textSize="14dp" />
             </LinearLayout>
@@ -268,7 +274,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="Quickly Email"
+                android:text="@string/Quickly_Email"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -290,7 +296,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="Yourself"
+                    android:text="@string/Yourself"
                     android:textColor="#000000"
                     android:textSize="14dp" />
 
@@ -306,7 +312,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="Contact"
+                    android:text="@string/Contact"
                     android:textColor="#000000"
                     android:textSize="14dp" />
             </LinearLayout>
@@ -316,11 +322,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="Quickly Text"
+                android:text="@string/Quickly_Text"
                 android:textColor="#999999" />
 
             <LinearLayout
-                android:id="@+id/textButtonsContainer"
+                android:id="@+id/textButtonsContainer2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -338,7 +344,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="Yourself"
+                    android:text="@string/Yourself"
                     android:textColor="#000000"
                     android:textSize="14dp" />
 
@@ -354,7 +360,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="Contact"
+                    android:text="@string/Contact"
                     android:textColor="#000000"
                     android:textSize="14dp" />
             </LinearLayout>

@@ -18,6 +18,7 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="0dp"
             android:layout_weight="0.20"
+            android:contentDescription="@string/app_name"
             android:src="@drawable/bubble" />
 
         <TextView
@@ -52,7 +53,7 @@
             android:background="#E0E0E0"
             android:gravity="center"
             android:padding="10dp"
-            android:text="[0] Messages"
+            android:text="@string/Zero_Messages"
             android:textColor="#000000" >
         </TextView>
 
@@ -64,7 +65,7 @@
             android:background="#F0F0F0"
             android:gravity="center"
             android:padding="10dp"
-            android:text="[0] Archived" >
+            android:text="@string/Zero_Archived" >
         </TextView>
     </LinearLayout>
 
@@ -86,43 +87,36 @@
             android:id="@+id/scrollViewMenu"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="0.35" >
+            android:layout_weight="0.50" >
 
             <LinearLayout
                 android:id="@+id/itemsLayout"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="4dp" >
             </LinearLayout>
         </ScrollView>
 
         <LinearLayout
-            android:id="@+id/addButtonContainer"
+            android:id="@+id/addNewButton"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:padding="5dp" >
 
-            <LinearLayout
-                android:id="@+id/addNewButton"
-                android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/addNewButtonText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="vertical"
-                android:padding="5dp" >
-
-                <TextView
-                    android:id="@+id/addNewButtonText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/add_lg"
-                    android:gravity="center_vertical"
-                    android:text="Add New"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#000000" />
-            </LinearLayout>
+                android:layout_gravity="left"
+                android:background="@drawable/custom_button"
+                android:drawableLeft="@drawable/add_lg"
+                android:gravity="center_vertical"
+                android:text="@string/Add_New"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
         </LinearLayout>
 
         <LinearLayout
@@ -146,7 +140,7 @@
                 android:background="#F0F0F0"
                 android:paddingBottom="3dp"
                 android:paddingLeft="4dp"
-                android:text="Settings [press to update]"
+                android:text="@string/Settings_press_to_update"
                 android:textColor="#000000" />
 
             <LinearLayout
@@ -157,7 +151,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/itemsLayout"
+                android:id="@+id/itemsLayout2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
@@ -172,7 +166,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" / "
+                    android:text="@string/slash"
                     android:textColor="#999999" />
 
                 <TextView

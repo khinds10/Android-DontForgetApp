@@ -18,6 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:contentDescription="@string/app_name"
             android:padding="5dp"
             android:src="@drawable/dont_forget_sm" />
 
@@ -26,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:contentDescription="@string/app_name"
             android:padding="2dp"
             android:src="@drawable/bubble_ex_sm" />
     </LinearLayout>
@@ -40,7 +42,7 @@
             android:id="@+id/countItemsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Item Count"
+            android:text="@string/Item_Count"
             android:textStyle="italic" />
 
         <TextView
@@ -48,7 +50,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="[5] Messages"
             android:textColor="#333333"
             android:textSize="15dp" />
 
@@ -57,7 +58,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="[5] Archived"
             android:textColor="#000000"
             android:textSize="15dp" />
     </LinearLayout>

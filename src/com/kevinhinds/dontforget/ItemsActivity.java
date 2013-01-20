@@ -129,7 +129,6 @@ public class ItemsActivity extends Activity {
 	protected String friendsEmail;
 	protected CharSequence[] friendsSMSList;
 	protected String friendsSMS;
-	protected String friendPrimarySMS;
 
 	/** which type of activity for result request wishes, either to email or SMS */
 	protected String activityForResultType = "email";
@@ -1386,7 +1385,7 @@ public class ItemsActivity extends Activity {
 			progressDialog.dismiss();
 			if (!success) {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-				alertDialog.setTitle("SMS could not be sent...");
+				alertDialog.setTitle("SMS could not be sent.");
 				alertDialog.setMessage("Check your settings and try again.");
 
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
@@ -1440,7 +1439,7 @@ public class ItemsActivity extends Activity {
 			progressDialog.dismiss();
 			if (!success) {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-				alertDialog.setTitle("Email could not be sent...");
+				alertDialog.setTitle("Email could not be sent.");
 				alertDialog.setMessage("Check your settings and try again.");
 
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via Email */
