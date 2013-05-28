@@ -13,10 +13,12 @@ import com.kevinhinds.dontforget.alarmmanager.AlarmManagerBroadcastReceiver;
 import com.kevinhinds.dontforget.email.GMailSender;
 import com.kevinhinds.dontforget.item.Item;
 import com.kevinhinds.dontforget.item.ItemsDataSource;
+import com.kevinhinds.dontforget.marketplace.MarketPlace;
 import com.kevinhinds.dontforget.reminder.Reminder;
 import com.kevinhinds.dontforget.reminder.ReminderDataSource;
 import com.kevinhinds.dontforget.status.Status;
 import com.kevinhinds.dontforget.status.StatusDataSource;
+import com.kevinhinds.dontforget.updates.LatestUpdates;
 import com.kevinhinds.dontforget.widget.CountWidget;
 import com.kevinhinds.dontforget.widget.ListWidget;
 
@@ -221,6 +223,9 @@ public class ItemsActivity extends Activity {
 
 		/** setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future */
 		alarm = new AlarmManagerBroadcastReceiver();
+
+		/** show the latest update notes if the application was just installed */
+		LatestUpdates.showFirstInstalledNotes(this);
 	}
 
 	/**
@@ -1344,25 +1349,6 @@ public class ItemsActivity extends Activity {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		/** Handle item selection */
-		switch (item.getItemId()) {
-		case R.id.menu_settings:
-			Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
-			startActivity(intent);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
 	private class SMSUserTask extends AsyncTask<String, Void, Boolean> {
 
 		@Override
@@ -1595,5 +1581,62 @@ public class ItemsActivity extends Activity {
 			reminderTimeMilleseconds = reminderTimeMilleseconds + 86400000;
 		}
 		return reminderTimeMilleseconds - currentTime.getTime();
+	}
+
+	/** create the main menu based on if the app is the full version or not */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		String isFullVersion = getResources().getString(R.string.is_full_version);
+		if (isFullVersion.toLowerCase().equals("true")) {
+			getMenuInflater().inflate(R.menu.main_full, menu);
+		} else {
+			getMenuInflater().inflate(R.menu.main, menu);
+		}
+		return true;
+	}
+
+	/** handle user selecting a menu item */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		/** Handle item selection */
+		switch (item.getItemId()) {
+		case R.id.menu_settings:
+			Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
+			startActivity(intent);
+			return true;
+		case R.id.menu_bitstreet:
+			viewAllPublisherApps();
+			break;
+		case R.id.menu_fullversion:
+			viewPremiumApp();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return true;
+	}
+
+	/**
+	 * view all apps on the device marketplace for current publisher
+	 */
+	public void viewAllPublisherApps() {
+		MarketPlace marketPlace = new MarketPlace(this);
+		Intent intent = marketPlace.getViewAllPublisherAppsIntent(this);
+		if (intent != null) {
+			startActivity(intent);
+		}
+	}
+
+	/**
+	 * view the premium version of this app
+	 */
+	public void viewPremiumApp() {
+		MarketPlace marketPlace = new MarketPlace(this);
+		Intent intent = marketPlace.getViewPremiumAppIntent(this);
+		if (intent != null) {
+			startActivity(intent);
+		}
 	}
 }
