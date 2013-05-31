@@ -46,7 +46,7 @@ public class MarketPlace {
 	 * @param context
 	 */
 	public MarketPlace(Context context) {
-		String deviceMarketPlaceName = getDevice();
+		String deviceMarketPlaceName = getDevice(context);
 		packageName = context.getResources().getString(R.string.app_full_version_package);
 		if (deviceMarketPlaceName.toUpperCase().equals("GOOGLE")) {
 			marketLocale = MarketLocale.GOOGLE;
@@ -60,16 +60,27 @@ public class MarketPlace {
 	/**
 	 * get device manufacturer to provide the correct marketplace intent(s)
 	 * 
+	 * @param context
 	 * @return string Amazon|Nook|Google
 	 */
-	public String getDevice() {
-		String manufacturer = android.os.Build.MANUFACTURER;
-		if (manufacturer.toLowerCase().contains("amazon")) {
-			return "Amazon";
-		} else if (manufacturer.toLowerCase().contains("nook") || manufacturer.toLowerCase().contains("barnes")) {
-			return "Nook";
+	public String getDevice(Context context) {
+		String marketplaceName = context.getResources().getString(R.string.marketplace_name);
+		if (!marketplaceName.equals("")) {
+			if (marketplaceName.toUpperCase().equals("AMAZON")) {
+				return "Amazon";
+			} else if (marketplaceName.toUpperCase().equals("NOOK")) {
+				return "Nook";
+			}
+			return "Google";
+		} else {
+			String manufacturer = android.os.Build.MANUFACTURER;
+			if (manufacturer.toLowerCase().contains("amazon")) {
+				return "Amazon";
+			} else if (manufacturer.toLowerCase().contains("nook") || manufacturer.toLowerCase().contains("barnes")) {
+				return "Nook";
+			}
+			return "Google";
 		}
-		return "Google";
 	}
 
 	/**
