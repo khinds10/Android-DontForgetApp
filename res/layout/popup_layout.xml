@@ -8,7 +8,7 @@
     android:padding="2dp" >
 
     <LinearLayout
-        android:id="@+id/buttonContainer"
+        android:id="@+id/titleContainer"
         android:layout_width="fill_parent"
         android:layout_height="42dp"
         android:background="@drawable/background_div" >
@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <ScrollView
-        android:id="@+id/scrollView1"
+        android:id="@+id/popupScrollView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
@@ -112,7 +112,7 @@
                 android:paddingTop="10dp" >
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/placeholderTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
@@ -326,7 +326,7 @@
                 android:textColor="#999999" />
 
             <LinearLayout
-                android:id="@+id/textButtonsContainer2"
+                android:id="@+id/sendSMSButtonsContainer2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

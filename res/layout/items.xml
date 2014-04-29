@@ -12,7 +12,7 @@
         android:orientation="horizontal" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/appLogoImage"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
@@ -30,7 +30,7 @@
             android:gravity="left"
             android:text="@string/app_name"
             android:textColor="#FFFFFF"
-            android:textSize="32dp" />
+            android:textSize="32sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -151,7 +151,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/itemsLayout2"
+                android:id="@+id/footerLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >

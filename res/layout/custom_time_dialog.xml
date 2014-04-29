@@ -6,7 +6,7 @@
     android:orientation="vertical" >
 
     <ScrollView
-        android:id="@+id/scrollView1"
+        android:id="@+id/timeScrollDialog"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
@@ -31,8 +31,7 @@
                 android:padding="5dp" >
             </TimePicker>
 
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/buttonLinearLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
