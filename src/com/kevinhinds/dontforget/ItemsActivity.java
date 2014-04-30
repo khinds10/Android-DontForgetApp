@@ -1,8 +1,10 @@
 package com.kevinhinds.dontforget;
 
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +23,7 @@ import com.kevinhinds.dontforget.status.StatusDataSource;
 import com.kevinhinds.dontforget.updates.LatestUpdates;
 import com.kevinhinds.dontforget.widget.CountWidget;
 import com.kevinhinds.dontforget.widget.ListWidget;
+import com.kevinhinds.dontforget.sound.SoundManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -77,6 +80,9 @@ public class ItemsActivity extends Activity {
 	private ItemsDataSource itemsDataSource;
 	private StatusDataSource statusDataSource;
 	private ReminderDataSource reminderDataSource;
+	private SoundManager mSoundManager;
+	ArrayList<Integer> rawIDs;
+	ArrayList<String> rawNames;
 
 	private View layout = null;
 	private PopupWindow pw;
@@ -166,11 +172,15 @@ public class ItemsActivity extends Activity {
 
 		/** apply font to title */
 		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
-		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
+		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
 
 		/** apply font to add new button */
 		TextView addNewButtonText = (TextView) findViewById(R.id.addNewButtonText);
-		addNewButtonText.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
+		addNewButtonText.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+
+		/** apply font to user settings message */
+		TextView userMessage = (TextView) findViewById(R.id.userMessage);
+		userMessage.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
 
 		/** get screen metrics */
 		DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -179,20 +189,19 @@ public class ItemsActivity extends Activity {
 		screenWidth = displaymetrics.widthPixels;
 
 		/** we start with the current messages view */
-		CurrentMessagesLabel.setTextColor(Color.BLACK);
-		CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
+		CurrentMessagesLabel.setTextColor(Color.WHITE);
 
 		/** if you click the current messages option */
 		TextView CurrentMessages = (TextView) findViewById(R.id.CurrentMessages);
 		CurrentMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				playSound("trek_compute5");
 				isArchivedMessageView = 0;
-				CurrentMessagesLabel.setTextColor(Color.BLACK);
-				CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
-				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#E0E0E0"));
-				ArchivedMessagesLabel.setTextColor(Color.GRAY);
+				CurrentMessagesLabel.setTextColor(Color.WHITE);
+				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#CC99CC"));
+				ArchivedMessagesLabel.setTextColor(Color.BLACK);
 				ArchivedMessagesLabel.setTypeface(null, Typeface.NORMAL);
-				ArchivedMessagesLabel.setBackgroundColor(Color.parseColor("#F0F0F0"));
+				ArchivedMessagesLabel.setBackgroundColor(Color.parseColor("#CC6666"));
 				setupItemsList();
 			}
 		});
@@ -201,13 +210,13 @@ public class ItemsActivity extends Activity {
 		TextView ArchivedMessages = (TextView) findViewById(R.id.ArchivedMessages);
 		ArchivedMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				playSound("trek_compute6");
 				isArchivedMessageView = 1;
-				CurrentMessagesLabel.setTextColor(Color.GRAY);
+				CurrentMessagesLabel.setTextColor(Color.BLACK);
 				CurrentMessagesLabel.setTypeface(null, Typeface.NORMAL);
-				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#F0F0F0"));
-				ArchivedMessagesLabel.setTextColor(Color.BLACK);
-				ArchivedMessagesLabel.setTypeface(null, Typeface.BOLD);
-				ArchivedMessagesLabel.setBackgroundColor(Color.parseColor("#E0E0E0"));
+				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#CC6666"));
+				ArchivedMessagesLabel.setTextColor(Color.WHITE);
+				ArchivedMessagesLabel.setBackgroundColor(Color.parseColor("#CC99CC"));
 				setupItemsList();
 			}
 		});
@@ -217,6 +226,7 @@ public class ItemsActivity extends Activity {
 		addNewButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				/** popup to add the new item */
+				playSound("trek_screen2");
 				initiateEditMessagePopup(false);
 			}
 		});
@@ -224,8 +234,32 @@ public class ItemsActivity extends Activity {
 		/** setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future */
 		alarm = new AlarmManagerBroadcastReceiver();
 
+		/** display the sounds list through a different thread */
+		LoadSoundsTask displaySoundsTask = new LoadSoundsTask();
+		displaySoundsTask.execute(new String[] { "" });
+
 		/** show the latest update notes if the application was just installed */
 		LatestUpdates.showFirstInstalledNotes(this);
+	}
+
+	/**
+	 * get the raw sounds and assets via background thread
+	 */
+	private class LoadSoundsTask extends AsyncTask<String, Void, String[]> {
+		@Override
+		protected String[] doInBackground(String... params) {
+			/** get the raw assets and setup the sound */
+			getRawAssets();
+			setupSounds();
+			return params;
+		}
+
+		@Override
+		protected void onPostExecute(String result[]) {
+			// / TODO have a loading thing here?
+			// TextView loadingMessage = (TextView) findViewById(R.id.loadingMessage);
+			// loadingMessage.setVisibility(View.GONE);
+		}
 	}
 
 	/**
@@ -250,8 +284,8 @@ public class ItemsActivity extends Activity {
 	private void setupItemsList() {
 
 		/** the message count text fields should reflect how many archived / non-archived messages */
-		CurrentMessagesLabel.setText("[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "] Messages");
-		ArchivedMessagesLabel.setText("[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "] Archived");
+		CurrentMessagesLabel.setText("Status [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "]");
+		ArchivedMessagesLabel.setText("Standby [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "]");
 
 		/** get all the itemlist items saved in the DB set to archived = false */
 		final List<Item> itemlist = itemsDataSource.getAllItemsbyArchiveType(isArchivedMessageView);
@@ -280,9 +314,10 @@ public class ItemsActivity extends Activity {
 			tv.setGravity(Gravity.CENTER_VERTICAL);
 			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.bubble), null, null, null);
 			tv.setCompoundDrawablePadding(10);
-			tv.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
+			tv.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
 			tv.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
+					playSound("trek_screen3");
 					currentID = v.getId();
 					Item currentEditItem = itemsDataSource.getById(currentID);
 					currentTitleValue = currentEditItem.name;
@@ -362,8 +397,17 @@ public class ItemsActivity extends Activity {
 		/** display the popup in the center */
 		pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
+		TextView processMessageTitle = (TextView) layout.findViewById(R.id.processMessageTitle);
+		processMessageTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+
+		TextView quickEmailTitle = (TextView) layout.findViewById(R.id.quickEmailTitle);
+		quickEmailTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+
+		TextView quickTextTitle = (TextView) layout.findViewById(R.id.quickTextTitle);
+		quickTextTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+
 		TextView popupTitle = (TextView) layout.findViewById(R.id.popupTitle);
-		popupTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
+		popupTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
 
 		editTextTitle = (TextView) layout.findViewById(R.id.editTextTitle);
 		messageContent = (TextView) layout.findViewById(R.id.messageContent);
@@ -479,6 +523,7 @@ public class ItemsActivity extends Activity {
 			String statusDate = getLastUpdateTime();
 
 			public void onClick(View v) {
+				playSound("trek_processing3");
 				if (isTitleEmpty(editTextTitle)) {
 					showEmptyTitleMessage();
 				} else {
@@ -498,6 +543,8 @@ public class ItemsActivity extends Activity {
 		TextView archiveOptionButton = (TextView) layout.findViewById(R.id.ArchiveButton);
 		archiveOptionButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+
+				playSound("trek_processing2");
 				if (isTitleEmpty(editTextTitle)) {
 					showEmptyTitleMessage();
 				} else {
@@ -516,6 +563,7 @@ public class ItemsActivity extends Activity {
 		TextView cancelButton = (TextView) layout.findViewById(R.id.cancelButton);
 		cancelButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				playSound("trek_beep6");
 				pw.dismiss();
 			}
 		});
@@ -1581,6 +1629,52 @@ public class ItemsActivity extends Activity {
 			reminderTimeMilleseconds = reminderTimeMilleseconds + 86400000;
 		}
 		return reminderTimeMilleseconds - currentTime.getTime();
+	}
+
+	/**
+	 * get all the raw assets sound files in the raw folder
+	 */
+	private void getRawAssets() {
+		rawIDs = new ArrayList<Integer>();
+		rawNames = new ArrayList<String>();
+		Field[] fields = R.raw.class.getFields();
+		for (Field f : fields)
+			try {
+				rawIDs.add(f.getInt(null));
+				rawNames.add(f.getName());
+			} catch (IllegalArgumentException e) {
+			} catch (IllegalAccessException e) {
+			}
+	}
+
+	/**
+	 * setup the new soundmanager with the context being "this"
+	 */
+	private void setupSounds() {
+		mSoundManager = new SoundManager();
+		mSoundManager.initSounds(this);
+		for (int i = 0; i < rawIDs.size(); i++) {
+			mSoundManager.addSound(i, rawIDs.get(i));
+		}
+	}
+
+	/**
+	 * play the sound
+	 */
+	private void playSound(String soundName) {
+		int i = 0;
+		int index = 0;
+		for (String s : rawNames) {
+			if (s.equals(soundName)) {
+				index = i;
+				break;
+			}
+			i++;
+		}
+		try {
+			mSoundManager.playSound(index);
+		} catch (Exception e) {
+		}
 	}
 
 	/** create the main menu based on if the app is the full version or not */

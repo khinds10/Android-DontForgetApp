@@ -3,15 +3,16 @@
     android:id="@+id/popup_element"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/custom_border"
+    android:background="@drawable/popup_border"
     android:orientation="vertical"
     android:padding="2dp" >
 
     <LinearLayout
         android:id="@+id/titleContainer"
         android:layout_width="fill_parent"
-        android:layout_height="42dp"
-        android:background="@drawable/background_div" >
+        android:layout_height="35dp"
+        android:layout_margin="12dp"
+        android:background="@drawable/popup_title_background" >
 
         <TextView
             android:id="@+id/popupTitle"
@@ -21,9 +22,9 @@
             android:padding="5dp"
             android:paddingBottom="15dp"
             android:paddingRight="10dp"
-            android:text="@string/Your_Message"
-            android:textColor="#FFFFFF"
-            android:textSize="20dp" />
+            android:text="LCARS ACCESS"
+            android:textColor="#000000"
+            android:textSize="16dp" />
 
         <Button
             android:id="@+id/cancelButton"
@@ -40,14 +41,16 @@
     <ScrollView
         android:id="@+id/popupScrollView"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:padding="10dp" >
 
         <LinearLayout
             android:id="@+id/messageFormContainer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp" >
+            android:padding="10dp"
+            android:paddingTop="0dp" >
 
             <TextView
                 android:id="@+id/textViewTitle"
@@ -182,7 +185,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="@string/Process_Message"
+                android:text="System Entry"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -199,7 +202,6 @@
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/save"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:maxWidth="90dp"
@@ -216,7 +218,6 @@
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/archive"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:maxWidth="90dp"
@@ -241,7 +242,6 @@
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/remind"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:maxWidth="90dp"
@@ -258,7 +258,6 @@
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/delete"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:maxWidth="90dp"
@@ -274,7 +273,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="@string/Quickly_Email"
+                android:text="Email Protocol"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -291,7 +290,6 @@
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/send"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:minHeight="35dp"
@@ -307,12 +305,11 @@
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/send"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="@string/Contact"
+                    android:text="Starfleet"
                     android:textColor="#000000"
                     android:textSize="14dp" />
             </LinearLayout>
@@ -322,7 +319,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="@string/Quickly_Text"
+                android:text="SMS Protocol"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -339,7 +336,6 @@
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/send"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:minHeight="35dp"
@@ -355,12 +351,11 @@
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
-                    android:drawableLeft="@drawable/send"
                     android:drawablePadding="5dp"
                     android:gravity="center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="@string/Contact"
+                    android:text="Starfleet"
                     android:textColor="#000000"
                     android:textSize="14dp" />
             </LinearLayout>

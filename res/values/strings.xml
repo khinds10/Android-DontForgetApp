@@ -3,7 +3,7 @@
     <string name="Add_New">Add New</string>
     <string name="Afternoon_Reminder_Time">Afternoon Reminder Time</string>
     <string name="app_full_version_package">com.kevinhinds.dontforget</string>
-    <string name="app_name">Don\'t Forget!</string>
+    <string name="app_name">Captain\'s Log</string>
     <string name="app_publisher_name">Kevin Hinds</string>
     <string name="app_publisher_package">com.kevinhinds</string>
     <string name="Archive">Archive</string>
@@ -13,7 +13,7 @@
     <string name="Contact">Contact</string>
     <string name="Delete">Delete</string>
     <string name="device_nook_ean_number">9999999999999</string>
-    <string name="Dont_Forget_Message">Don\'t Forget! Message</string>
+    <string name="Dont_Forget_Message">Captain\'s Log Message</string>
     <string name="Edit">Edit</string>
     <string name="Evening_Reminder_Time">Evening Reminder Time</string>
     <string name="is_full_version">true</string>
