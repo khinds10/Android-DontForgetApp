@@ -18,8 +18,7 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="0dp"
             android:layout_weight="0.20"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/bubble" />
+            android:contentDescription="@string/app_name" />
 
         <TextView
             android:id="@+id/appTitle"
@@ -93,6 +92,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPassword" />
+
             <TextView
                 android:id="@+id/phoneNumberTitle"
                 android:layout_width="wrap_content"

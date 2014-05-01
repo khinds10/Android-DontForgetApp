@@ -56,7 +56,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -146,6 +145,12 @@ public class ItemsActivity extends Activity {
 	private int afternoonTime = 0;
 	private int eveningTime = 0;
 
+	/** the font for the buttons */
+	public String buttonFont = "fonts/Muro.otf";
+
+	/** font for the titles */
+	public String titleFont = "fonts/Montalban.ttf";
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -172,15 +177,15 @@ public class ItemsActivity extends Activity {
 
 		/** apply font to title */
 		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
-		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
 
 		/** apply font to add new button */
 		TextView addNewButtonText = (TextView) findViewById(R.id.addNewButtonText);
-		addNewButtonText.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+		addNewButtonText.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		/** apply font to user settings message */
 		TextView userMessage = (TextView) findViewById(R.id.userMessage);
-		userMessage.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+		userMessage.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		/** get screen metrics */
 		DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -309,12 +314,12 @@ public class ItemsActivity extends Activity {
 			tv.setText((CharSequence) itemName);
 			tv.setLayoutParams(lp);
 			tv.setClickable(true);
-			tv.setTextColor(Color.BLACK);
+			tv.setTextColor(Color.WHITE);
 			tv.setPadding(10, 8, 0, 8);
 			tv.setGravity(Gravity.CENTER_VERTICAL);
-			tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.bubble), null, null, null);
+			// tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.bubble), null, null, null);
 			tv.setCompoundDrawablePadding(10);
-			tv.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+			tv.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 			tv.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					playSound("trek_screen3");
@@ -397,32 +402,52 @@ public class ItemsActivity extends Activity {
 		/** display the popup in the center */
 		pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
+		TextView textViewTitle = (TextView) layout.findViewById(R.id.textViewTitle);
+		textViewTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+
+		TextView messageTitle = (TextView) layout.findViewById(R.id.messageTitle);
+		messageTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+
 		TextView processMessageTitle = (TextView) layout.findViewById(R.id.processMessageTitle);
-		processMessageTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+		processMessageTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		TextView quickEmailTitle = (TextView) layout.findViewById(R.id.quickEmailTitle);
-		quickEmailTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+		quickEmailTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		TextView quickTextTitle = (TextView) layout.findViewById(R.id.quickTextTitle);
-		quickTextTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+		quickTextTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		TextView popupTitle = (TextView) layout.findViewById(R.id.popupTitle);
-		popupTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Montalban.ttf"));
+		popupTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		editTextTitle = (TextView) layout.findViewById(R.id.editTextTitle);
 		messageContent = (TextView) layout.findViewById(R.id.messageContent);
+
 		TextView deleteButton = (TextView) layout.findViewById(R.id.DeleteButton);
+		deleteButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+
 		TextView archiveButton = (TextView) layout.findViewById(R.id.ArchiveButton);
+		archiveButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+
 		final TextView readOnlyTitletextView = (TextView) layout.findViewById(R.id.readOnlyTitletextView);
+		readOnlyTitletextView.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+
 		final TextView readOnlyMessagetextView = (TextView) layout.findViewById(R.id.readOnlyMessagetextView);
+		readOnlyMessagetextView.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		/** edit existing memo buttons and container */
 		final LinearLayout editButtonContainer = (LinearLayout) layout.findViewById(R.id.editButtonContainer);
-		final Button editMemoButton = (Button) layout.findViewById(R.id.editMemoButton);
-		final Button cancelEditMemoButton = (Button) layout.findViewById(R.id.cancelEditMemoButton);
+
+		final TextView editMemoButton = (TextView) layout.findViewById(R.id.editMemoButton);
+		editMemoButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+
+		final TextView cancelEditMemoButton = (TextView) layout.findViewById(R.id.cancelEditMemoButton);
+		cancelEditMemoButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		/** reminder reminder elements */
-		final Button cancelReminderButton = (Button) layout.findViewById(R.id.cancelReminderButton);
+		final TextView cancelReminderButton = (TextView) layout.findViewById(R.id.cancelReminderButton);
+		cancelReminderButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+
 		final LinearLayout reminderLayout = (LinearLayout) layout.findViewById(R.id.reminderReminder);
 		final TextView reminderReminderInfo = (TextView) layout.findViewById(R.id.reminderReminderInfo);
 		final ImageView reminderImage = (ImageView) layout.findViewById(R.id.reminderImage);
@@ -511,14 +536,13 @@ public class ItemsActivity extends Activity {
 		/** set the button text to Archived/Un-Archived by what you're able to do */
 		if (isArchivedMessageView == 1) {
 			archiveButton.setText("Un-Archive");
-			archiveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.unarchive, 0, 0, 0);
 		} else {
 			archiveButton.setText("Archive");
-			archiveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.archive, 0, 0, 0);
 		}
 
 		/** set button is pressed, set the timer and close the popup */
 		TextView setButton = (TextView) layout.findViewById(R.id.SaveButton);
+		setButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		setButton.setOnClickListener(new OnClickListener() {
 			String statusDate = getLastUpdateTime();
 
@@ -541,9 +565,9 @@ public class ItemsActivity extends Activity {
 
 		/** set button is pressed, set the timer and close the popup */
 		TextView archiveOptionButton = (TextView) layout.findViewById(R.id.ArchiveButton);
+		archiveOptionButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		archiveOptionButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-
 				playSound("trek_processing2");
 				if (isTitleEmpty(editTextTitle)) {
 					showEmptyTitleMessage();
@@ -561,6 +585,7 @@ public class ItemsActivity extends Activity {
 
 		/** cancel button to close */
 		TextView cancelButton = (TextView) layout.findViewById(R.id.cancelButton);
+		cancelButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		cancelButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				playSound("trek_beep6");
@@ -593,6 +618,7 @@ public class ItemsActivity extends Activity {
 
 		/** email yourself button */
 		TextView sendButton = (TextView) layout.findViewById(R.id.sendEmailButton);
+		sendButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		sendButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
@@ -618,6 +644,7 @@ public class ItemsActivity extends Activity {
 
 		/** email friend button */
 		TextView sendContactEmailButton = (TextView) layout.findViewById(R.id.sendContactEmailButton);
+		sendContactEmailButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		sendContactEmailButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
@@ -633,6 +660,7 @@ public class ItemsActivity extends Activity {
 
 		/** SMS friend button */
 		TextView sendContactSMSButton = (TextView) layout.findViewById(R.id.sendContactSMSButton);
+		sendContactSMSButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		sendContactSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
@@ -648,6 +676,7 @@ public class ItemsActivity extends Activity {
 
 		/** SMS yourself button */
 		TextView sendSMSButton = (TextView) layout.findViewById(R.id.sendSMSButton);
+		sendSMSButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		sendSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
@@ -673,6 +702,7 @@ public class ItemsActivity extends Activity {
 
 		/** remind me later button */
 		TextView RemindButton = (TextView) layout.findViewById(R.id.RemindButton);
+		RemindButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		RemindButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
@@ -700,13 +730,13 @@ public class ItemsActivity extends Activity {
 								customDialog.setContentView(R.layout.custom_time_dialog);
 								customDialog.setTitle("Choose Custom Reminder:");
 								customDialog.show();
-								Button cancelCustomReminderButton = (Button) customDialog.findViewById(R.id.cancelCustomReminderButton);
+								TextView cancelCustomReminderButton = (TextView) customDialog.findViewById(R.id.cancelCustomReminderButton);
 								cancelCustomReminderButton.setOnClickListener(new OnClickListener() {
 									public void onClick(View v) {
 										customDialog.dismiss();
 									}
 								});
-								Button setCustomReminderButton = (Button) customDialog.findViewById(R.id.setCustomReminderButton);
+								TextView setCustomReminderButton = (TextView) customDialog.findViewById(R.id.setCustomReminderButton);
 								setCustomReminderButton.setOnClickListener(new OnClickListener() {
 									public void onClick(View v) {
 
@@ -1208,10 +1238,11 @@ public class ItemsActivity extends Activity {
 
 		/** show the user the most current email settings */
 		TextView userGmail = (TextView) findViewById(R.id.userGmail);
+		userGmail.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		String displayEmail = "";
 		if (usersEmail.equals("")) {
-			userGmail.setTextColor(Color.BLACK);
-			displayEmail = "(Please configure)";
+			userGmail.setTextColor(Color.WHITE);
+			displayEmail = "(Configure)";
 		} else {
 			displayEmail = usersEmail;
 		}
@@ -1219,10 +1250,11 @@ public class ItemsActivity extends Activity {
 
 		/** show the user the most current phone number */
 		TextView userPhoneNumber = (TextView) findViewById(R.id.userPhoneNumber);
+		userPhoneNumber.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		String displayPhone = "";
 		if (usersPhone.equals("")) {
-			userPhoneNumber.setTextColor(Color.BLACK);
-			displayPhone = "(Please configure)";
+			userPhoneNumber.setTextColor(Color.WHITE);
+			displayPhone = "(Configure)";
 		} else {
 			displayPhone = usersPhone;
 		}

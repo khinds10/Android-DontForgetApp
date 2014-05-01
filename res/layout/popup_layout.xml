@@ -18,24 +18,28 @@
             android:id="@+id/popupTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".6"
+            android:layout_weight=".8"
             android:padding="5dp"
             android:paddingBottom="15dp"
-            android:paddingRight="10dp"
+            android:paddingRight="15dp"
             android:text="LCARS ACCESS"
             android:textColor="#000000"
-            android:textSize="16dp" />
+            android:textSize="24sp" />
 
-        <Button
+        <TextView
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginRight="5dp"
-            android:layout_weight=".4"
-            android:background="@drawable/custom_button"
-            android:padding="5dp"
-            android:text="@string/Cancel" >
-        </Button>
+            android:layout_weight=".2"
+            android:background="@drawable/custom_button_yellow"
+            android:gravity="right|center_vertical"
+            android:paddingRight="15dp"
+            android:text="CLOSE"
+            android:textColor="#000000"
+            android:textSize="14sp" >
+        </TextView>
     </LinearLayout>
 
     <ScrollView
@@ -57,8 +61,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="@string/Title"
-                android:textColor="#000000" />
+                android:text="DIRECTIVE"
+                android:textColor="#999999" />
 
             <EditText
                 android:id="@+id/editTextTitle"
@@ -67,7 +71,7 @@
                 android:inputType="textCapSentences"
                 android:maxLines="3"
                 android:paddingTop="10dp"
-                android:textSize="22dp"
+                android:textSize="22sp"
                 android:textStyle="bold" >
 
                 <requestFocus />
@@ -78,17 +82,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:textColor="#000000"
-                android:textSize="20dp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/messageTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
-                android:text="@string/Message"
-                android:textColor="#000000"
-                android:textSize="14dp" />
+                android:text="DETAILS"
+                android:textColor="#999999" />
 
             <EditText
                 android:id="@+id/messageContent"
@@ -104,8 +107,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:textColor="#000000"
-                android:textSize="20dp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" />
 
             <LinearLayout
                 android:id="@+id/editButtonContainer"
@@ -120,23 +123,29 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-                <Button
+                <TextView
                     android:id="@+id/editMemoButton"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:background="@drawable/custom_button"
-                    android:padding="10dp"
-                    android:text="@string/Edit" />
+                    android:background="@drawable/custom_button_yellow"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="15dp"
+                    android:text="EDIT"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
 
-                <Button
+                <TextView
                     android:id="@+id/cancelEditMemoButton"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:background="@drawable/custom_button"
-                    android:padding="10dp"
-                    android:text="@string/Cancel_Edit" />
+                    android:background="@drawable/custom_button_yellow"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="15dp"
+                    android:text="CANCEL"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -150,7 +159,7 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:orientation="horizontal"
                     android:paddingBottom="5dp" >
 
@@ -159,7 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/app_name"
-                        android:gravity="center_vertical"
+                        android:gravity="right|center_vertical"
                         android:paddingRight="4dp"
                         android:src="@drawable/reminder_icon" />
 
@@ -167,12 +176,12 @@
                         android:id="@+id/reminderReminderInfo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
+                        android:gravity="right|center_vertical"
                         android:paddingTop="10dp"
                         android:textColor="#0000FF" />
                 </LinearLayout>
 
-                <Button
+                <TextView
                     android:id="@+id/cancelReminderButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -185,7 +194,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="System Entry"
+                android:text="SYSTEM ENTRY"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -201,15 +210,16 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:background="@drawable/custom_button_blue"
                     android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:maxWidth="90dp"
                     android:minHeight="35dp"
                     android:minWidth="90dp"
-                    android:text="@string/Save"
+                    android:paddingRight="18dp"
+                    android:text="SAVE"
                     android:textColor="#000000"
-                    android:textSize="14dp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/ArchiveButton"
@@ -217,15 +227,16 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:background="@drawable/custom_button_blue"
                     android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:maxWidth="90dp"
                     android:minHeight="35dp"
                     android:minWidth="90dp"
-                    android:text="@string/Archive"
+                    android:paddingRight="18dp"
+                    android:text="ARCHIVE"
                     android:textColor="#000000"
-                    android:textSize="14dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -241,15 +252,16 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:background="@drawable/custom_button_blue"
                     android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:maxWidth="90dp"
                     android:minHeight="35dp"
                     android:minWidth="90dp"
-                    android:text="@string/Remind_Me"
+                    android:paddingRight="18dp"
+                    android:text="REMIND"
                     android:textColor="#000000"
-                    android:textSize="14dp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/DeleteButton"
@@ -257,15 +269,16 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:background="@drawable/custom_button_blue"
                     android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:maxWidth="90dp"
                     android:minHeight="35dp"
                     android:minWidth="90dp"
-                    android:text="@string/Delete"
+                    android:paddingRight="18dp"
+                    android:text="DELETE"
                     android:textColor="#000000"
-                    android:textSize="14dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
@@ -273,7 +286,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="Email Protocol"
+                android:text="EMAIL PROTOCOL"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -289,14 +302,15 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:background="@drawable/custom_button_purple"
                     android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="@string/Yourself"
+                    android:paddingRight="15dp"
+                    android:text="YOURSELF"
                     android:textColor="#000000"
-                    android:textSize="14dp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/sendContactEmailButton"
@@ -304,14 +318,15 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight=".5"
-                    android:background="@drawable/custom_button"
+                    android:background="@drawable/custom_button_purple"
                     android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="Starfleet"
+                    android:paddingRight="15dp"
+                    android:text="STARFLEET"
                     android:textColor="#000000"
-                    android:textSize="14dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
@@ -319,7 +334,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="SMS Protocol"
+                android:text="SMS PROTOCOL"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -337,12 +352,13 @@
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
                     android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="@string/Yourself"
+                    android:paddingRight="15dp"
+                    android:text="YOURSELF"
                     android:textColor="#000000"
-                    android:textSize="14dp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/sendContactSMSButton"
@@ -352,12 +368,13 @@
                     android:layout_weight=".5"
                     android:background="@drawable/custom_button"
                     android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
+                    android:gravity="right|center_vertical"
                     android:minHeight="35dp"
                     android:minWidth="200dp"
-                    android:text="Starfleet"
+                    android:paddingRight="15dp"
+                    android:text="STARFLEET"
                     android:textColor="#000000"
-                    android:textSize="14dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

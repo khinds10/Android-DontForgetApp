@@ -10,14 +10,20 @@
         android:layout_height="50dp"
         android:orientation="horizontal" >
 
+        <ImageView
+            android:id="@+id/titleIcon"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:paddingRight="4dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/dysonlcars" />
+
         <TextView
             android:id="@+id/AppTitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.80"
-            android:gravity="left"
-            android:drawableLeft="@drawable/ic_launcher"
+            android:layout_gravity="center_vertical"
             android:text="@string/app_name"
             android:textColor="#FD9903"
             android:textSize="28sp" />
@@ -99,14 +105,15 @@
 
             <TextView
                 android:id="@+id/addNewButtonText"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:background="@drawable/custom_button"
-                android:gravity="center_vertical"
-                android:text="@string/Add_New"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000" />
+                android:gravity="right"
+                android:paddingRight="15dp"
+                android:text="ACCESS"
+                android:textColor="#000000"
+                android:textSize="22sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -128,11 +135,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="#8988C2"
+                android:gravity="center_vertical"
                 android:paddingBottom="3dp"
                 android:paddingLeft="4dp"
-                android:text="@string/Settings_press_to_update"
+                android:text="Configuration"
                 android:textColor="#000000"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
