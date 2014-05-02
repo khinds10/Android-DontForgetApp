@@ -67,6 +67,7 @@ import android.widget.Toast;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.view.KeyEvent;
 
 /**
  * Main Activity for items
@@ -200,7 +201,7 @@ public class ItemsActivity extends Activity {
 		TextView CurrentMessages = (TextView) findViewById(R.id.CurrentMessages);
 		CurrentMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				playSound("trek_compute5");
+				soundEvent("click_current_messages");
 				isArchivedMessageView = 0;
 				CurrentMessagesLabel.setTextColor(Color.WHITE);
 				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#CC99CC"));
@@ -215,7 +216,7 @@ public class ItemsActivity extends Activity {
 		TextView ArchivedMessages = (TextView) findViewById(R.id.ArchivedMessages);
 		ArchivedMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				playSound("trek_compute6");
+				soundEvent("click_archived_messages");
 				isArchivedMessageView = 1;
 				CurrentMessagesLabel.setTextColor(Color.BLACK);
 				CurrentMessagesLabel.setTypeface(null, Typeface.NORMAL);
@@ -231,7 +232,7 @@ public class ItemsActivity extends Activity {
 		addNewButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				/** popup to add the new item */
-				playSound("trek_screen2");
+				soundEvent("click_add_new");
 				initiateEditMessagePopup(false);
 			}
 		});
@@ -261,9 +262,8 @@ public class ItemsActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(String result[]) {
-			// / TODO have a loading thing here?
-			// TextView loadingMessage = (TextView) findViewById(R.id.loadingMessage);
-			// loadingMessage.setVisibility(View.GONE);
+			/** play the open app sound */
+			soundEvent("openapp");
 		}
 	}
 
@@ -317,12 +317,15 @@ public class ItemsActivity extends Activity {
 			tv.setTextColor(Color.WHITE);
 			tv.setPadding(10, 8, 0, 8);
 			tv.setGravity(Gravity.CENTER_VERTICAL);
+
+			// // this could be like crazy numbers or something that appear as an image?
 			// tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.bubble), null, null, null);
+
 			tv.setCompoundDrawablePadding(10);
 			tv.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 			tv.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					playSound("trek_screen3");
+					soundEvent("click_view_item");
 					currentID = v.getId();
 					Item currentEditItem = itemsDataSource.getById(currentID);
 					currentTitleValue = currentEditItem.name;
@@ -479,6 +482,7 @@ public class ItemsActivity extends Activity {
 			}
 			cancelReminderButton.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
+					soundEvent("click_cancel_timer");
 					reminderDataSource.deleteReminder(currentReminder);
 					reminderImage.setVisibility(View.GONE);
 					cancelReminderButton.setVisibility(View.GONE);
@@ -507,6 +511,7 @@ public class ItemsActivity extends Activity {
 		/** edit button is pressed, change the popup to be able to edit */
 		editMemoButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				soundEvent("click_edit_message");
 				readOnlyTitletextView.setVisibility(View.GONE);
 				readOnlyMessagetextView.setVisibility(View.GONE);
 				editTextTitle.setVisibility(View.VISIBLE);
@@ -522,6 +527,7 @@ public class ItemsActivity extends Activity {
 		/** cancel edit button is pressed, change the popup to be able to edit */
 		cancelEditMemoButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				soundEvent("click_cancel_edit_message");
 				readOnlyTitletextView.setVisibility(View.VISIBLE);
 				readOnlyMessagetextView.setVisibility(View.VISIBLE);
 				editTextTitle.setVisibility(View.GONE);
@@ -547,10 +553,11 @@ public class ItemsActivity extends Activity {
 			String statusDate = getLastUpdateTime();
 
 			public void onClick(View v) {
-				playSound("trek_processing3");
 				if (isTitleEmpty(editTextTitle)) {
+					soundEvent("error_no_title_save");
 					showEmptyTitleMessage();
 				} else {
+					soundEvent("click_save_message");
 					if (editMode) {
 						recentlyTriedItemID = editEntryDB("[edited] " + statusDate);
 						recentlyTriedEditType = "edit";
@@ -568,14 +575,16 @@ public class ItemsActivity extends Activity {
 		archiveOptionButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		archiveOptionButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				playSound("trek_processing2");
 				if (isTitleEmpty(editTextTitle)) {
+					soundEvent("error_no_title_archive");
 					showEmptyTitleMessage();
 				} else {
 					/** set archive / un-archive by user request */
 					if (isArchivedMessageView == 1) {
+						soundEvent("click_archive_message");
 						archiveOptionEntryDB(0);
 					} else {
+						soundEvent("click_unarchive_message");
 						archiveOptionEntryDB(1);
 					}
 					pw.dismiss();
@@ -588,7 +597,7 @@ public class ItemsActivity extends Activity {
 		cancelButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		cancelButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				playSound("trek_beep6");
+				soundEvent("click_cancel_button");
 				pw.dismiss();
 			}
 		});
@@ -596,10 +605,12 @@ public class ItemsActivity extends Activity {
 		/** delete button is pressed, confirm and delete */
 		deleteButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				soundEvent("click_delete_button");
 				AlertDialog.Builder builder = new AlertDialog.Builder(ItemsActivity.this);
 				builder.setTitle("Delete Message");
 				builder.setMessage("Are you sure you want to delete this message?").setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
+						soundEvent("click_confirm_delete");
 						deleteReminderEntry(currentID);
 						deleteEntryDB();
 						dialog.dismiss();
@@ -607,6 +618,7 @@ public class ItemsActivity extends Activity {
 					}
 				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
+						soundEvent("click_cancel_delete");
 						dialog.cancel();
 					}
 				});
@@ -622,8 +634,10 @@ public class ItemsActivity extends Activity {
 		sendButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
+					soundEvent("error_no_title_send");
 					showEmptyTitleMessage();
 				} else {
+					soundEvent("sending_email_yourself");
 					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + usersEmail);
 					String statusValue = "[emailed yourself] " + getLastUpdateTime();
 					if (editMode) {
@@ -648,9 +662,11 @@ public class ItemsActivity extends Activity {
 		sendContactEmailButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
+					soundEvent("error_no_title_contact_email");
 					showEmptyTitleMessage();
 				} else {
 					/** select a friends email to send a reminder to */
+					soundEvent("find_contact_email");
 					activityForResultType = "email";
 					Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
 					startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
@@ -664,9 +680,11 @@ public class ItemsActivity extends Activity {
 		sendContactSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
+					soundEvent("error_no_title_contact_sms");
 					showEmptyTitleMessage();
 				} else {
 					/** select a friends email to send a reminder to */
+					soundEvent("find_contact_sms");
 					activityForResultType = "SMS";
 					Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
 					startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
@@ -680,8 +698,10 @@ public class ItemsActivity extends Activity {
 		sendSMSButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
+					soundEvent("error_no_title_send_sms");
 					showEmptyTitleMessage();
 				} else {
+					soundEvent("sending_sms_yourself");
 					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
 					String statusValue = "[texted yourself] " + getLastUpdateTime();
 					if (editMode) {
@@ -706,8 +726,10 @@ public class ItemsActivity extends Activity {
 		RemindButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
+					soundEvent("error_no_title_remind");
 					showEmptyTitleMessage();
 				} else {
+					soundEvent("click_remind");
 					String statusDate = getLastUpdateTime();
 					if (editMode) {
 						currentID = editEntryDB("[edited] " + statusDate);
@@ -722,10 +744,10 @@ public class ItemsActivity extends Activity {
 					/** setup the list of choices with click events */
 					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
-
 							/** based on the dialog selection either set the reminder or continue to show the custom dialog if they chose "custom" */
 							String selectedItem = (String) currentReminderOptions[item];
 							if (selectedItem.equals("Custom...")) {
+								soundEvent("event_choose_reminder_time_custom_select");
 								final Dialog customDialog = new Dialog(ItemsActivity.this);
 								customDialog.setContentView(R.layout.custom_time_dialog);
 								customDialog.setTitle("Choose Custom Reminder:");
@@ -757,6 +779,7 @@ public class ItemsActivity extends Activity {
 								dialog.dismiss();
 							} else {
 								/** get the amount of time until the future selected reminder datetime */
+								soundEvent("event_choose_reminder_time_standard");
 								long diff = getFutureTime(currentReminderOptions[item]);
 								setReminder(diff);
 								dialog.dismiss();
@@ -960,6 +983,7 @@ public class ItemsActivity extends Activity {
 		alertDialog.setMessage("Send text to contact's number -> " + friendsSMS);
 		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
+				soundEvent("click_sms_contact_confirm");
 				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Text Message", "Texting contact's primary number: \n" + friendsSMS);
 				String statusValue = "[texted: " + friendsSMS + "] " + getLastUpdateTime();
 				if (currentEditMode) {
@@ -979,6 +1003,7 @@ public class ItemsActivity extends Activity {
 		});
 		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
+				soundEvent("click_sms_contact_cancel");
 				dialog.dismiss();
 			}
 		});
@@ -995,6 +1020,7 @@ public class ItemsActivity extends Activity {
 		alertDialog.setMessage("Send Message to -> " + friendsEmail);
 		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
+				soundEvent("click_email_contact_confirm");
 				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + friendsEmail);
 				String statusValue = "[emailed: " + friendsEmail + "] " + getLastUpdateTime();
 				if (currentEditMode) {
@@ -1014,6 +1040,7 @@ public class ItemsActivity extends Activity {
 		});
 		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
+				soundEvent("click_email_contact_cancel");
 				dialog.dismiss();
 			}
 		});
@@ -1116,6 +1143,7 @@ public class ItemsActivity extends Activity {
 					chooseAlert.setSingleChoiceItems(friendsSMSList, -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/** friends SMS becomes what was selected from the dialog removing the message about if the phone number is primary */
+							soundEvent("click_choose_which_number_sms");
 							friendsSMS = (String) friendsSMSList[item];
 							friendsSMS = friendsSMS.replace(" [primary]", "");
 							sendSMSConfirm();
@@ -1130,6 +1158,7 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle("Send Reminder to Friend");
 				alertDialog.setMessage("Phone number couldn't be located for contact");
+				soundEvent("event_no_phone_number_found_sms");
 
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
 				Status status = getStatus();
@@ -1144,6 +1173,7 @@ public class ItemsActivity extends Activity {
 
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
+						soundEvent("event_no_phone_number_found_sms_confirm");
 						dialog.dismiss();
 					}
 				});
@@ -1165,6 +1195,7 @@ public class ItemsActivity extends Activity {
 					chooseEmailAlert.setSingleChoiceItems(friendsEmailList, -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/** friends email becomes what was selected from the dialog */
+							soundEvent("click_choose_which_email");
 							friendsEmail = (String) friendsEmailList[item];
 							showEmailConfirm();
 							dialog.dismiss();
@@ -1178,6 +1209,7 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle("Send Reminder to Friend");
 				alertDialog.setMessage("Email address couldn't be located for contact");
+				soundEvent("event_email_not_found_contact");
 
 				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email */
 				Status status = getStatus();
@@ -1192,6 +1224,7 @@ public class ItemsActivity extends Activity {
 
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
+						soundEvent("event_email_not_found_contact_confirm");
 						dialog.dismiss();
 					}
 				});
@@ -1264,6 +1297,7 @@ public class ItemsActivity extends Activity {
 		LinearLayout subContentAccountSettings = (LinearLayout) findViewById(R.id.subContentAccountSettings);
 		subContentAccountSettings.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				soundEvent("click_edit_settings");
 				Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
 				startActivity(intent);
 			}
@@ -1492,7 +1526,7 @@ public class ItemsActivity extends Activity {
 				String currentTitle = editTextTitle.getText().toString();
 				String currentMessage = messageContent.getText().toString();
 				GMailSender sender = new GMailSender(usersEmail, usersPassword);
-				sender.sendMail(currentTitle + "   (Don't Forget! for Android)", currentMessage + "\n\n--\nDon't Forget! for Android", usersEmail, recipient);
+				sender.sendMail(currentTitle + "   (Captain's Log for Android)", currentMessage + "\n\n--\nCaptain's Log for Android", usersEmail, recipient);
 			} catch (Exception e) {
 				emailSent = false;
 			}
@@ -1687,6 +1721,143 @@ public class ItemsActivity extends Activity {
 		mSoundManager.initSounds(this);
 		for (int i = 0; i < rawIDs.size(); i++) {
 			mSoundManager.addSound(i, rawIDs.get(i));
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		soundEvent("keypress");
+		return super.onKeyDown(keyCode, event);
+	}
+
+	/**
+	 * capture a screen event to then map the correct sound to play
+	 * 
+	 * @param eventName
+	 */
+	private void soundEvent(String eventName) {
+		if (eventName.equals("keypress")) {
+			playSound("keypress");
+		}
+		if (eventName.equals("openapp")) {
+			playSound("openapp");
+		}
+		if (eventName.equals("error_no_title_save")) {
+			playSound("error");
+		}
+		if (eventName.equals("click_current_messages")) {
+			playSound("left");
+		}
+		if (eventName.equals("click_archived_messages")) {
+			playSound("right");
+		}
+		if (eventName.equals("click_add_new")) {
+			playSound("open");
+		}
+		if (eventName.equals("click_view_item")) {
+			playSound("open");
+		}
+		if (eventName.equals("click_cancel_timer")) {
+			playSound("save");
+		}
+		if (eventName.equals("click_edit_message")) {
+			playSound("cancel");
+		}
+		if (eventName.equals("click_cancel_edit_message")) {
+			playSound("cancel");
+		}
+		if (eventName.equals("click_save_message")) {
+			playSound("finalize");
+		}
+		if (eventName.equals("error_no_title_archive")) {
+			playSound("error");
+		}
+		if (eventName.equals("click_archive_message")) {
+			playSound("archive");
+		}
+		if (eventName.equals("click_unarchive_message")) {
+			playSound("unarchive");
+		}
+		if (eventName.equals("click_cancel_button")) {
+			playSound("save");
+		}
+		if (eventName.equals("click_delete_button")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_confirm_delete")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_cancel_delete")) {
+			playSound("beep");
+		}
+		if (eventName.equals("error_no_title_send")) {
+			playSound("error");
+		}
+		if (eventName.equals("sending_email_yourself")) {
+			playSound("beep");
+		}
+		if (eventName.equals("error_no_title_contact_email")) {
+			playSound("error");
+		}
+		if (eventName.equals("find_contact_email")) {
+			playSound("beep");
+		}
+		if (eventName.equals("error_no_title_contact_sms")) {
+			playSound("error");
+		}
+		if (eventName.equals("find_contact_sms")) {
+			playSound("beep");
+		}
+		if (eventName.equals("error_no_title_send_sms")) {
+			playSound("error");
+		}
+		if (eventName.equals("sending_sms_yourself")) {
+			playSound("beep");
+		}
+		if (eventName.equals("error_no_title_remind")) {
+			playSound("error");
+		}
+		if (eventName.equals("click_remind")) {
+			playSound("beep");
+		}
+		if (eventName.equals("event_choose_reminder_time_custom_select")) {
+			playSound("beep");
+		}
+		if (eventName.equals("event_choose_reminder_time_standard")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_sms_contact_confirm")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_sms_contact_cancel")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_email_contact_confirm")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_email_contact_cancel")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_choose_which_number_sms")) {
+			playSound("beep");
+		}
+		if (eventName.equals("event_no_phone_number_found_sms")) {
+			playSound("beep");
+		}
+		if (eventName.equals("event_no_phone_number_found_sms_confirm")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_choose_which_email")) {
+			playSound("beep");
+		}
+		if (eventName.equals("event_email_not_found_contact")) {
+			playSound("beep");
+		}
+		if (eventName.equals("event_email_not_found_contact_confirm")) {
+			playSound("beep");
+		}
+		if (eventName.equals("click_edit_settings")) {
+			playSound("beep");
 		}
 	}
 
