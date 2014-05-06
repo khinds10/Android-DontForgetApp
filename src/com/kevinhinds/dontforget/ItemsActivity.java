@@ -194,20 +194,19 @@ public class ItemsActivity extends Activity {
 		screenHeight = displaymetrics.heightPixels;
 		screenWidth = displaymetrics.widthPixels;
 
-		/** we start with the current messages view */
-		CurrentMessagesLabel.setTextColor(Color.WHITE);
-
 		/** if you click the current messages option */
+		CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
 		TextView CurrentMessages = (TextView) findViewById(R.id.CurrentMessages);
 		CurrentMessages.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				soundEvent("click_current_messages");
 				isArchivedMessageView = 0;
-				CurrentMessagesLabel.setTextColor(Color.WHITE);
-				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#CC99CC"));
-				ArchivedMessagesLabel.setTextColor(Color.BLACK);
+				CurrentMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.lg_pink_button));
+				CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
+				ArchivedMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.dk_pink_button));
 				ArchivedMessagesLabel.setTypeface(null, Typeface.NORMAL);
-				ArchivedMessagesLabel.setBackgroundColor(Color.parseColor("#CC6666"));
+				CurrentMessagesLabel.setPadding(10, 10, 10, 10);
+				ArchivedMessagesLabel.setPadding(10, 10, 10, 10);
 				setupItemsList();
 			}
 		});
@@ -218,11 +217,12 @@ public class ItemsActivity extends Activity {
 			public void onClick(View v) {
 				soundEvent("click_archived_messages");
 				isArchivedMessageView = 1;
-				CurrentMessagesLabel.setTextColor(Color.BLACK);
+				CurrentMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.dk_pink_button));
 				CurrentMessagesLabel.setTypeface(null, Typeface.NORMAL);
-				CurrentMessagesLabel.setBackgroundColor(Color.parseColor("#CC6666"));
-				ArchivedMessagesLabel.setTextColor(Color.WHITE);
-				ArchivedMessagesLabel.setBackgroundColor(Color.parseColor("#CC99CC"));
+				ArchivedMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.lg_pink_button));
+				ArchivedMessagesLabel.setTypeface(null, Typeface.BOLD);
+				CurrentMessagesLabel.setPadding(10, 10, 10, 10);
+				ArchivedMessagesLabel.setPadding(10, 10, 10, 10);
 				setupItemsList();
 			}
 		});
@@ -289,8 +289,8 @@ public class ItemsActivity extends Activity {
 	private void setupItemsList() {
 
 		/** the message count text fields should reflect how many archived / non-archived messages */
-		CurrentMessagesLabel.setText("Status [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "]");
-		ArchivedMessagesLabel.setText("Standby [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "]");
+		CurrentMessagesLabel.setText("STATUS [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "]");
+		ArchivedMessagesLabel.setText("STANDBY [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "]");
 
 		/** get all the itemlist items saved in the DB set to archived = false */
 		final List<Item> itemlist = itemsDataSource.getAllItemsbyArchiveType(isArchivedMessageView);

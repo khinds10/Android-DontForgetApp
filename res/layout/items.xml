@@ -8,8 +8,14 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="90dp"
         android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/AppTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:background="@drawable/title_half_circle"
+            android:text="       " />
 
         <TextView
             android:id="@+id/AppTitle"
@@ -25,14 +31,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
-        <ImageView
-            android:id="@+id/reminderImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/app_name"
-            android:scaleType="matrix"
-            android:src="@drawable/navborder" />
     </LinearLayout>
 
     <LinearLayout
@@ -40,24 +38,17 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <LinearLayout
-            android:layout_width="57dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/sidebar"
-            android:orientation="vertical" >
-        </LinearLayout>
-
         <TextView
             android:id="@+id/CurrentMessages"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="0.4"
-            android:background="@drawable/custom_button"
-            android:gravity="center"
+            android:background="@drawable/lg_pink_button"
+            android:gravity="right|center_vertical"
             android:padding="10dp"
-            android:text="Status [0]"
-            android:textColor="#FFFFFF" >
+            android:text="STATUS [0]"
+            android:textColor="#000000" >
         </TextView>
 
         <TextView
@@ -66,10 +57,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="0.6"
-            android:background="@drawable/custom_button_yellow"
-            android:gravity="center"
+            android:background="@drawable/dk_pink_button"
+            android:gravity="right|center_vertical"
             android:padding="10dp"
-            android:text="Standby [0]"
+            android:text="STANDBY [0]"
             android:textColor="#000000" >
         </TextView>
     </LinearLayout>
@@ -101,7 +92,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="90dp"
             android:orientation="vertical"
             android:padding="5dp" >
 
@@ -109,8 +99,8 @@
                 android:id="@+id/addNewButtonText"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:background="@drawable/custom_button"
+                android:layout_gravity="right"
+                android:background="@drawable/orange_button"
                 android:gravity="right"
                 android:paddingRight="15dp"
                 android:text="ACCESS"
@@ -125,31 +115,17 @@
             android:layout_weight="0.98"
             android:orientation="vertical" >
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="@drawable/border"
-                android:orientation="vertical" >
-            </LinearLayout>
-
             <TextView
                 android:id="@+id/userMessage"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#8988C2"
+                android:background="@drawable/lg_pink_button"
                 android:gravity="center_vertical"
                 android:paddingBottom="3dp"
                 android:paddingLeft="4dp"
                 android:text="Configuration"
                 android:textColor="#000000"
                 android:textSize="14sp" />
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="@drawable/border"
-                android:orientation="vertical" >
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/footerLayout"
