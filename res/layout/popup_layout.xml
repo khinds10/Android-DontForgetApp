@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/titleContainer"
         android:layout_width="fill_parent"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:layout_margin="12dp"
         android:background="@drawable/popup_title_background" >
 
@@ -57,7 +57,7 @@
             android:paddingTop="0dp" >
 
             <TextView
-                android:id="@+id/textViewTitle"
+                android:id="@+id/manualInputText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"

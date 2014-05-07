@@ -150,7 +150,7 @@ public class ItemsActivity extends Activity {
 	public String buttonFont = "fonts/Muro.otf";
 
 	/** font for the titles */
-	public String titleFont = "fonts/Montalban.ttf";
+	public String titleFont = "fonts/talldark.ttf";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -166,6 +166,8 @@ public class ItemsActivity extends Activity {
 
 		CurrentMessagesLabel = (TextView) findViewById(R.id.CurrentMessages);
 		ArchivedMessagesLabel = (TextView) findViewById(R.id.ArchivedMessages);
+		CurrentMessagesLabel.setPadding(8, 8, 20, 8);
+		ArchivedMessagesLabel.setPadding(8, 8, 20, 8);
 
 		/** non-archived messages by default */
 		isArchivedMessageView = 0;
@@ -180,13 +182,21 @@ public class ItemsActivity extends Activity {
 		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
 		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
 
+		/** title font to stardate */
+		TextView starDate = (TextView) findViewById(R.id.starDate);
+		starDate.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
+
+		/** local time font */
+		TextView localTime = (TextView) findViewById(R.id.localTime);
+		localTime.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
+
 		/** apply font to add new button */
 		TextView addNewButtonText = (TextView) findViewById(R.id.addNewButtonText);
 		addNewButtonText.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		/** apply font to user settings message */
-		TextView userMessage = (TextView) findViewById(R.id.userMessage);
-		userMessage.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+		TextView configTitle = (TextView) findViewById(R.id.configTitle);
+		configTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
 
 		/** get screen metrics */
 		DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -201,12 +211,12 @@ public class ItemsActivity extends Activity {
 			public void onClick(View v) {
 				soundEvent("click_current_messages");
 				isArchivedMessageView = 0;
-				CurrentMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.lg_pink_button));
+				CurrentMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.lg_orange_button));
 				CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
-				ArchivedMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.dk_pink_button));
+				ArchivedMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.extrlg_orange_button));
 				ArchivedMessagesLabel.setTypeface(null, Typeface.NORMAL);
-				CurrentMessagesLabel.setPadding(10, 10, 10, 10);
-				ArchivedMessagesLabel.setPadding(10, 10, 10, 10);
+				CurrentMessagesLabel.setPadding(8, 8, 20, 8);
+				ArchivedMessagesLabel.setPadding(8, 8, 20, 8);
 				setupItemsList();
 			}
 		});
@@ -217,12 +227,12 @@ public class ItemsActivity extends Activity {
 			public void onClick(View v) {
 				soundEvent("click_archived_messages");
 				isArchivedMessageView = 1;
-				CurrentMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.dk_pink_button));
+				CurrentMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.extrlg_orange_button));
 				CurrentMessagesLabel.setTypeface(null, Typeface.NORMAL);
-				ArchivedMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.lg_pink_button));
+				ArchivedMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.lg_orange_button));
 				ArchivedMessagesLabel.setTypeface(null, Typeface.BOLD);
-				CurrentMessagesLabel.setPadding(10, 10, 10, 10);
-				ArchivedMessagesLabel.setPadding(10, 10, 10, 10);
+				CurrentMessagesLabel.setPadding(8, 8, 20, 8);
+				ArchivedMessagesLabel.setPadding(8, 8, 20, 8);
 				setupItemsList();
 			}
 		});
@@ -404,6 +414,9 @@ public class ItemsActivity extends Activity {
 		pw = new PopupWindow(layout, (int) popupWidth, (int) popupHeight, true);
 		/** display the popup in the center */
 		pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+		TextView manualInputText = (TextView) layout.findViewById(R.id.manualInputText);
+		manualInputText.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 
 		TextView textViewTitle = (TextView) layout.findViewById(R.id.textViewTitle);
 		textViewTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
