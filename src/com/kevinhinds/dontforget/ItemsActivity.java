@@ -42,6 +42,7 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -166,8 +167,8 @@ public class ItemsActivity extends Activity {
 
 		CurrentMessagesLabel = (TextView) findViewById(R.id.CurrentMessages);
 		ArchivedMessagesLabel = (TextView) findViewById(R.id.ArchivedMessages);
-		CurrentMessagesLabel.setPadding(8, 8, 20, 8);
-		ArchivedMessagesLabel.setPadding(8, 8, 20, 8);
+		CurrentMessagesLabel.setPadding(16, 16, 38, 16);
+		ArchivedMessagesLabel.setPadding(16, 16, 38, 16);
 
 		/** non-archived messages by default */
 		isArchivedMessageView = 0;
@@ -215,8 +216,8 @@ public class ItemsActivity extends Activity {
 				CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
 				ArchivedMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.extrlg_orange_button));
 				ArchivedMessagesLabel.setTypeface(null, Typeface.NORMAL);
-				CurrentMessagesLabel.setPadding(8, 8, 20, 8);
-				ArchivedMessagesLabel.setPadding(8, 8, 20, 8);
+				CurrentMessagesLabel.setPadding(16, 16, 38, 16);
+				ArchivedMessagesLabel.setPadding(16, 16, 38, 16);
 				setupItemsList();
 			}
 		});
@@ -231,8 +232,8 @@ public class ItemsActivity extends Activity {
 				CurrentMessagesLabel.setTypeface(null, Typeface.NORMAL);
 				ArchivedMessagesLabel.setBackgroundDrawable(getResources().getDrawable(R.drawable.lg_orange_button));
 				ArchivedMessagesLabel.setTypeface(null, Typeface.BOLD);
-				CurrentMessagesLabel.setPadding(8, 8, 20, 8);
-				ArchivedMessagesLabel.setPadding(8, 8, 20, 8);
+				CurrentMessagesLabel.setPadding(16, 16, 38, 16);
+				ArchivedMessagesLabel.setPadding(16, 16, 38, 16);
 				setupItemsList();
 			}
 		});
@@ -305,12 +306,30 @@ public class ItemsActivity extends Activity {
 		/** get all the itemlist items saved in the DB set to archived = false */
 		final List<Item> itemlist = itemsDataSource.getAllItemsbyArchiveType(isArchivedMessageView);
 
-		/** attach to the LinearLayout to add TextViews dynamically via menuValues */
-		LinearLayout ll = (LinearLayout) findViewById(R.id.itemsLayout);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		/** attach to the LinearLayout to add TextViews dynamically via current user message values*/
+		LinearLayout itemsLayout = (LinearLayout) findViewById(R.id.itemsLayout);
+
+		/** create the layout parameters with the margins applied */
+		LinearLayout.LayoutParams textFillContent = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		textFillContent.setMargins(6, 0, 0, 0);
+		LinearLayout.LayoutParams textWrapContent = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
+		textWrapContent.setMargins(6, 0, 0, 0);
+		LinearLayout.LayoutParams itemContainerFillContent = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 40);
+		itemContainerFillContent.setMargins(0, 0, 0, 50);
+
+		/** swap item colors based on archived list or not */
+		Drawable squareColor1;
+		Drawable squareColor2;
+		if (isArchivedMessageView == 0) {
+			squareColor1 = getResources().getDrawable(R.drawable.orange_square);
+			squareColor2 = getResources().getDrawable(R.drawable.brown_yellow_square);
+		} else {
+			squareColor1 = getResources().getDrawable(R.drawable.brown_yellow_square);
+			squareColor2 = getResources().getDrawable(R.drawable.orange_square);
+		}
 
 		/** start with a clean slate */
-		ll.removeAllViews();
+		itemsLayout.removeAllViews();
 
 		/** iterate over the itemlist to build the menu items to show */
 		Iterator<Item> itemlistiterator = itemlist.iterator();
@@ -318,22 +337,39 @@ public class ItemsActivity extends Activity {
 			Item itemlistitem = itemlistiterator.next();
 			String itemName = itemlistitem.getName();
 			long ID = itemlistitem.getId();
-			TextView tv = new TextView(this);
-			tv.setId((int) ID);
-			tv.setTextSize(18);
-			tv.setText((CharSequence) itemName);
-			tv.setLayoutParams(lp);
-			tv.setClickable(true);
-			tv.setTextColor(Color.WHITE);
-			tv.setPadding(10, 8, 0, 8);
-			tv.setGravity(Gravity.CENTER_VERTICAL);
 
-			// // this could be like crazy numbers or something that appear as an image?
-			// tv.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.bubble), null, null, null);
+			/** create the linear layout for the item itself that's horizontal */
+			LinearLayout itemLL = new LinearLayout(this);
+			itemLL.setOrientation(LinearLayout.HORIZONTAL);
+			itemLL.setLayoutParams(itemContainerFillContent);
 
-			tv.setCompoundDrawablePadding(10);
-			tv.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
-			tv.setOnClickListener(new OnClickListener() {
+			/** create the left hand box with the date */
+			TextView dateBox = new TextView(this);
+			dateBox.setTextSize(16);
+			dateBox.setText("12.31");
+			dateBox.setMaxLines(1);
+			dateBox.setLayoutParams(textWrapContent);
+			dateBox.setWidth(75);
+			dateBox.setTextColor(Color.BLACK);
+			dateBox.setGravity(Gravity.CENTER_VERTICAL);
+			dateBox.setGravity(Gravity.CENTER_HORIZONTAL);
+			dateBox.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+			dateBox.setBackgroundDrawable(squareColor1);
+			itemLL.addView(dateBox);
+
+			/** create the actual message text */
+			TextView itemText = new TextView(this);
+			itemText.setId((int) ID);
+			itemText.setTextSize(22);
+			itemText.setText((CharSequence) itemName);
+			itemText.setLayoutParams(textWrapContent);
+			itemText.setClickable(true);
+			itemText.setPadding(0, 1, 0, 0);
+			itemText.setMaxLines(1);
+			itemText.setTextColor(Color.WHITE);
+			itemText.setGravity(Gravity.CENTER_VERTICAL);
+			itemText.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+			itemText.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					soundEvent("click_view_item");
 					currentID = v.getId();
@@ -345,7 +381,44 @@ public class ItemsActivity extends Activity {
 					initiateEditMessagePopup(true);
 				}
 			});
-			ll.addView(tv);
+			itemLL.addView(itemText);
+
+			/** create box next to message */
+			TextView rightMemoSquare = new TextView(this);
+			rightMemoSquare.setLayoutParams(textWrapContent);
+			rightMemoSquare.setWidth(50);
+			rightMemoSquare.setGravity(Gravity.CENTER_VERTICAL);
+			rightMemoSquare.setGravity(Gravity.CENTER_HORIZONTAL);
+			rightMemoSquare.setBackgroundDrawable(squareColor1);
+			itemLL.addView(rightMemoSquare);
+
+			/** create status item box */
+			TextView rightMemoStatusBox = new TextView(this);
+			rightMemoStatusBox.setTextSize(16);
+			rightMemoStatusBox.setText("A");
+			rightMemoStatusBox.setMaxLines(1);
+			rightMemoStatusBox.setLayoutParams(textWrapContent);
+			rightMemoStatusBox.setWidth(40);
+			rightMemoStatusBox.setTextColor(Color.BLACK);
+			rightMemoStatusBox.setGravity(Gravity.CENTER_VERTICAL);
+			rightMemoStatusBox.setGravity(Gravity.CENTER_HORIZONTAL);
+			rightMemoStatusBox.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+			rightMemoStatusBox.setBackgroundDrawable(squareColor2);
+			itemLL.addView(rightMemoStatusBox);
+
+			/** set the fill parent box with the time */
+			TextView rightMemoSquareTimeBox = new TextView(this);
+			rightMemoSquareTimeBox.setTextSize(16);
+			rightMemoSquareTimeBox.setText("16:30");
+			rightMemoSquareTimeBox.setMaxLines(1);
+			rightMemoSquareTimeBox.setLayoutParams(textFillContent);
+			rightMemoSquareTimeBox.setTextColor(Color.BLACK);
+			rightMemoSquareTimeBox.setGravity(Gravity.CENTER_VERTICAL);
+			rightMemoSquareTimeBox.setGravity(Gravity.RIGHT);
+			rightMemoSquareTimeBox.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+			rightMemoSquareTimeBox.setBackgroundDrawable(squareColor1);
+			itemLL.addView(rightMemoSquareTimeBox);
+			itemsLayout.addView(itemLL);
 
 			/** show the possible reminder of the item by the current ID being processed */
 			Reminder reminder = reminderDataSource.getById(ID);
@@ -353,14 +426,14 @@ public class ItemsActivity extends Activity {
 				TextView textReminder = new TextView(this);
 				textReminder.setTextSize(10);
 				textReminder.setText("Reminder: " + (CharSequence) reminder.time);
-				textReminder.setLayoutParams(lp);
+				textReminder.setLayoutParams(textFillContent);
 				textReminder.setClickable(true);
 				textReminder.setTextColor(Color.BLUE);
 				textReminder.setPadding(50, 2, 0, 2);
 				textReminder.setGravity(Gravity.CENTER_VERTICAL);
 				textReminder.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.reminder_icon), null, null, null);
 				textReminder.setCompoundDrawablePadding(10);
-				ll.addView(textReminder);
+				// ll.addView(textReminder);
 			} else {
 				/** show the status of the item by the current ID being processed */
 				TextView textStatus = new TextView(this);
@@ -368,12 +441,12 @@ public class ItemsActivity extends Activity {
 				Status Status = statusDataSource.getById(ID);
 				String currentStatusDetails = Status.content;
 				textStatus.setText((CharSequence) currentStatusDetails);
-				textStatus.setLayoutParams(lp);
+				textStatus.setLayoutParams(textFillContent);
 				textStatus.setClickable(true);
 				textStatus.setTextColor(Color.GRAY);
 				textStatus.setPadding(50, 2, 0, 2);
 				textStatus.setGravity(Gravity.CENTER_VERTICAL);
-				ll.addView(textStatus);
+				// ll.addView(textStatus);
 			}
 		}
 

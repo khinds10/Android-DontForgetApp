@@ -1,6 +1,12 @@
 TODO
+	
+	[] stardate should move down by the access button
+	
+	[] top right nav box should have something else besides stardate
 
-	[] finish the home page header, footer design
+	[] item rows show real data saved in the "status" table by pipe separation
+			MM.DD | [A,E,T,E] | [HH:MM, PHONE #]
+
 	[] Finish the sounds mapping and test
 
 	[] star date function
@@ -10,3 +16,4 @@ TODO
 BUGS!
 
 	[] Can't go to the settings page!?
+	[] the very first non-archived message has part of the row turning black?

@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="32dp"
+        android:layout_height="48dp"
         android:orientation="horizontal"
         android:padding="5dp" >
 
@@ -22,26 +22,19 @@
             android:id="@+id/AppTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|center_horizontal"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
             android:paddingTop="1dp"
             android:text="@string/app_name"
             android:textColor="#FD9903"
-            android:textSize="26sp" />
-
-        <ImageView
-            android:id="@+id/dysonIcon"
-            android:layout_width="20dp"
-            android:layout_height="fill_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/dysonlcars" />
+            android:textSize="51sp" />
 
         <ImageView
             android:id="@+id/topMiddleSquare"
             android:layout_width="50dp"
             android:layout_height="fill_parent"
-            android:src="@drawable/lg_pink_square" />
+            android:src="@drawable/dk_pink_square" />
 
         <ImageView
             android:id="@+id/topBlkSpace"
@@ -54,12 +47,13 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="@drawable/lg_pink_square"
-            android:gravity="right|center_vertical"
+            android:gravity="center_horizontal|center_vertical"
             android:paddingLeft="3dp"
             android:paddingTop="1dp"
+            android:maxLines="1"
             android:text="STARDATE 47988 "
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -75,7 +69,6 @@
             android:layout_weight="0.4"
             android:background="@drawable/lg_orange_button"
             android:gravity="right|center_vertical"
-            android:padding="5dp"
             android:text="STATUS [0]"
             android:textColor="#000000"
             android:textSize="16sp" >
@@ -89,7 +82,6 @@
             android:layout_weight="0.6"
             android:background="@drawable/extrlg_orange_button"
             android:gravity="right|center_vertical"
-            android:padding="5dp"
             android:text="STANDBY [0]"
             android:textColor="#000000"
             android:textSize="16sp" >
@@ -108,7 +100,6 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="0.50" >
-
             <LinearLayout
                 android:id="@+id/itemsLayout"
                 android:layout_width="fill_parent"
@@ -149,7 +140,7 @@
             <LinearLayout
                 android:id="@+id/subContentAccountSettings"
                 android:layout_width="fill_parent"
-                android:layout_height="26dp"
+                android:layout_height="42dp"
                 android:orientation="horizontal"
                 android:padding="3dp" >
 
@@ -162,19 +153,19 @@
 
                 <TextView
                     android:id="@+id/configTitle"
-                    android:layout_width="40dp"
+                    android:layout_width="62dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/blk_square"
-                    android:gravity="center_vertical"
+                    android:gravity="center_vertical|center_horizontal"
                     android:paddingLeft="4dp"
                     android:paddingTop="1dp"
                     android:text="DELTA"
                     android:textColor="#FD9903"
-                    android:textSize="23sp" />
+                    android:textSize="45sp" />
 
                 <ImageView
                     android:id="@+id/bottomMiddleSquare"
-                    android:layout_width="50dp"
+                    android:layout_width="46dp"
                     android:layout_height="fill_parent"
                     android:src="@drawable/dk_blue_square" />
 
@@ -194,7 +185,7 @@
                     android:paddingTop="1dp"
                     android:text="Planetary Statistics 7:10pm "
                     android:textColor="#000000"
-                    android:textSize="16sp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <LinearLayout
