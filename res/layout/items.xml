@@ -22,7 +22,7 @@
             android:id="@+id/AppTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
+            android:gravity="fill_vertical|fill_horizontal"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
             android:paddingTop="1dp"
@@ -43,14 +43,14 @@
             android:src="@drawable/blk_square" />
 
         <TextView
-            android:id="@+id/starDate"
+            android:id="@+id/localDate"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="@drawable/lg_pink_square"
             android:gravity="center_horizontal|center_vertical"
+            android:maxLines="1"
             android:paddingLeft="3dp"
             android:paddingTop="1dp"
-            android:maxLines="1"
             android:text="STARDATE 47988 "
             android:textColor="#000000"
             android:textSize="22sp" />
@@ -59,6 +59,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal" >
 
         <TextView
@@ -100,6 +101,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="0.50" >
+
             <LinearLayout
                 android:id="@+id/itemsLayout"
                 android:layout_width="fill_parent"
@@ -112,22 +114,42 @@
         <LinearLayout
             android:id="@+id/addNewButton"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_height="50dp"
             android:orientation="vertical"
             android:padding="5dp" >
 
-            <TextView
-                android:id="@+id/addNewButtonText"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:background="@drawable/orange_button"
-                android:gravity="right"
-                android:paddingRight="15dp"
-                android:text="ACCESS"
-                android:textColor="#000000"
-                android:textSize="22sp" />
+            <LinearLayout
+                android:id="@+id/bottomLayoutRow"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/starDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    android:layout_weight=".65"
+                    android:gravity="left|center_vertical|center_horizontal"
+                    android:maxLines="1"
+                    android:paddingRight="15dp"
+                    android:textColor="#999999"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/addNewButtonText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_gravity="right"
+                    android:layout_weight=".35"
+                    android:background="@drawable/purple_button"
+                    android:gravity="right"
+                    android:maxLines="1"
+                    android:paddingRight="15dp"
+                    android:text="ACCESS"
+                    android:textColor="#000000"
+                    android:textSize="22sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -156,12 +178,14 @@
                     android:layout_width="62dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/blk_square"
-                    android:gravity="center_vertical|center_horizontal"
+                    android:gravity="fill_vertical|fill_horizontal"
+                    android:maxLines="1"
                     android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
                     android:paddingTop="1dp"
                     android:text="DELTA"
                     android:textColor="#FD9903"
-                    android:textSize="45sp" />
+                    android:textSize="42sp" />
 
                 <ImageView
                     android:id="@+id/bottomMiddleSquare"
@@ -183,7 +207,6 @@
                     android:gravity="right|center_vertical"
                     android:paddingLeft="3dp"
                     android:paddingTop="1dp"
-                    android:text="Planetary Statistics 7:10pm "
                     android:textColor="#000000"
                     android:textSize="20sp" />
             </LinearLayout>

@@ -1,19 +1,32 @@
 TODO
-	
-	[] stardate should move down by the access button
-	
-	[] top right nav box should have something else besides stardate
 
-	[] item rows show real data saved in the "status" table by pipe separation
-			MM.DD | [A,E,T,E] | [HH:MM, PHONE #]
+	[] have mute sounds option
+	
+	[] have a volume adjuster!
 
 	[] Finish the sounds mapping and test
 
-	[] star date function
-		[] have current star date displayed
-		[] have it part of the tags that say "edited XX/XX/XXXX" and so on... 	
+	[] reminders crap designed
+
+	[] settings page fixed
+	
+	[] widgets designed
+
+	[] When this is done, make it an entirely new app with freemium version and the freaking pollfish installed
+
+TEST!
+
+	[] Save
+	[] Remind
+	[] Email
+	[] SMS
+	[] Item rows show real data saved in the "status" table by pipe separation
+		[] test all the combos
+			-- also need to put in the email, phone # values
+			-- test if the values are messed up, it should catch the exceptions!
 
 BUGS!
 
+	[] title and delta text should programatically be the same size as the layouts next to them
 	[] Can't go to the settings page!?
 	[] the very first non-archived message has part of the row turning black?

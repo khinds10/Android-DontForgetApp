@@ -74,12 +74,12 @@
         <item>12 Midnight</item>
     </string-array>
     <string-array name="array_reminder_options">
-        <item>This Morning\n(Full Version)</item>
-        <item>This Afternoon\n(Full Version)</item>
-        <item>This Evening\n(Full Version)</item>
-        <item>Tomorrow Morning\n(Full Version)</item>
-        <item>Tomorrow Afternoon\n(Full Version)</item>
-        <item>Tomorrow Evening\n(Full Version)</item>
+        <item>This Morning</item>
+        <item>This Afternoon</item>
+        <item>This Evening</item>
+        <item>Tomorrow Morning</item>
+        <item>Tomorrow Afternoon</item>
+        <item>Tomorrow Evening</item>
     </string-array>
 
 </resources>
