@@ -7,28 +7,17 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="48dp"
+        android:layout_height="43dp"
         android:orientation="horizontal"
         android:padding="5dp" >
 
         <ImageView
             android:id="@+id/topTitleCorner"
-            android:layout_width="20dp"
+            android:layout_width="160dp"
             android:layout_height="fill_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/half_dk_pink" />
-
-        <TextView
-            android:id="@+id/AppTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="fill_vertical|fill_horizontal"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
-            android:paddingTop="1dp"
-            android:text="@string/app_name"
-            android:textColor="#FD9903"
-            android:textSize="51sp" />
+            android:layout_gravity="left"
+            android:scaleType="fitStart"
+            android:src="@drawable/title" />
 
         <ImageView
             android:id="@+id/topMiddleSquare"
@@ -47,11 +36,9 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="@drawable/lg_pink_square"
-            android:gravity="center_horizontal|center_vertical"
+            android:gravity="right|center_vertical"
             android:maxLines="1"
-            android:paddingLeft="3dp"
-            android:paddingTop="1dp"
-            android:text="STARDATE 47988 "
+            android:padding="4dp"
             android:textColor="#000000"
             android:textSize="22sp" />
     </LinearLayout>
@@ -133,8 +120,8 @@
                     android:gravity="left|center_vertical|center_horizontal"
                     android:maxLines="1"
                     android:paddingRight="15dp"
-                    android:textColor="#999999"
-                    android:textSize="20sp" />
+                    android:textColor="#666666"
+                    android:textSize="32sp" />
 
                 <TextView
                     android:id="@+id/addNewButtonText"
@@ -162,30 +149,17 @@
             <LinearLayout
                 android:id="@+id/subContentAccountSettings"
                 android:layout_width="fill_parent"
-                android:layout_height="42dp"
+                android:layout_height="30dp"
                 android:orientation="horizontal"
                 android:padding="3dp" >
 
                 <ImageView
                     android:id="@+id/bottomBlueCorner"
-                    android:layout_width="20dp"
+                    android:layout_width="58dp"
                     android:layout_height="fill_parent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/half_blue" />
-
-                <TextView
-                    android:id="@+id/configTitle"
-                    android:layout_width="62dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/blk_square"
-                    android:gravity="fill_vertical|fill_horizontal"
-                    android:maxLines="1"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:paddingTop="1dp"
-                    android:text="DELTA"
-                    android:textColor="#FD9903"
-                    android:textSize="42sp" />
+                    android:layout_gravity="left"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/delta" />
 
                 <ImageView
                     android:id="@+id/bottomMiddleSquare"

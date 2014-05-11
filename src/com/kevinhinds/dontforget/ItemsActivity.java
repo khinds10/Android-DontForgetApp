@@ -103,20 +103,17 @@ public class ItemsActivity extends Activity {
 	private AlarmManagerBroadcastReceiver alarm;
 
 	/**
-	 * the current options for future reminders can change during the day, keep track of the current
-	 * list here
+	 * the current options for future reminders can change during the day, keep track of the current list here
 	 */
 	private CharSequence[] currentReminderOptions = null;
 
 	/**
-	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can
-	 * change the status to reflect as such
+	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can change the status to reflect as such
 	 */
 	protected long recentlyTriedItemID;
 
 	/**
-	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or
-	 * "edit" type of operation to reflect in the status if it fails
+	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or "edit" type of operation to reflect in the status if it fails
 	 */
 	protected String recentlyTriedEditType;
 
@@ -190,12 +187,6 @@ public class ItemsActivity extends Activity {
 		/** setup the list of items to show the user */
 		setupItemsList();
 
-		/** apply font to title and apply a correct pixel sizing */
-		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
-		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
-		ImageView topMiddleSquare = (ImageView) findViewById(R.id.topMiddleSquare);
-		AppTitle.setTextScaleX(topMiddleSquare.getHeight());
-
 		/** title font to localDate */
 		TextView localDateTextView = (TextView) findViewById(R.id.localDate);
 		localDateTextView.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
@@ -218,20 +209,6 @@ public class ItemsActivity extends Activity {
 		/** apply font to add new button */
 		TextView addNewButtonText = (TextView) findViewById(R.id.addNewButtonText);
 		addNewButtonText.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
-
-		/**
-		 * apply font to user settings message title and apply a correct pixel sizing
-		 */
-		TextView configTitle = (TextView) findViewById(R.id.configTitle);
-		configTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
-		ImageView bottomMiddleSquare = (ImageView) findViewById(R.id.bottomMiddleSquare);
-		configTitle.setTextScaleX(bottomMiddleSquare.getHeight());
-
-		/** get screen metrics */
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		screenHeight = displaymetrics.heightPixels;
-		screenWidth = displaymetrics.widthPixels;
 
 		/** if you click the current messages option */
 		CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
@@ -277,8 +254,7 @@ public class ItemsActivity extends Activity {
 		});
 
 		/**
-		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the
-		 * future
+		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future
 		 */
 		alarm = new AlarmManagerBroadcastReceiver();
 
@@ -332,6 +308,12 @@ public class ItemsActivity extends Activity {
 	 */
 	private void setupItemsList() {
 
+		/** get screen metrics */
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		screenHeight = displaymetrics.heightPixels;
+		screenWidth = displaymetrics.widthPixels;
+
 		/**
 		 * the message count text fields should reflect how many archived / non-archived messages
 		 */
@@ -353,18 +335,22 @@ public class ItemsActivity extends Activity {
 		textFillContent.setMargins(6, 0, 0, 0);
 		LinearLayout.LayoutParams textWrapContent = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
 		textWrapContent.setMargins(6, 0, 0, 0);
-		LinearLayout.LayoutParams itemContainerFillContent = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 75);
-		itemContainerFillContent.setMargins(0, 0, 0, 50);
+		LinearLayout.LayoutParams itemContainerFillContent = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 12);
+		LinearLayout.LayoutParams itemTextContainer = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 60);
 
 		/** swap item colors based on archived list or not */
 		Drawable squareColor1;
 		Drawable squareColor2;
+		Drawable squareColor3;
+
 		if (isArchivedMessageView == 0) {
-			squareColor1 = getResources().getDrawable(R.drawable.orange_square);
-			squareColor2 = getResources().getDrawable(R.drawable.brown_yellow_square);
+			squareColor1 = getResources().getDrawable(R.drawable.grey_square);
+			squareColor2 = getResources().getDrawable(R.drawable.md_grey_square);
+			squareColor3 = getResources().getDrawable(R.drawable.lg_grey_square);
 		} else {
-			squareColor1 = getResources().getDrawable(R.drawable.brown_yellow_square);
-			squareColor2 = getResources().getDrawable(R.drawable.orange_square);
+			squareColor1 = getResources().getDrawable(R.drawable.dk_grey_square);
+			squareColor2 = getResources().getDrawable(R.drawable.md_grey_square);
+			squareColor3 = getResources().getDrawable(R.drawable.grey_square);
 		}
 
 		/** start with a clean slate */
@@ -379,6 +365,25 @@ public class ItemsActivity extends Activity {
 
 			/**
 			 * create the linear layout for the item itself that's horizontal and assign the click
+			 */
+			LinearLayout itemMainLL = new LinearLayout(this);
+			itemMainLL.setId((int) ID);
+			itemMainLL.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					soundEvent("click_view_item");
+					currentID = v.getId();
+					Item currentEditItem = itemsDataSource.getById(currentID);
+					currentTitleValue = currentEditItem.name;
+					currentMessageValue = currentEditItem.content;
+					/** popup to edit the item */
+					initiateEditMessagePopup(true);
+				}
+			});
+			itemMainLL.setOrientation(LinearLayout.HORIZONTAL);
+			itemMainLL.setLayoutParams(itemTextContainer);
+
+			/**
+			 * create the smaller layout for the bar to fit inside
 			 */
 			LinearLayout itemLL = new LinearLayout(this);
 			itemLL.setId((int) ID);
@@ -395,6 +400,24 @@ public class ItemsActivity extends Activity {
 			});
 			itemLL.setOrientation(LinearLayout.HORIZONTAL);
 			itemLL.setLayoutParams(itemContainerFillContent);
+			itemLL.setPadding(4, 4, 4, 4);
+
+			/** create the actual message text */
+			TextView itemText = new TextView(this);
+			itemText.setTextSize(22);
+			itemText.setText((CharSequence) itemName);
+			itemText.setLayoutParams(textWrapContent);
+			itemText.setPadding(10, 20, 0, 0);
+			itemText.setMaxLines(1);
+			itemText.setWidth((int) (screenWidth / 1.45));
+			if (isArchivedMessageView == 0) {
+				itemText.setTextColor(Color.parseColor("#FFFFFF"));
+			} else {
+				itemText.setTextColor(Color.parseColor("#999999"));
+			}
+			itemText.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+			itemText.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+			itemMainLL.addView(itemText);
 
 			/**
 			 * get status of the item to populate the other elements of the row: X,MM.d,H:m,INFO
@@ -402,60 +425,61 @@ public class ItemsActivity extends Activity {
 			Status Status = statusDataSource.getById(ID);
 			String currentStatusDetails = Status.content;
 			String[] statusElements = currentStatusDetails.split(",");
-
-			/** create the left hand box with the date */
-			TextView dateBox = new TextView(this);
-			dateBox.setTextSize(16);
 			String rowDate = "";
 			try {
 				rowDate = statusElements[1];
 			} catch (IndexOutOfBoundsException e) {
 				rowDate = "";
 			}
-			dateBox.setText(rowDate);
-			dateBox.setMaxLines(1);
-			dateBox.setLayoutParams(textWrapContent);
-			dateBox.setWidth(75);
-			dateBox.setTextColor(Color.BLACK);
-			dateBox.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-			dateBox.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
-			dateBox.setBackgroundDrawable(squareColor1);
-			itemLL.addView(dateBox);
-
-			/** create the actual message text */
-			TextView itemText = new TextView(this);
-			itemText.setTextSize(22);
-			itemText.setText((CharSequence) itemName);
-			itemText.setLayoutParams(textWrapContent);
-			itemText.setPadding(0, 1, 0, 0);
-			itemText.setMaxLines(1);
-			itemText.setTextColor(Color.WHITE);
-			itemText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-			itemText.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
-			itemLL.addView(itemText);
-
-			/** create box next to message */
-			TextView rightMemoSquare = new TextView(this);
-			rightMemoSquare.setLayoutParams(textWrapContent);
-			rightMemoSquare.setWidth(50);
-			rightMemoSquare.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-			rightMemoSquare.setBackgroundDrawable(squareColor1);
-			itemLL.addView(rightMemoSquare);
-
-			/** create status item box */
-			TextView rightMemoStatusBox = new TextView(this);
-			rightMemoStatusBox.setTextSize(16);
 			String rowChar = "";
 			try {
 				rowChar = statusElements[0];
 			} catch (IndexOutOfBoundsException e) {
 				rowChar = "";
 			}
-			rightMemoStatusBox.setText(rowChar);
-			rightMemoStatusBox.setMaxLines(1);
+			String rowDateString = "";
+			try {
+				rowDateString = statusElements[2];
+			} catch (IndexOutOfBoundsException e) {
+				rowDateString = "";
+			}
+			/** create the status message text */
+			TextView itemStatusText = new TextView(this);
+			itemStatusText.setTextSize(12);
+			itemStatusText.setText(rowChar + " - " + rowDate + " - " + rowDateString);
+			itemStatusText.setLayoutParams(textWrapContent);
+			itemStatusText.setMaxLines(1);
+			if (isArchivedMessageView == 0) {
+				itemStatusText.setTextColor(Color.parseColor("#CC9966"));
+			} else {
+				itemStatusText.setTextColor(Color.parseColor("#999999"));
+			}
+			itemStatusText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+			itemStatusText.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+			itemStatusText.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
+			itemMainLL.addView(itemStatusText);
+
+			/** create the right hand box */
+			TextView dateBox = new TextView(this);
+			dateBox.setLayoutParams(textWrapContent);
+			dateBox.setWidth(30);
+			dateBox.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
+			dateBox.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+			dateBox.setBackgroundDrawable(squareColor1);
+			itemLL.addView(dateBox);
+
+			/** create box next to message */
+			TextView rightMemoSquare = new TextView(this);
+			rightMemoSquare.setLayoutParams(textWrapContent);
+			rightMemoSquare.setWidth(10);
+			rightMemoSquare.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+			rightMemoSquare.setBackgroundDrawable(squareColor3);
+			itemLL.addView(rightMemoSquare);
+
+			/** create status item box */
+			TextView rightMemoStatusBox = new TextView(this);
 			rightMemoStatusBox.setLayoutParams(textWrapContent);
-			rightMemoStatusBox.setWidth(40);
-			rightMemoStatusBox.setTextColor(Color.BLACK);
+			rightMemoStatusBox.setWidth(20);
 			rightMemoStatusBox.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 			rightMemoStatusBox.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 			rightMemoStatusBox.setBackgroundDrawable(squareColor2);
@@ -463,21 +487,12 @@ public class ItemsActivity extends Activity {
 
 			/** set the fill parent box with the time */
 			TextView rightMemoSquareTimeBox = new TextView(this);
-			rightMemoSquareTimeBox.setTextSize(16);
-			String rowDateString = "";
-			try {
-				rowDateString = statusElements[2];
-			} catch (IndexOutOfBoundsException e) {
-				rowDateString = "";
-			}
-			rightMemoSquareTimeBox.setText(rowDateString);
-			rightMemoSquareTimeBox.setMaxLines(1);
 			rightMemoSquareTimeBox.setLayoutParams(textFillContent);
-			rightMemoSquareTimeBox.setTextColor(Color.BLACK);
 			rightMemoSquareTimeBox.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
 			rightMemoSquareTimeBox.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 			rightMemoSquareTimeBox.setBackgroundDrawable(squareColor1);
 			itemLL.addView(rightMemoSquareTimeBox);
+			itemsLayout.addView(itemMainLL);
 			itemsLayout.addView(itemLL);
 
 			/**
@@ -595,8 +610,7 @@ public class ItemsActivity extends Activity {
 		final ImageView reminderImage = (ImageView) layout.findViewById(R.id.reminderImage);
 
 		/**
-		 * if we're editing an existing entry the other buttons are enabled, else you can't use them
-		 * yet
+		 * if we're editing an existing entry the other buttons are enabled, else you can't use them yet
 		 */
 		if (editMode) {
 
@@ -891,8 +905,7 @@ public class ItemsActivity extends Activity {
 					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/**
-							 * based on the dialog selection either set the reminder or continue to
-							 * show the custom dialog if they chose "custom"
+							 * based on the dialog selection either set the reminder or continue to show the custom dialog if they chose "custom"
 							 */
 							String selectedItem = (String) currentReminderOptions[item];
 							if (selectedItem.equals("Custom...")) {
@@ -921,8 +934,7 @@ public class ItemsActivity extends Activity {
 												customTimePicker.getCurrentMinute());
 
 										/**
-										 * get the diff of the future custom time against the
-										 * current time to set the future reminder
+										 * get the diff of the future custom time against the current time to set the future reminder
 										 */
 										long diff = customDate.getTime() - currentTime.getTime();
 										setReminder(diff);
@@ -933,8 +945,7 @@ public class ItemsActivity extends Activity {
 								dialog.dismiss();
 							} else {
 								/**
-								 * get the amount of time until the future selected reminder
-								 * datetime
+								 * get the amount of time until the future selected reminder datetime
 								 */
 								soundEvent("event_choose_reminder_time_standard");
 								long diff = getFutureTime(currentReminderOptions[item]);
@@ -973,8 +984,7 @@ public class ItemsActivity extends Activity {
 		currentID = editEntryDB("E," + getLastUpdateTime());
 
 		/**
-		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been
-		 * added/updated
+		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated
 		 */
 		alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, currentID);
 		deleteReminderEntry(currentID);
@@ -997,8 +1007,7 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * add the existing reminder entry table for this particular item "id" and setup the items list
-	 * with the new situation
+	 * add the existing reminder entry table for this particular item "id" and setup the items list with the new situation
 	 * 
 	 * @param recentlyTriedItemID
 	 * @param todaysDate
@@ -1011,9 +1020,7 @@ public class ItemsActivity extends Activity {
 	/**
 	 * get the reminder options as CharSequence[] to pass to the dialog as choice items list
 	 * 
-	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't
-	 *          set "This Morning" if it's already passed the time that "This Morning" is supposed
-	 *          to remind you at
+	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't set "This Morning" if it's already passed the time that "This Morning" is supposed to remind you at
 	 * @return
 	 */
 	private CharSequence[] getReminderOptions() {
@@ -1124,8 +1131,7 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of
-	 * "AM" / "PM"
+	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of "AM" / "PM"
 	 * 
 	 * @param hour
 	 * @return
@@ -1293,8 +1299,7 @@ public class ItemsActivity extends Activity {
 		}
 
 		/**
-		 * remove the duplicate values from the array that may have come back from the contact
-		 * selection
+		 * remove the duplicate values from the array that may have come back from the contact selection
 		 */
 		friendsSMSList = getDistinct(friendsSMSList);
 		friendsEmailList = getDistinct(friendsEmailList);
@@ -1305,8 +1310,7 @@ public class ItemsActivity extends Activity {
 		if (activityForResultType.equals("SMS")) {
 
 			/**
-			 * if we have an primary phone number for our friend, then send it out to them, else
-			 * show the error
+			 * if we have an primary phone number for our friend, then send it out to them, else show the error
 			 */
 			if (friendsSMSList.length != 0) {
 				if (friendsSMSList.length == 1) {
@@ -1321,8 +1325,7 @@ public class ItemsActivity extends Activity {
 					chooseAlert.setSingleChoiceItems(friendsSMSList, -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/**
-							 * friends SMS becomes what was selected from the dialog removing the
-							 * message about if the phone number is primary
+							 * friends SMS becomes what was selected from the dialog removing the message about if the phone number is primary
 							 */
 							soundEvent("click_choose_which_number_sms");
 							friendsSMS = (String) friendsSMSList[item];
@@ -1342,8 +1345,7 @@ public class ItemsActivity extends Activity {
 				soundEvent("event_no_phone_number_found_sms");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it
-				 * couldn't be sent via SMS
+				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS
 				 */
 				addEditItemStatus();
 
@@ -1392,8 +1394,7 @@ public class ItemsActivity extends Activity {
 				soundEvent("event_email_not_found_contact");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it
-				 * couldn't be sent via email
+				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email
 				 */
 				addEditItemStatus();
 
@@ -1424,8 +1425,7 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * get a nicely formated datetime string with pipe separated date and time values to later
-	 * render in the item rows formatted to: MM.d|H:m
+	 * get a nicely formated datetime string with pipe separated date and time values to later render in the item rows formatted to: MM.d|H:m
 	 * 
 	 * @return
 	 */
@@ -1617,8 +1617,7 @@ public class ItemsActivity extends Activity {
 				alertDialog.setMessage("Check your settings and try again.");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it
-				 * couldn't be sent via SMS
+				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS
 				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1674,8 +1673,7 @@ public class ItemsActivity extends Activity {
 				alertDialog.setMessage("Check your settings and try again.");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it
-				 * couldn't be sent via Email
+				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via Email
 				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1707,8 +1705,7 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * update any currently running widgets with the latest and greatest from this activity that was
-	 * loaded
+	 * update any currently running widgets with the latest and greatest from this activity that was loaded
 	 */
 	private void updateWidgets() {
 
@@ -1807,8 +1804,7 @@ public class ItemsActivity extends Activity {
 		getTwentyFourHourTimeForPreferences();
 
 		/**
-		 * build datetime string out of the current date plus the hour in the future the reminder is
-		 * scheduled for
+		 * build datetime string out of the current date plus the hour in the future the reminder is scheduled for
 		 */
 		String reminderDateString = "";
 		if (currentReminderOption.equals("This Morning") || currentReminderOption.equals("Tomorrow Morning")) {
@@ -2080,10 +2076,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * According to Roberto Orci, stardates were revised again for the 2009 film Star Trek so that
-	 * the first four digits correspond to the year, while the remainder was intended to stand for
-	 * the day of the year. For example, stardate 2233.04 would be January 4, 2233. Star Trek Into
-	 * Darkness begins on stardate 2259.55, or February 24, 2259.
+	 * According to Roberto Orci, stardates were revised again for the 2009 film Star Trek so that the first four digits correspond to the year, while the remainder was intended to stand for the day
+	 * of the year. For example, stardate 2233.04 would be January 4, 2233. Star Trek Into Darkness begins on stardate 2259.55, or February 24, 2259.
 	 * 
 	 * @return
 	 */

@@ -75,10 +75,6 @@ public class SettingsActivity extends Activity {
 		int eveningPosition = adapter.getPosition(evening);
 		eveningSpinner.setSelection(eveningPosition);
 
-		/** apply font to title */
-		TextView AppTitle = (TextView) findViewById(R.id.AppTitle);
-		AppTitle.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/PermanentMarker.ttf"));
-
 		/** get the references to the EditText Values */
 		emailPassword = (EditText) findViewById(R.id.emailPassword);
 		phoneNumber = (EditText) findViewById(R.id.phoneNumber);
