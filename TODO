@@ -1,20 +1,23 @@
 TODO
 
-	[] settings page designed
+	[] height automatically adjusts correctly
+		[] settings
+			[] landscape
+			[] potrait
+			
+		[] main
+			[] landscape
+			[] portrait
 
 	[] reminders crap designed
 	
 	[] widgets designed
-
-	[] have the animated gifs working :)
-	
-	[] have it make the LCARS bars and items list have a rotating hightlight 
 	
 	[] have mute sounds option
 	
 	[] have a volume adjuster!
 
-	[] Finish the sounds mapping and test
+	[] finish the sounds mapping and test
 
 	[] when this is done, make it an entirely new app with freemium version and the freaking pollfish installed
 
@@ -29,8 +32,5 @@ TEST!
 			-- also need to put in the email, phone # values
 			-- test if the values are messed up, it should catch the exceptions!
 
-BUGS!
-
-	[] title and delta text should programatically be the same size as the layouts next to them
-	[] Can't go to the settings page!?
-	[] the very first non-archived message has part of the row turning black?
+Long Term
+	[] have it make the LCARS bars and items list have a rotating hightlight

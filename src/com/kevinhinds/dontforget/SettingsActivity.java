@@ -1,6 +1,10 @@
 package com.kevinhinds.dontforget;
 
+import java.io.InputStream;
 import java.util.regex.Pattern;
+
+import com.kevinhinds.dontforget.views.GifDecoderView;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -13,9 +17,10 @@ import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -41,6 +46,12 @@ public class SettingsActivity extends Activity {
 	Spinner morningSpinner;
 	Spinner afternoonSpinner;
 	Spinner eveningSpinner;
+
+	/** the font for the buttons */
+	public String buttonFont = "fonts/Muro.otf";
+
+	/** font for the titles */
+	public String titleFont = "fonts/talldark.ttf";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -98,12 +109,28 @@ public class SettingsActivity extends Activity {
 		emailPassword.setText(usersPassword);
 
 		/** if you click the archive messages option */
-		Button saveButton = (Button) findViewById(R.id.saveButton);
+		TextView saveButton = (TextView) findViewById(R.id.saveButton);
+		saveButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		saveButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				setValues();
 			}
 		});
+
+		/** title font to localDate and display stardate */
+		TextView localDateTextView = (TextView) findViewById(R.id.localDate);
+		localDateTextView.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
+		localDateTextView.setText(ItemsActivity.getStarDate());
+
+		/** create the graph animated GIF */
+		InputStream stream = null;
+		stream = getResources().openRawResource(R.drawable.graph);
+		GifDecoderView staticView = new GifDecoderView(this, stream);
+		RelativeLayout.LayoutParams lhw = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		staticView.setLayoutParams(lhw);
+		staticView.setPadding(0, 0, 0, 0);
+		RelativeLayout lineGifBox = (RelativeLayout) findViewById(R.id.alertGif);
+		lineGifBox.addView(staticView);
 	}
 
 	/**
@@ -120,7 +147,7 @@ public class SettingsActivity extends Activity {
 
 		/** set selected spinner values */
 		editor.putString("MORNING", morningSpinner.getSelectedItem().toString());
-		editor.putString("AFTERNOON",  afternoonSpinner.getSelectedItem().toString());
+		editor.putString("AFTERNOON", afternoonSpinner.getSelectedItem().toString());
 		editor.putString("EVENING", eveningSpinner.getSelectedItem().toString());
 		editor.commit();
 

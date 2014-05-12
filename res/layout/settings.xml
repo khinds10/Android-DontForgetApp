@@ -2,173 +2,292 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@android:color/background_light"
+    android:background="@android:color/background_dark"
     android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="75dp"
-        android:background="@drawable/popup_title_background"
-        android:orientation="horizontal" >
+        android:layout_height="43dp"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp" >
 
         <ImageView
-            android:id="@+id/appIcon"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="0dp"
-            android:layout_weight="0.20"
-            android:contentDescription="@string/app_name" />
+            android:id="@+id/topTitleCorner"
+            android:layout_width="160dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="left"
+            android:scaleType="fitStart"
+            android:src="@drawable/title" />
+
+        <ImageView
+            android:id="@+id/topMiddleSquare"
+            android:layout_width="50dp"
+            android:layout_height="fill_parent"
+            android:src="@drawable/dk_pink_square" />
+
+        <ImageView
+            android:id="@+id/topBlkSpace"
+            android:layout_width="4dp"
+            android:layout_height="fill_parent"
+            android:src="@drawable/blk_square" />
 
         <TextView
-            android:id="@+id/appTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.80"
-            android:gravity="left"
-            android:text="@string/app_name"
-            android:textColor="#FFFFFF"
-            android:textSize="32dp" />
+            android:id="@+id/localDate"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/lg_pink_square"
+            android:gravity="right|center_vertical"
+            android:maxLines="1"
+            android:padding="4dp"
+            android:textColor="#000000"
+            android:textSize="22sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/border"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
         android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:paddingLeft="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/corner" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="4dp"
+            android:paddingLeft="4dp"
+            android:src="@drawable/dk_pink_square" />
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/scrollViewMenu"
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="fill_parent"
+            android:paddingBottom="4dp"
+            android:paddingLeft="4dp"
+            android:src="@drawable/dk_blue_square" />
 
         <LinearLayout
-            android:id="@+id/itemsLayout"
             android:layout_width="fill_parent"
-            android:layout_height="358dp"
-            android:orientation="vertical"
-            android:padding="4dp" >
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/SettingsTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:paddingBottom="25dp"
-                android:paddingTop="5dp"
-                android:text="@string/Settings"
-                android:textColor="#000000"
-                android:textSize="22dp" />
-
-            <TextView
-                android:id="@+id/emailTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Your_Gmail_Address"
-                android:textColor="#000000" />
-
-            <EditText
-                android:id="@+id/emailAddress"
+            <ScrollView
+                android:id="@+id/scrollViewMenu"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textEmailAddress" >
+                android:layout_height="475dp" >
 
-                <requestFocus />
-            </EditText>
+                <LinearLayout
+                    android:id="@+id/itemsLayout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal"
+                    android:padding="10dp" >
 
-            <TextView
-                android:id="@+id/passwordTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Your_Gmail_Password"
-                android:textColor="#000000" />
+                    <LinearLayout
+                        android:id="@+id/itemsLayout"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical"
+                        android:paddingRight="4dp" >
 
-            <EditText
-                android:id="@+id/emailPassword"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPassword" />
+                        <TextView
+                            android:id="@+id/emailTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gmail Address"
+                            android:textColor="#FFFFFF" />
 
-            <TextView
-                android:id="@+id/phoneNumberTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:text="@string/Your_Phone_Number"
-                android:textColor="#000000" />
+                        <EditText
+                            android:id="@+id/emailAddress"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:inputType="textEmailAddress" >
+                        </EditText>
 
-            <EditText
-                android:id="@+id/phoneNumber"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="phone" />
+                        <TextView
+                            android:id="@+id/passwordTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gmail Password"
+                            android:textColor="#FFFFFF" />
 
-            <TextView
-                android:id="@+id/morningReminderTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:text="@string/Morning_Reminder_Time"
-                android:textColor="#000000" />
+                        <EditText
+                            android:id="@+id/emailPassword"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:inputType="textPassword" />
 
-            <Spinner
-                android:id="@+id/morningSpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="100dp" />
+                        <TextView
+                            android:id="@+id/phoneNumberTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="10dp"
+                            android:text="Phone Number"
+                            android:textColor="#FFFFFF" />
 
-            <TextView
-                android:id="@+id/afternoonReminderTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:text="@string/Afternoon_Reminder_Time"
-                android:textColor="#000000" />
+                        <EditText
+                            android:id="@+id/phoneNumber"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:inputType="phone" />
 
-            <Spinner
-                android:id="@+id/afternoonSpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="100dp" />
+                        <TextView
+                            android:id="@+id/morningReminderTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="10dp"
+                            android:text="Morning Reminder"
+                            android:textColor="#FFFFFF" />
 
-            <TextView
-                android:id="@+id/eveningReminderTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:text="@string/Evening_Reminder_Time"
-                android:textColor="#000000" />
+                        <Spinner
+                            android:id="@+id/morningSpinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="100dp" />
 
-            <Spinner
-                android:id="@+id/eveningSpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="100dp" />
+                        <TextView
+                            android:id="@+id/afternoonReminderTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="10dp"
+                            android:text="Afternoon Reminder"
+                            android:textColor="#FFFFFF" />
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                        <Spinner
+                            android:id="@+id/afternoonSpinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="100dp" />
 
-                <TextView
-                    android:id="@+id/buttonPaddingPlaceholder"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.75" />
+                        <TextView
+                            android:id="@+id/eveningReminderTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="10dp"
+                            android:text="Evening Reminder"
+                            android:textColor="#FFFFFF" />
 
-                <Button
-                    android:id="@+id/saveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.25"
-                    android:text="@string/Save" />
-            </LinearLayout>
+                        <Spinner
+                            android:id="@+id/eveningSpinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="100dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="0.5"
+                        android:gravity="top"
+                        android:orientation="vertical" >
+
+                        <ImageView
+                            android:id="@+id/lcarsAnimation"
+                            android:layout_width="fill_parent"
+                            android:layout_height="250dp"
+                            android:layout_gravity="top"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/lcars"
+                            android:gravity="top"
+                            android:scaleType="centerCrop" >
+                        </ImageView>
+
+                        <RelativeLayout
+                            android:id="@+id/alertGif"
+                            android:layout_width="fill_parent"
+                            android:layout_height="100dp" >
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="75dp" >
+
+                            <TextView
+                                android:id="@+id/buttonPaddingPlaceholder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.75" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="fill_parent"
+            android:paddingBottom="4dp"
+            android:paddingLeft="4dp"
+            android:src="@drawable/blue_square" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/placeHolder"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_weight=".65" />
+
+            <TextView
+                android:id="@+id/saveButton"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_weight=".35"
+                android:background="@drawable/purple_button"
+                android:gravity="right"
+                android:maxLines="1"
+                android:paddingRight="15dp"
+                android:text="PERSIST"
+                android:textColor="#000000"
+                android:textSize="22sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:paddingLeft="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/corner_bottom" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="4dp"
+            android:layout_gravity="bottom"
+            android:paddingLeft="4dp"
+            android:src="@drawable/dk_blue_square" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.kevinhinds.dontforget;
 
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,6 +24,7 @@ import com.kevinhinds.dontforget.reminder.ReminderDataSource;
 import com.kevinhinds.dontforget.status.Status;
 import com.kevinhinds.dontforget.status.StatusDataSource;
 import com.kevinhinds.dontforget.updates.LatestUpdates;
+import com.kevinhinds.dontforget.views.GifDecoderView;
 import com.kevinhinds.dontforget.widget.CountWidget;
 import com.kevinhinds.dontforget.widget.ListWidget;
 import com.kevinhinds.dontforget.sound.SoundManager;
@@ -40,6 +42,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -63,6 +66,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -103,17 +107,20 @@ public class ItemsActivity extends Activity {
 	private AlarmManagerBroadcastReceiver alarm;
 
 	/**
-	 * the current options for future reminders can change during the day, keep track of the current list here
+	 * the current options for future reminders can change during the day, keep track of the current
+	 * list here
 	 */
 	private CharSequence[] currentReminderOptions = null;
 
 	/**
-	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can change the status to reflect as such
+	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can
+	 * change the status to reflect as such
 	 */
 	protected long recentlyTriedItemID;
 
 	/**
-	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or "edit" type of operation to reflect in the status if it fails
+	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or
+	 * "edit" type of operation to reflect in the status if it fails
 	 */
 	protected String recentlyTriedEditType;
 
@@ -212,8 +219,7 @@ public class ItemsActivity extends Activity {
 
 		/** if you click the current messages option */
 		CurrentMessagesLabel.setTypeface(null, Typeface.BOLD);
-		TextView CurrentMessages = (TextView) findViewById(R.id.CurrentMessages);
-		CurrentMessages.setOnClickListener(new OnClickListener() {
+		CurrentMessagesLabel.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				soundEvent("click_current_messages");
 				isArchivedMessageView = 0;
@@ -228,8 +234,7 @@ public class ItemsActivity extends Activity {
 		});
 
 		/** if you click the archive messages option */
-		TextView ArchivedMessages = (TextView) findViewById(R.id.ArchivedMessages);
-		ArchivedMessages.setOnClickListener(new OnClickListener() {
+		ArchivedMessagesLabel.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				soundEvent("click_archived_messages");
 				isArchivedMessageView = 1;
@@ -253,8 +258,44 @@ public class ItemsActivity extends Activity {
 			}
 		});
 
+		/** get the display metrics */
+		getDisplayMetrics();
+
+		/** create the line animated GIF */
+		InputStream stream = null;
+		stream = getResources().openRawResource(R.drawable.line);
+		GifDecoderView staticView = new GifDecoderView(this, stream);
+		RelativeLayout.LayoutParams lhw = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		staticView.setLayoutParams(lhw);
+		staticView.setPadding(0, 0, 0, 0);
+		RelativeLayout lineGifBox = (RelativeLayout) findViewById(R.id.lineGifBox);
+		lineGifBox.addView(staticView);
+
+		/** create the blue alert animated gif */
+		InputStream streamAlert = null;
+		streamAlert = getResources().openRawResource(R.drawable.blue);
+		GifDecoderView staticViewAlert = new GifDecoderView(this, streamAlert);
+		RelativeLayout.LayoutParams lpAlert = new RelativeLayout.LayoutParams(screenWidth / 5, LayoutParams.FILL_PARENT);
+		staticViewAlert.setLayoutParams(lpAlert);
+		staticViewAlert.setPadding(0, 0, 0, 0);
+		RelativeLayout alertGif = (RelativeLayout) findViewById(R.id.alertGif);
+		alertGif.addView(staticViewAlert);
+
+		/** on the load make sure that the items list is the right height */
+		Configuration config = getResources().getConfiguration();
+		int itemsViewHeight = 2;
+		if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			itemsViewHeight = 3;
+		}
+
+		/** set the height of the items container */
+		LinearLayout itemsMainContainer = (LinearLayout) findViewById(R.id.itemsMainContainer);
+		LinearLayout.LayoutParams lpItems = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) (screenHeight / itemsViewHeight));
+		itemsMainContainer.setLayoutParams(lpItems);
+
 		/**
-		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future
+		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the
+		 * future
 		 */
 		alarm = new AlarmManagerBroadcastReceiver();
 
@@ -266,6 +307,27 @@ public class ItemsActivity extends Activity {
 		 * show the latest update notes if the application was just installed
 		 */
 		LatestUpdates.showFirstInstalledNotes(this);
+
+	}
+
+	/**
+	 * Check screen orientation or screen rotate event here
+	 */
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+
+		/** get the display metrics */
+		getDisplayMetrics();
+
+		int itemsViewHeight = 2;
+		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			itemsViewHeight = 3;
+		}
+		/** set the height of the items container */
+		LinearLayout itemsMainContainer = (LinearLayout) findViewById(R.id.itemsMainContainer);
+		LinearLayout.LayoutParams lpItems = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) (screenHeight / itemsViewHeight));
+		itemsMainContainer.setLayoutParams(lpItems);
 	}
 
 	/**
@@ -308,11 +370,7 @@ public class ItemsActivity extends Activity {
 	 */
 	private void setupItemsList() {
 
-		/** get screen metrics */
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		screenHeight = displaymetrics.heightPixels;
-		screenWidth = displaymetrics.widthPixels;
+		getDisplayMetrics();
 
 		/**
 		 * the message count text fields should reflect how many archived / non-archived messages
@@ -610,7 +668,8 @@ public class ItemsActivity extends Activity {
 		final ImageView reminderImage = (ImageView) layout.findViewById(R.id.reminderImage);
 
 		/**
-		 * if we're editing an existing entry the other buttons are enabled, else you can't use them yet
+		 * if we're editing an existing entry the other buttons are enabled, else you can't use them
+		 * yet
 		 */
 		if (editMode) {
 
@@ -731,9 +790,8 @@ public class ItemsActivity extends Activity {
 		});
 
 		/** set button is pressed, set the timer and close the popup */
-		TextView archiveOptionButton = (TextView) layout.findViewById(R.id.ArchiveButton);
-		archiveOptionButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
-		archiveOptionButton.setOnClickListener(new OnClickListener() {
+		archiveButton.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+		archiveButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (isTitleEmpty(editTextTitle)) {
 					soundEvent("error_no_title_archive");
@@ -905,7 +963,8 @@ public class ItemsActivity extends Activity {
 					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/**
-							 * based on the dialog selection either set the reminder or continue to show the custom dialog if they chose "custom"
+							 * based on the dialog selection either set the reminder or continue to
+							 * show the custom dialog if they chose "custom"
 							 */
 							String selectedItem = (String) currentReminderOptions[item];
 							if (selectedItem.equals("Custom...")) {
@@ -934,7 +993,8 @@ public class ItemsActivity extends Activity {
 												customTimePicker.getCurrentMinute());
 
 										/**
-										 * get the diff of the future custom time against the current time to set the future reminder
+										 * get the diff of the future custom time against the
+										 * current time to set the future reminder
 										 */
 										long diff = customDate.getTime() - currentTime.getTime();
 										setReminder(diff);
@@ -945,7 +1005,8 @@ public class ItemsActivity extends Activity {
 								dialog.dismiss();
 							} else {
 								/**
-								 * get the amount of time until the future selected reminder datetime
+								 * get the amount of time until the future selected reminder
+								 * datetime
 								 */
 								soundEvent("event_choose_reminder_time_standard");
 								long diff = getFutureTime(currentReminderOptions[item]);
@@ -984,7 +1045,8 @@ public class ItemsActivity extends Activity {
 		currentID = editEntryDB("E," + getLastUpdateTime());
 
 		/**
-		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated
+		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been
+		 * added/updated
 		 */
 		alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, currentID);
 		deleteReminderEntry(currentID);
@@ -1007,7 +1069,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * add the existing reminder entry table for this particular item "id" and setup the items list with the new situation
+	 * add the existing reminder entry table for this particular item "id" and setup the items list
+	 * with the new situation
 	 * 
 	 * @param recentlyTriedItemID
 	 * @param todaysDate
@@ -1020,7 +1083,9 @@ public class ItemsActivity extends Activity {
 	/**
 	 * get the reminder options as CharSequence[] to pass to the dialog as choice items list
 	 * 
-	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't set "This Morning" if it's already passed the time that "This Morning" is supposed to remind you at
+	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't
+	 *          set "This Morning" if it's already passed the time that "This Morning" is supposed
+	 *          to remind you at
 	 * @return
 	 */
 	private CharSequence[] getReminderOptions() {
@@ -1131,7 +1196,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of "AM" / "PM"
+	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of
+	 * "AM" / "PM"
 	 * 
 	 * @param hour
 	 * @return
@@ -1299,7 +1365,8 @@ public class ItemsActivity extends Activity {
 		}
 
 		/**
-		 * remove the duplicate values from the array that may have come back from the contact selection
+		 * remove the duplicate values from the array that may have come back from the contact
+		 * selection
 		 */
 		friendsSMSList = getDistinct(friendsSMSList);
 		friendsEmailList = getDistinct(friendsEmailList);
@@ -1310,7 +1377,8 @@ public class ItemsActivity extends Activity {
 		if (activityForResultType.equals("SMS")) {
 
 			/**
-			 * if we have an primary phone number for our friend, then send it out to them, else show the error
+			 * if we have an primary phone number for our friend, then send it out to them, else
+			 * show the error
 			 */
 			if (friendsSMSList.length != 0) {
 				if (friendsSMSList.length == 1) {
@@ -1325,7 +1393,8 @@ public class ItemsActivity extends Activity {
 					chooseAlert.setSingleChoiceItems(friendsSMSList, -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/**
-							 * friends SMS becomes what was selected from the dialog removing the message about if the phone number is primary
+							 * friends SMS becomes what was selected from the dialog removing the
+							 * message about if the phone number is primary
 							 */
 							soundEvent("click_choose_which_number_sms");
 							friendsSMS = (String) friendsSMSList[item];
@@ -1345,7 +1414,8 @@ public class ItemsActivity extends Activity {
 				soundEvent("event_no_phone_number_found_sms");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via SMS
 				 */
 				addEditItemStatus();
 
@@ -1394,7 +1464,8 @@ public class ItemsActivity extends Activity {
 				soundEvent("event_email_not_found_contact");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via email
 				 */
 				addEditItemStatus();
 
@@ -1425,7 +1496,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * get a nicely formated datetime string with pipe separated date and time values to later render in the item rows formatted to: MM.d|H:m
+	 * get a nicely formated datetime string with pipe separated date and time values to later
+	 * render in the item rows formatted to: MM.d|H:m
 	 * 
 	 * @return
 	 */
@@ -1452,7 +1524,7 @@ public class ItemsActivity extends Activity {
 		String displayEmail = "";
 		if (usersEmail.equals("")) {
 			userGmail.setTextColor(Color.WHITE);
-			displayEmail = "(Configure)";
+			displayEmail = "(press to configure)";
 		} else {
 			displayEmail = usersEmail;
 		}
@@ -1464,7 +1536,7 @@ public class ItemsActivity extends Activity {
 		String displayPhone = "";
 		if (usersPhone.equals("")) {
 			userPhoneNumber.setTextColor(Color.WHITE);
-			displayPhone = "(Configure)";
+			displayPhone = "(press to configure)";
 		} else {
 			displayPhone = usersPhone;
 		}
@@ -1617,7 +1689,8 @@ public class ItemsActivity extends Activity {
 				alertDialog.setMessage("Check your settings and try again.");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via SMS
 				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1673,7 +1746,8 @@ public class ItemsActivity extends Activity {
 				alertDialog.setMessage("Check your settings and try again.");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via Email
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via Email
 				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1705,7 +1779,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * update any currently running widgets with the latest and greatest from this activity that was loaded
+	 * update any currently running widgets with the latest and greatest from this activity that was
+	 * loaded
 	 */
 	private void updateWidgets() {
 
@@ -1804,7 +1879,8 @@ public class ItemsActivity extends Activity {
 		getTwentyFourHourTimeForPreferences();
 
 		/**
-		 * build datetime string out of the current date plus the hour in the future the reminder is scheduled for
+		 * build datetime string out of the current date plus the hour in the future the reminder is
+		 * scheduled for
 		 */
 		String reminderDateString = "";
 		if (currentReminderOption.equals("This Morning") || currentReminderOption.equals("Tomorrow Morning")) {
@@ -1878,7 +1954,7 @@ public class ItemsActivity extends Activity {
 			playSound("keypress");
 		}
 		if (eventName.equals("openapp")) {
-			playSound("openapp");
+			playSound("open");
 		}
 		if (eventName.equals("error_no_title_save")) {
 			playSound("error");
@@ -2076,12 +2152,14 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * According to Roberto Orci, stardates were revised again for the 2009 film Star Trek so that the first four digits correspond to the year, while the remainder was intended to stand for the day
-	 * of the year. For example, stardate 2233.04 would be January 4, 2233. Star Trek Into Darkness begins on stardate 2259.55, or February 24, 2259.
+	 * According to Roberto Orci, stardates were revised again for the 2009 film Star Trek so that
+	 * the first four digits correspond to the year, while the remainder was intended to stand for
+	 * the day of the year. For example, stardate 2233.04 would be January 4, 2233. Star Trek Into
+	 * Darkness begins on stardate 2259.55, or February 24, 2259.
 	 * 
 	 * @return
 	 */
-	public String getStarDate() {
+	public static String getStarDate() {
 		SimpleDateFormat localDateDF = new SimpleDateFormat("yyyy.D", Locale.getDefault());
 		return localDateDF.format(Calendar.getInstance().getTime());
 	}
@@ -2148,5 +2226,15 @@ public class ItemsActivity extends Activity {
 		}
 		setupItemsList();
 		return currentID;
+	}
+
+	/**
+	 * get screen metrics
+	 */
+	private void getDisplayMetrics() {
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		screenHeight = displaymetrics.heightPixels;
+		screenWidth = displaymetrics.widthPixels;
 	}
 }
