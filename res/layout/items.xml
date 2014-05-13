@@ -126,7 +126,7 @@
                 android:layout_height="fill_parent"
                 android:paddingBottom="4dp"
                 android:paddingLeft="4dp"
-                android:src="@drawable/dk_pink_square" />
+                android:src="@drawable/dk_blue_square" />
 
             <ScrollView
                 android:id="@+id/scrollViewMenu"

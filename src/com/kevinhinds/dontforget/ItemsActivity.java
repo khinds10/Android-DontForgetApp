@@ -1950,11 +1950,33 @@ public class ItemsActivity extends Activity {
 	 * @param eventName
 	 */
 	private void soundEvent(String eventName) {
+		
+		
+
+		// archive.wav
+		// beep.wav
+		// beep2.wav
+		// call.wav
+		// cancel.wav
+		// commit.wav
+		// confirm.wav
+		// error.wav
+		// hail.wav
+		// keypress.wav
+		// open.wav
+		// ping.wav
+		// processing.wav
+		// save.wav
+		// thinking.wav
+		// unarchive.wav
+
+		
+		
 		if (eventName.equals("keypress")) {
 			playSound("keypress");
 		}
 		if (eventName.equals("openapp")) {
-			playSound("open");
+			playSound("openapp");
 		}
 		if (eventName.equals("error_no_title_save")) {
 			playSound("error");
@@ -1972,16 +1994,16 @@ public class ItemsActivity extends Activity {
 			playSound("open");
 		}
 		if (eventName.equals("click_cancel_timer")) {
-			playSound("save");
+			playSound("canel");
 		}
 		if (eventName.equals("click_edit_message")) {
-			playSound("cancel");
+			playSound("beepbeep");
 		}
 		if (eventName.equals("click_cancel_edit_message")) {
-			playSound("cancel");
+			playSound("beep2");
 		}
 		if (eventName.equals("click_save_message")) {
-			playSound("finalize");
+			playSound("commit");
 		}
 		if (eventName.equals("error_no_title_archive")) {
 			playSound("error");
@@ -1993,13 +2015,13 @@ public class ItemsActivity extends Activity {
 			playSound("unarchive");
 		}
 		if (eventName.equals("click_cancel_button")) {
-			playSound("save");
+			playSound("cancel");
 		}
 		if (eventName.equals("click_delete_button")) {
 			playSound("beep");
 		}
 		if (eventName.equals("click_confirm_delete")) {
-			playSound("beep");
+			playSound("processing");
 		}
 		if (eventName.equals("click_cancel_delete")) {
 			playSound("beep");
@@ -2008,46 +2030,46 @@ public class ItemsActivity extends Activity {
 			playSound("error");
 		}
 		if (eventName.equals("sending_email_yourself")) {
-			playSound("beep");
+			playSound("sending");
 		}
 		if (eventName.equals("error_no_title_contact_email")) {
 			playSound("error");
 		}
 		if (eventName.equals("find_contact_email")) {
-			playSound("beep");
+			playSound("chirp");
 		}
 		if (eventName.equals("error_no_title_contact_sms")) {
 			playSound("error");
 		}
 		if (eventName.equals("find_contact_sms")) {
-			playSound("beep");
+			playSound("chirp");
 		}
 		if (eventName.equals("error_no_title_send_sms")) {
 			playSound("error");
 		}
 		if (eventName.equals("sending_sms_yourself")) {
-			playSound("beep");
+			playSound("sending");
 		}
 		if (eventName.equals("error_no_title_remind")) {
 			playSound("error");
 		}
 		if (eventName.equals("click_remind")) {
-			playSound("beep");
+			playSound("hail");
 		}
 		if (eventName.equals("event_choose_reminder_time_custom_select")) {
 			playSound("beep");
 		}
 		if (eventName.equals("event_choose_reminder_time_standard")) {
-			playSound("beep");
+			playSound("call");
 		}
 		if (eventName.equals("click_sms_contact_confirm")) {
-			playSound("beep");
+			playSound("sending");
 		}
 		if (eventName.equals("click_sms_contact_cancel")) {
 			playSound("beep");
 		}
 		if (eventName.equals("click_email_contact_confirm")) {
-			playSound("beep");
+			playSound("sending");
 		}
 		if (eventName.equals("click_email_contact_cancel")) {
 			playSound("beep");
@@ -2056,7 +2078,7 @@ public class ItemsActivity extends Activity {
 			playSound("beep");
 		}
 		if (eventName.equals("event_no_phone_number_found_sms")) {
-			playSound("beep");
+			playSound("thinking");
 		}
 		if (eventName.equals("event_no_phone_number_found_sms_confirm")) {
 			playSound("beep");
@@ -2065,7 +2087,7 @@ public class ItemsActivity extends Activity {
 			playSound("beep");
 		}
 		if (eventName.equals("event_email_not_found_contact")) {
-			playSound("beep");
+			playSound("thinking");
 		}
 		if (eventName.equals("event_email_not_found_contact_confirm")) {
 			playSound("beep");
