@@ -29,6 +29,7 @@ import com.kevinhinds.dontforget.widget.CountWidget;
 import com.kevinhinds.dontforget.widget.ListWidget;
 import com.kevinhinds.dontforget.sound.SoundManager;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -107,6 +108,11 @@ public class ItemsActivity extends Activity {
 	private AlarmManagerBroadcastReceiver alarm;
 
 	/**
+	 * boolean for if the sounds are turned on or not
+	 */
+	protected boolean soundsTurnedOn;
+
+	/**
 	 * the current options for future reminders can change during the day, keep track of the current
 	 * list here
 	 */
@@ -176,6 +182,19 @@ public class ItemsActivity extends Activity {
 
 		/** if first install then need some default options created */
 		checkFirstInstall();
+
+		/** check if the user wants to have app sounds enabled or not */
+		SharedPreferences wmbPreference = PreferenceManager.getDefaultSharedPreferences(this);
+		if (wmbPreference.getBoolean("FIRSTINSTALL", true)) {
+			soundsTurnedOn = true;
+			SharedPreferences.Editor editor = wmbPreference.edit();
+			editor.putBoolean("FIRSTINSTALL", false);
+			editor.putBoolean("soundsTurnedOn", soundsTurnedOn);
+			editor.commit();
+		} else {
+			soundsTurnedOn = wmbPreference.getBoolean("soundsTurnedOn", true);
+		}
+		setSilentModeMessage();
 
 		/** get the current settings for the user */
 		getUserSettings();
@@ -281,17 +300,8 @@ public class ItemsActivity extends Activity {
 		RelativeLayout alertGif = (RelativeLayout) findViewById(R.id.alertGif);
 		alertGif.addView(staticViewAlert);
 
-		/** on the load make sure that the items list is the right height */
-		Configuration config = getResources().getConfiguration();
-		int itemsViewHeight = 2;
-		if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			itemsViewHeight = 3;
-		}
-
-		/** set the height of the items container */
-		LinearLayout itemsMainContainer = (LinearLayout) findViewById(R.id.itemsMainContainer);
-		LinearLayout.LayoutParams lpItems = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) (screenHeight / itemsViewHeight));
-		itemsMainContainer.setLayoutParams(lpItems);
+		/** resize the display elements onLoad */
+		resizeDisplayElements();
 
 		/**
 		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the
@@ -311,19 +321,27 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * Check screen orientation or screen rotate event here
+	 * Check screen orientation or screen rotate event here to resize screen elements
 	 */
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+		resizeDisplayElements();
+	}
 
-		/** get the display metrics */
+	/**
+	 * get the display metrics and resize the display elements correctly
+	 */
+	protected void resizeDisplayElements() {
+
+		/** on the load make sure that the items list is the right height */
 		getDisplayMetrics();
-
-		int itemsViewHeight = 2;
-		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			itemsViewHeight = 3;
+		Configuration config = getResources().getConfiguration();
+		double itemsViewHeight = 2;
+		if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			itemsViewHeight = 4;
 		}
+
 		/** set the height of the items container */
 		LinearLayout itemsMainContainer = (LinearLayout) findViewById(R.id.itemsMainContainer);
 		LinearLayout.LayoutParams lpItems = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) (screenHeight / itemsViewHeight));
@@ -560,15 +578,11 @@ public class ItemsActivity extends Activity {
 			if (reminder != null) {
 				TextView textReminder = new TextView(this);
 				textReminder.setTextSize(10);
-				textReminder.setText("Reminder: " + (CharSequence) reminder.time);
+				textReminder.setText("REMINDER - " + (CharSequence) reminder.time.toUpperCase());
 				textReminder.setLayoutParams(textFillContent);
-				textReminder.setClickable(true);
-				textReminder.setTextColor(Color.BLUE);
-				textReminder.setPadding(50, 2, 0, 2);
+				textReminder.setTextColor(Color.parseColor("#FF9966"));
 				textReminder.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
-				textReminder.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.reminder_icon), null, null, null);
-				textReminder.setCompoundDrawablePadding(10);
-				// ll.addView(textReminder);
+				itemsLayout.addView(textReminder);
 			}
 		}
 
@@ -665,7 +679,6 @@ public class ItemsActivity extends Activity {
 
 		final LinearLayout reminderLayout = (LinearLayout) layout.findViewById(R.id.reminderReminder);
 		final TextView reminderReminderInfo = (TextView) layout.findViewById(R.id.reminderReminderInfo);
-		final ImageView reminderImage = (ImageView) layout.findViewById(R.id.reminderImage);
 
 		/**
 		 * if we're editing an existing entry the other buttons are enabled, else you can't use them
@@ -693,15 +706,14 @@ public class ItemsActivity extends Activity {
 			final Reminder currentReminder = checkReminderEntry(currentID);
 			if (currentReminder != null) {
 				reminderLayout.setVisibility(View.VISIBLE);
-				reminderReminderInfo.setText("Reminder: " + currentReminder.getTime());
+				reminderReminderInfo.setText("REMINDER - " + currentReminder.getTime().toUpperCase());
 			}
 			cancelReminderButton.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					soundEvent("click_cancel_timer");
 					reminderDataSource.deleteReminder(currentReminder);
-					reminderImage.setVisibility(View.GONE);
 					cancelReminderButton.setVisibility(View.GONE);
-					reminderReminderInfo.setText("Reminder Cancelled");
+					reminderReminderInfo.setText("REMINDER CANCELLED");
 					alarm.cancelReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), currentID);
 					setupItemsList();
 				}
@@ -1033,6 +1045,7 @@ public class ItemsActivity extends Activity {
 	 * 
 	 * @param diff
 	 */
+	@SuppressLint("SimpleDateFormat")
 	private void setReminder(long diff) {
 
 		/**
@@ -1088,6 +1101,7 @@ public class ItemsActivity extends Activity {
 	 *          to remind you at
 	 * @return
 	 */
+	@SuppressLint("SimpleDateFormat")
 	private CharSequence[] getReminderOptions() {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("H");
@@ -1501,6 +1515,7 @@ public class ItemsActivity extends Activity {
 	 * 
 	 * @return
 	 */
+	@SuppressLint("SimpleDateFormat")
 	private String getLastUpdateTime() {
 		Date currentTime = new Date();
 		DateFormat todaysDateFormat = new SimpleDateFormat("MM.d,H.m");
@@ -1868,6 +1883,7 @@ public class ItemsActivity extends Activity {
 	 * @param currentReminderOption
 	 * @return
 	 */
+	@SuppressLint("SimpleDateFormat")
 	private long getFutureTime(CharSequence currentReminderOption) {
 
 		/** get current datetime and format for today in time */
@@ -1950,8 +1966,11 @@ public class ItemsActivity extends Activity {
 	 * @param eventName
 	 */
 	private void soundEvent(String eventName) {
-		
-		
+
+		/** don't play sounds if they're not enabled by user settings */
+		if (!soundsTurnedOn) {
+			return;
+		}
 
 		// archive.wav
 		// beep.wav
@@ -1970,8 +1989,6 @@ public class ItemsActivity extends Activity {
 		// thinking.wav
 		// unarchive.wav
 
-		
-		
 		if (eventName.equals("keypress")) {
 			playSound("keypress");
 		}
@@ -2135,6 +2152,13 @@ public class ItemsActivity extends Activity {
 
 		/** Handle item selection */
 		switch (item.getItemId()) {
+		case R.id.soundsTurnedOnOff:
+			soundsTurnedOn = !soundsTurnedOn;
+			SharedPreferences.Editor editor = wmbPreference.edit();
+			editor.putBoolean("soundsTurnedOn", soundsTurnedOn);
+			editor.commit();
+			setSilentModeMessage();
+			return true;
 		case R.id.menu_settings:
 			Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
 			startActivity(intent);
@@ -2258,5 +2282,17 @@ public class ItemsActivity extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 		screenHeight = displaymetrics.heightPixels;
 		screenWidth = displaymetrics.widthPixels;
+	}
+
+	/**
+	 * set the footer message about if the app is in silent mode or not
+	 */
+	protected void setSilentModeMessage() {
+		TextView silentModeMessage = (TextView) findViewById(R.id.silentModeMessage);
+		silentModeMessage.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
+		silentModeMessage.setText("");
+		if (!soundsTurnedOn) {
+			silentModeMessage.setText("Silent Mode - On -");
+		}
 	}
 }

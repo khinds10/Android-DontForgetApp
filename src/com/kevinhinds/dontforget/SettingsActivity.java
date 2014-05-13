@@ -11,16 +11,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -52,6 +57,12 @@ public class SettingsActivity extends Activity {
 
 	/** font for the titles */
 	public String titleFont = "fonts/talldark.ttf";
+
+	/**
+	 * screen height / width
+	 */
+	private int screenHeight;
+	private int screenWidth;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -131,6 +142,43 @@ public class SettingsActivity extends Activity {
 		staticView.setPadding(0, 0, 0, 0);
 		RelativeLayout lineGifBox = (RelativeLayout) findViewById(R.id.alertGif);
 		lineGifBox.addView(staticView);
+
+		/** adjust the screen elements onLoad */
+		adjustScreenElements();
+	}
+
+	/**
+	 * screen load / config change make sure that the items list is the right height
+	 */
+	protected void adjustScreenElements() {
+
+		getDisplayMetrics();
+		Configuration config = getResources().getConfiguration();
+		double itemsViewHeight = 1.4;
+		double lcarsImageWidthSize = 2.5;
+		double lcarsImageHeightSize = 2.5;
+		if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			itemsViewHeight = 1.75;
+			lcarsImageWidthSize = 3.5;
+			lcarsImageHeightSize = 1.5;
+		}
+
+		/** set the height of the items container */
+		ScrollView scrollViewMenu = (ScrollView) findViewById(R.id.scrollViewMenu);
+		LinearLayout.LayoutParams lpItems = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) (screenHeight / itemsViewHeight));
+		scrollViewMenu.setLayoutParams(lpItems);
+		ImageView lcarsAnimation = (ImageView) findViewById(R.id.lcarsAnimation);
+		LinearLayout.LayoutParams lpItemsImage = new LinearLayout.LayoutParams((int) (screenWidth / lcarsImageWidthSize), (int) (screenHeight / lcarsImageHeightSize));
+		lcarsAnimation.setLayoutParams(lpItemsImage);
+	}
+
+	/**
+	 * Check screen orientation or screen rotate event here
+	 */
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		adjustScreenElements();
 	}
 
 	/**
@@ -185,5 +233,15 @@ public class SettingsActivity extends Activity {
 			}
 		}
 		return probableEmail;
+	}
+
+	/**
+	 * get screen metrics
+	 */
+	private void getDisplayMetrics() {
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+		screenHeight = displaymetrics.heightPixels;
+		screenWidth = displaymetrics.widthPixels;
 	}
 }

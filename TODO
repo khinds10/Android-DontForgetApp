@@ -1,5 +1,38 @@
-TODO
+====================
+== TODO
+====================
+	
+	[] widgets designed
 
+	[] finish the sounds mapping and test
+
+	[] have it make the LCARS bars and items list have a rotating hightlight
+
+	[] when this is done, make it an entirely new app with freemium version and the freaking pollfish installed
+
+====================
+== BUGS
+====================
+
+	[] Add/Edit Items doesn't have the cool line item details ?!
+	
+====================
+== TEST
+====================
+
+	[] Save
+	[] Remind
+	[] Email
+	[] SMS
+	
+	[] Item rows show real data saved in the "status" table by pipe separation
+		[] test all the combos
+			-- also need to put in the email, phone # values
+			-- test if the values are messed up, it should catch the exceptions!
+			
+	[] have mute sounds menu option
+		[] have something saying that the sounds are muted or not below user settings :)
+		
 	[] height automatically adjusts correctly
 		[] settings
 			[] landscape
@@ -8,29 +41,9 @@ TODO
 		[] main
 			[] landscape
 			[] portrait
+			
+====================
+== TEST
+====================
 
-	[] reminders crap designed
-	
-	[] widgets designed
-	
-	[] have mute sounds option
-	
-	[] have a volume adjuster!
-
-	[] finish the sounds mapping and test
-
-	[] when this is done, make it an entirely new app with freemium version and the freaking pollfish installed
-
-TEST!
-
-	[] Save
-	[] Remind
-	[] Email
-	[] SMS
-	[] Item rows show real data saved in the "status" table by pipe separation
-		[] test all the combos
-			-- also need to put in the email, phone # values
-			-- test if the values are messed up, it should catch the exceptions!
-
-Long Term
-	[] have it make the LCARS bars and items list have a rotating hightlight
+	 [] have a volume adjuster?
