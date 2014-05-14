@@ -42,14 +42,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6"
-                    android:text="@string/Set_Reminder" />
+                    android:text="Set Custom Reminder" />
 
                 <Button
                     android:id="@+id/cancelCustomReminderButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.4"
-                    android:text="@string/Cancel" />
+                    android:text="Cancel" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

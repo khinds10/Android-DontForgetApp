@@ -1,20 +1,18 @@
 ====================
 == TODO
 ====================
-	
-	[] widgets designed
 
-	[] finish the sounds mapping and test
+	[...] add the missing strings and all that in strings.xml
 
 	[] have it make the LCARS bars and items list have a rotating hightlight
 
-	[] when this is done, make it an entirely new app with freemium version and the freaking pollfish installed
+	[] finish the sounds mapping and test
 
-====================
-== BUGS
-====================
-
-	[] Add/Edit Items doesn't have the cool line item details ?!
+	[] fix the stupid SMS problem
+	
+	[] finishing up
+		[] make it an entirely new app with freemium version
+			-- 2 new repos needed
 	
 ====================
 == TEST
@@ -43,7 +41,39 @@
 			[] portrait
 			
 ====================
-== TEST
+== LONG TERM
 ====================
-
+	
 	 [] have a volume adjuster?
+	 
+	 [] Widgets
+	 
+	 	[] have cool borders or something
+	 	
+		[] the widgets should have custom font text from bitmaps
+	
+				What is needed is to render the font onto a canvas, and then pass it on to a bitmap and assign that to an ImageView. Like so:
+				
+					public Bitmap buildUpdate(String time) {
+					    Bitmap myBitmap = Bitmap.createBitmap(160, 84, Bitmap.Config.ARGB_4444);
+					    Canvas myCanvas = new Canvas(myBitmap);
+					    Paint paint = new Paint();
+					    Typeface clock = Typeface.createFromAsset(this.getAssets(),"Clockopia.ttf");
+					    paint.setAntiAlias(true);
+					    paint.setSubpixelText(true);
+					    paint.setTypeface(clock);
+					    paint.setStyle(Paint.Style.FILL);
+					    paint.setColor(Color.WHITE);
+					    paint.setTextSize(65);
+					    paint.setTextAlign(Align.CENTER);
+					    myCanvas.drawText(time, 80, 60, paint);
+					    return myBitmap;
+					}
+			
+				In the widget update
+					String time = (String) DateFormat.format(mTimeFormat, mCalendar);
+					RemoteViews views = new RemoteViews(getPackageName(), R.layout.main);
+					views.setImageViewBitmap(R.id.TimeView, buildUpdate(time));
+					
+	 [] the app can go through the internet to send somebody else a message (having this same app)
+	 	-- have to have address or something, but this could be a harmful thing					

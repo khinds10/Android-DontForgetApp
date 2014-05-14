@@ -25,7 +25,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -148,25 +147,17 @@ public class SettingsActivity extends Activity {
 	}
 
 	/**
-	 * screen load / config change make sure that the items list is the right height
+	 * screen load / config change make sure that the view elements are the correct height
 	 */
 	protected void adjustScreenElements() {
-
 		getDisplayMetrics();
 		Configuration config = getResources().getConfiguration();
-		double itemsViewHeight = 1.4;
 		double lcarsImageWidthSize = 2.5;
 		double lcarsImageHeightSize = 2.5;
 		if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			itemsViewHeight = 1.75;
 			lcarsImageWidthSize = 3.5;
 			lcarsImageHeightSize = 1.5;
 		}
-
-		/** set the height of the items container */
-		ScrollView scrollViewMenu = (ScrollView) findViewById(R.id.scrollViewMenu);
-		LinearLayout.LayoutParams lpItems = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) (screenHeight / itemsViewHeight));
-		scrollViewMenu.setLayoutParams(lpItems);
 		ImageView lcarsAnimation = (ImageView) findViewById(R.id.lcarsAnimation);
 		LinearLayout.LayoutParams lpItemsImage = new LinearLayout.LayoutParams((int) (screenWidth / lcarsImageWidthSize), (int) (screenHeight / lcarsImageHeightSize));
 		lcarsAnimation.setLayoutParams(lpItemsImage);
@@ -185,6 +176,7 @@ public class SettingsActivity extends Activity {
 	 * set the values the user wishes
 	 */
 	private void setValues() {
+
 		/** get the preferences editor */
 		SharedPreferences.Editor editor = wmbPreference.edit();
 
@@ -239,9 +231,9 @@ public class SettingsActivity extends Activity {
 	 * get screen metrics
 	 */
 	private void getDisplayMetrics() {
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		screenHeight = displaymetrics.heightPixels;
-		screenWidth = displaymetrics.widthPixels;
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		screenWidth = dm.widthPixels;
+		screenHeight = dm.heightPixels;
 	}
 }

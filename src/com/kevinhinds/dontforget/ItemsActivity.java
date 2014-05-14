@@ -43,7 +43,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -64,7 +63,6 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -95,8 +93,8 @@ public class ItemsActivity extends Activity {
 	private View layout = null;
 	private PopupWindow pw;
 
-	private int screenHeight;
-	private int screenWidth;
+	private double screenHeight;
+	private double screenWidth;
 
 	protected TextView editTextTitle;
 	protected TextView messageContent;
@@ -294,14 +292,8 @@ public class ItemsActivity extends Activity {
 		InputStream streamAlert = null;
 		streamAlert = getResources().openRawResource(R.drawable.blue);
 		GifDecoderView staticViewAlert = new GifDecoderView(this, streamAlert);
-		RelativeLayout.LayoutParams lpAlert = new RelativeLayout.LayoutParams(screenWidth / 5, LayoutParams.FILL_PARENT);
-		staticViewAlert.setLayoutParams(lpAlert);
-		staticViewAlert.setPadding(0, 0, 0, 0);
 		RelativeLayout alertGif = (RelativeLayout) findViewById(R.id.alertGif);
 		alertGif.addView(staticViewAlert);
-
-		/** resize the display elements onLoad */
-		resizeDisplayElements();
 
 		/**
 		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the
@@ -318,34 +310,6 @@ public class ItemsActivity extends Activity {
 		 */
 		LatestUpdates.showFirstInstalledNotes(this);
 
-	}
-
-	/**
-	 * Check screen orientation or screen rotate event here to resize screen elements
-	 */
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		resizeDisplayElements();
-	}
-
-	/**
-	 * get the display metrics and resize the display elements correctly
-	 */
-	protected void resizeDisplayElements() {
-
-		/** on the load make sure that the items list is the right height */
-		getDisplayMetrics();
-		Configuration config = getResources().getConfiguration();
-		double itemsViewHeight = 2;
-		if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			itemsViewHeight = 4;
-		}
-
-		/** set the height of the items container */
-		LinearLayout itemsMainContainer = (LinearLayout) findViewById(R.id.itemsMainContainer);
-		LinearLayout.LayoutParams lpItems = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) (screenHeight / itemsViewHeight));
-		itemsMainContainer.setLayoutParams(lpItems);
 	}
 
 	/**
@@ -485,7 +449,7 @@ public class ItemsActivity extends Activity {
 			itemText.setLayoutParams(textWrapContent);
 			itemText.setPadding(10, 20, 0, 0);
 			itemText.setMaxLines(1);
-			itemText.setWidth((int) (screenWidth / 1.45));
+			itemText.setWidth((int) (screenWidth * 0.5));
 			if (isArchivedMessageView == 0) {
 				itemText.setTextColor(Color.parseColor("#FFFFFF"));
 			} else {
@@ -614,6 +578,7 @@ public class ItemsActivity extends Activity {
 		getUserSettings();
 
 		/** adjust the popup WxH */
+		getDisplayMetrics();
 		float popupWidth = (float) (screenWidth * .90);
 		float popupHeight = (float) (screenHeight * .90);
 
@@ -2278,10 +2243,10 @@ public class ItemsActivity extends Activity {
 	 * get screen metrics
 	 */
 	private void getDisplayMetrics() {
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		screenHeight = displaymetrics.heightPixels;
-		screenWidth = displaymetrics.widthPixels;
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		screenWidth = dm.widthPixels;
+		screenHeight = dm.heightPixels;
 	}
 
 	/**
