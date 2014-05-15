@@ -2,14 +2,12 @@
 == TODO
 ====================
 
-	[...] add the missing strings and all that in strings.xml
+	[] fix the stupid SMS problem
 
-	[] have it make the LCARS bars and items list have a rotating hightlight
+	[] add the missing strings and all that in strings.xml
 
 	[] finish the sounds mapping and test
 
-	[] fix the stupid SMS problem
-	
 	[] finishing up
 		[] make it an entirely new app with freemium version
 			-- 2 new repos needed
@@ -46,6 +44,11 @@
 	
 	 [] have a volume adjuster?
 	 
+	 [] have it make the LCARS bars and items list have a rotating hightlight
+	 
+	 [] the app can go through the internet to send somebody else a message (having this same app)
+	 	-- have to have address or something, but this could be a harmful thing				
+	 
 	 [] Widgets
 	 
 	 	[] have cool borders or something
@@ -74,6 +77,4 @@
 					String time = (String) DateFormat.format(mTimeFormat, mCalendar);
 					RemoteViews views = new RemoteViews(getPackageName(), R.layout.main);
 					views.setImageViewBitmap(R.id.TimeView, buildUpdate(time));
-					
-	 [] the app can go through the internet to send somebody else a message (having this same app)
-	 	-- have to have address or something, but this could be a harmful thing					
+	

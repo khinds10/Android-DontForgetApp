@@ -141,35 +141,6 @@ public class SettingsActivity extends Activity {
 		staticView.setPadding(0, 0, 0, 0);
 		RelativeLayout lineGifBox = (RelativeLayout) findViewById(R.id.alertGif);
 		lineGifBox.addView(staticView);
-
-		/** adjust the screen elements onLoad */
-		adjustScreenElements();
-	}
-
-	/**
-	 * screen load / config change make sure that the view elements are the correct height
-	 */
-	protected void adjustScreenElements() {
-		getDisplayMetrics();
-		Configuration config = getResources().getConfiguration();
-		double lcarsImageWidthSize = 2.5;
-		double lcarsImageHeightSize = 2.5;
-		if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			lcarsImageWidthSize = 3.5;
-			lcarsImageHeightSize = 1.5;
-		}
-		ImageView lcarsAnimation = (ImageView) findViewById(R.id.lcarsAnimation);
-		LinearLayout.LayoutParams lpItemsImage = new LinearLayout.LayoutParams((int) (screenWidth / lcarsImageWidthSize), (int) (screenHeight / lcarsImageHeightSize));
-		lcarsAnimation.setLayoutParams(lpItemsImage);
-	}
-
-	/**
-	 * Check screen orientation or screen rotate event here
-	 */
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		adjustScreenElements();
 	}
 
 	/**
