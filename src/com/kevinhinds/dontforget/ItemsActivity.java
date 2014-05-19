@@ -80,6 +80,7 @@ import android.view.KeyEvent;
  * 
  * @author khinds
  */
+@SuppressLint("DefaultLocale")
 public class ItemsActivity extends Activity {
 
 	private static final int CONTACT_PICKER_RESULT = 1001;
@@ -111,17 +112,20 @@ public class ItemsActivity extends Activity {
 	protected boolean soundsTurnedOn;
 
 	/**
-	 * the current options for future reminders can change during the day, keep track of the current list here
+	 * the current options for future reminders can change during the day, keep track of the current
+	 * list here
 	 */
 	private CharSequence[] currentReminderOptions = null;
 
 	/**
-	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can change the status to reflect as such
+	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can
+	 * change the status to reflect as such
 	 */
 	protected long recentlyTriedItemID;
 
 	/**
-	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or "edit" type of operation to reflect in the status if it fails
+	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or
+	 * "edit" type of operation to reflect in the status if it fails
 	 */
 	protected String recentlyTriedEditType;
 
@@ -293,7 +297,8 @@ public class ItemsActivity extends Activity {
 		alertGif.addView(staticViewAlert);
 
 		/**
-		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future
+		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the
+		 * future
 		 */
 		alarm = new AlarmManagerBroadcastReceiver();
 
@@ -346,6 +351,7 @@ public class ItemsActivity extends Activity {
 	/**
 	 * create the list of items on the activity as they currently are saved in the database
 	 */
+	@SuppressLint("DefaultLocale")
 	private void setupItemsList() {
 
 		getDisplayMetrics();
@@ -642,7 +648,8 @@ public class ItemsActivity extends Activity {
 		final TextView reminderReminderInfo = (TextView) layout.findViewById(R.id.reminderReminderInfo);
 
 		/**
-		 * if we're editing an existing entry the other buttons are enabled, else you can't use them yet
+		 * if we're editing an existing entry the other buttons are enabled, else you can't use them
+		 * yet
 		 */
 		if (editMode) {
 
@@ -937,10 +944,11 @@ public class ItemsActivity extends Activity {
 					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/**
-							 * based on the dialog selection either set the reminder or continue to show the custom dialog if they chose "custom"
+							 * based on the dialog selection either set the reminder or continue to
+							 * show the custom dialog if they chose "custom"
 							 */
 							String selectedItem = (String) currentReminderOptions[item];
-							if (selectedItem.equals("Custom...")) {
+							if (selectedItem.equals("Custom")) {
 								soundEvent("event_choose_reminder_time_custom_select");
 								final Dialog customDialog = new Dialog(ItemsActivity.this);
 								customDialog.setContentView(R.layout.custom_time_dialog);
@@ -966,7 +974,8 @@ public class ItemsActivity extends Activity {
 												customTimePicker.getCurrentMinute());
 
 										/**
-										 * get the diff of the future custom time against the current time to set the future reminder
+										 * get the diff of the future custom time against the
+										 * current time to set the future reminder
 										 */
 										long diff = customDate.getTime() - currentTime.getTime();
 										setReminder(diff);
@@ -977,7 +986,8 @@ public class ItemsActivity extends Activity {
 								dialog.dismiss();
 							} else {
 								/**
-								 * get the amount of time until the future selected reminder datetime
+								 * get the amount of time until the future selected reminder
+								 * datetime
 								 */
 								soundEvent("event_choose_reminder_time_standard");
 								long diff = getFutureTime(currentReminderOptions[item]);
@@ -1017,7 +1027,8 @@ public class ItemsActivity extends Activity {
 		currentID = editEntryDB("E," + getLastUpdateTime());
 
 		/**
-		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated
+		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been
+		 * added/updated
 		 */
 		alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, currentID);
 		deleteReminderEntry(currentID);
@@ -1040,7 +1051,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * add the existing reminder entry table for this particular item "id" and setup the items list with the new situation
+	 * add the existing reminder entry table for this particular item "id" and setup the items list
+	 * with the new situation
 	 * 
 	 * @param recentlyTriedItemID
 	 * @param todaysDate
@@ -1053,7 +1065,9 @@ public class ItemsActivity extends Activity {
 	/**
 	 * get the reminder options as CharSequence[] to pass to the dialog as choice items list
 	 * 
-	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't set "This Morning" if it's already passed the time that "This Morning" is supposed to remind you at
+	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't
+	 *          set "This Morning" if it's already passed the time that "This Morning" is supposed
+	 *          to remind you at
 	 * @return
 	 */
 	@SuppressLint("SimpleDateFormat")
@@ -1165,7 +1179,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of "AM" / "PM"
+	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of
+	 * "AM" / "PM"
 	 * 
 	 * @param hour
 	 * @return
@@ -1334,7 +1349,8 @@ public class ItemsActivity extends Activity {
 		}
 
 		/**
-		 * remove the duplicate values from the array that may have come back from the contact selection
+		 * remove the duplicate values from the array that may have come back from the contact
+		 * selection
 		 */
 		friendsSMSList = getDistinct(friendsSMSList);
 		friendsEmailList = getDistinct(friendsEmailList);
@@ -1345,7 +1361,8 @@ public class ItemsActivity extends Activity {
 		if (activityForResultType.equals("SMS")) {
 
 			/**
-			 * if we have an primary phone number for our friend, then send it out to them, else show the error
+			 * if we have an primary phone number for our friend, then send it out to them, else
+			 * show the error
 			 */
 			if (friendsSMSList.length != 0) {
 				if (friendsSMSList.length == 1) {
@@ -1360,7 +1377,8 @@ public class ItemsActivity extends Activity {
 					chooseAlert.setSingleChoiceItems(friendsSMSList, -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/**
-							 * friends SMS becomes what was selected from the dialog removing the message about if the phone number is primary
+							 * friends SMS becomes what was selected from the dialog removing the
+							 * message about if the phone number is primary
 							 */
 							soundEvent("click_choose_which_number_sms");
 							friendsSMS = (String) friendsSMSList[item];
@@ -1380,7 +1398,8 @@ public class ItemsActivity extends Activity {
 				soundEvent("event_no_phone_number_found_sms");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via SMS
 				 */
 				addEditItemStatus();
 
@@ -1429,7 +1448,8 @@ public class ItemsActivity extends Activity {
 				soundEvent("event_email_not_found_contact");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via email
 				 */
 				addEditItemStatus();
 
@@ -1460,7 +1480,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * get a nicely formated datetime string with pipe separated date and time values to later render in the item rows formatted to: MM.d|H:m
+	 * get a nicely formated datetime string with pipe separated date and time values to later
+	 * render in the item rows formatted to: MM.d|H:m
 	 * 
 	 * @return
 	 */
@@ -1651,9 +1672,11 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle(ItemsActivity.this.getString(R.string.SMS_could_not_be_sent));
 				alertDialog.setMessage(ItemsActivity.this.getString(R.string.Check_your_settings_and_try_again));
+				soundEvent("event_sms_could_not_be_sent");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via SMS
 				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1708,9 +1731,11 @@ public class ItemsActivity extends Activity {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
 				alertDialog.setTitle(ItemsActivity.this.getString(R.string.Email_could_not_be_sent));
 				alertDialog.setMessage(ItemsActivity.this.getString(R.string.Check_your_settings_and_try_again));
+				soundEvent("event_email_could_not_be_sent");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via Email
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via Email
 				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1742,7 +1767,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * update any currently running widgets with the latest and greatest from this activity that was loaded
+	 * update any currently running widgets with the latest and greatest from this activity that was
+	 * loaded
 	 */
 	private void updateWidgets() {
 
@@ -1842,7 +1868,8 @@ public class ItemsActivity extends Activity {
 		getTwentyFourHourTimeForPreferences();
 
 		/**
-		 * build datetime string out of the current date plus the hour in the future the reminder is scheduled for
+		 * build datetime string out of the current date plus the hour in the future the reminder is
+		 * scheduled for
 		 */
 		String reminderDateString = "";
 		if (currentReminderOption.equals("This Morning") || currentReminderOption.equals("Tomorrow Morning")) {
@@ -1918,23 +1945,6 @@ public class ItemsActivity extends Activity {
 			return;
 		}
 
-		// archive.wav
-		// beep.wav
-		// beep2.wav
-		// call.wav
-		// cancel.wav
-		// commit.wav
-		// confirm.wav
-		// error.wav
-		// hail.wav
-		// keypress.wav
-		// open.wav
-		// ping.wav
-		// processing.wav
-		// save.wav
-		// thinking.wav
-		// unarchive.wav
-
 		if (eventName.equals("keypress")) {
 			playSound("keypress");
 		}
@@ -1963,7 +1973,7 @@ public class ItemsActivity extends Activity {
 			playSound("beepbeep");
 		}
 		if (eventName.equals("click_cancel_edit_message")) {
-			playSound("beep2");
+			playSound("beep3");
 		}
 		if (eventName.equals("click_save_message")) {
 			playSound("commit");
@@ -1981,13 +1991,13 @@ public class ItemsActivity extends Activity {
 			playSound("cancel");
 		}
 		if (eventName.equals("click_delete_button")) {
-			playSound("beep");
+			playSound("thinking");
 		}
 		if (eventName.equals("click_confirm_delete")) {
-			playSound("processing");
+			playSound("delete");
 		}
 		if (eventName.equals("click_cancel_delete")) {
-			playSound("beep");
+			playSound("cancel");
 		}
 		if (eventName.equals("error_no_title_send")) {
 			playSound("error");
@@ -2038,25 +2048,31 @@ public class ItemsActivity extends Activity {
 			playSound("beep");
 		}
 		if (eventName.equals("click_choose_which_number_sms")) {
-			playSound("beep");
+			playSound("processing2");
 		}
 		if (eventName.equals("event_no_phone_number_found_sms")) {
-			playSound("thinking");
+			playSound("warning");
 		}
 		if (eventName.equals("event_no_phone_number_found_sms_confirm")) {
 			playSound("beep");
 		}
 		if (eventName.equals("click_choose_which_email")) {
-			playSound("beep");
+			playSound("processing2");
 		}
 		if (eventName.equals("event_email_not_found_contact")) {
-			playSound("thinking");
+			playSound("warning");
 		}
 		if (eventName.equals("event_email_not_found_contact_confirm")) {
 			playSound("beep");
 		}
 		if (eventName.equals("click_edit_settings")) {
-			playSound("beep");
+			playSound("thinking");
+		}
+		if (eventName.equals("event_email_could_not_be_sent")) {
+			playSound("warning");
+		}
+		if (eventName.equals("event_sms_could_not_be_sent")) {
+			playSound("warning");
 		}
 	}
 
@@ -2080,6 +2096,7 @@ public class ItemsActivity extends Activity {
 	}
 
 	/** create the main menu based on if the app is the full version or not */
+	@SuppressLint("DefaultLocale")
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -2144,8 +2161,10 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * According to Roberto Orci, stardates were revised again for the 2009 film Star Trek so that the first four digits correspond to the year, while the remainder was intended to stand for the day
-	 * of the year. For example, stardate 2233.04 would be January 4, 2233. Star Trek Into Darkness begins on stardate 2259.55, or February 24, 2259.
+	 * According to Roberto Orci, stardates were revised again for the 2009 film Star Trek so that
+	 * the first four digits correspond to the year, while the remainder was intended to stand for
+	 * the day of the year. For example, stardate 2233.04 would be January 4, 2233. Star Trek Into
+	 * Darkness begins on stardate 2259.55, or February 24, 2259.
 	 * 
 	 * @return
 	 */
@@ -2161,12 +2180,15 @@ public class ItemsActivity extends Activity {
 		Status status = getStatus();
 		status.setId(recentlyTriedItemID);
 		String statusDate = getLastUpdateTime();
-		if (recentlyTriedEditType.equals("edit")) {
-			status.setContent("E," + statusDate);
-		} else {
-			status.setContent("A," + statusDate);
+		try {
+			if (recentlyTriedEditType.equals("edit")) {
+				status.setContent("E," + statusDate);
+			} else {
+				status.setContent("A," + statusDate);
+			}
+			statusDataSource.editStatus(status);
+		} catch (Exception e) {
 		}
-		statusDataSource.editStatus(status);
 	}
 
 	/**
