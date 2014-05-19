@@ -11,19 +11,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -56,13 +52,7 @@ public class SettingsActivity extends Activity {
 
 	/** font for the titles */
 	public String titleFont = "fonts/talldark.ttf";
-
-	/**
-	 * screen height / width
-	 */
-	private int screenHeight;
-	private int screenWidth;
-
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -196,15 +186,5 @@ public class SettingsActivity extends Activity {
 			}
 		}
 		return probableEmail;
-	}
-
-	/**
-	 * get screen metrics
-	 */
-	private void getDisplayMetrics() {
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		screenWidth = dm.widthPixels;
-		screenHeight = dm.heightPixels;
 	}
 }

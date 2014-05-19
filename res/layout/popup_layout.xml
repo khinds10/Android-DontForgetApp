@@ -22,7 +22,7 @@
             android:padding="5dp"
             android:paddingBottom="15dp"
             android:paddingRight="15dp"
-            android:text="LCARS ACCESS"
+            android:text="@string/LCARS_ACCESS"
             android:textColor="#000000"
             android:textSize="24sp" />
 
@@ -36,7 +36,7 @@
             android:background="@drawable/yellow_button"
             android:gravity="right|center_vertical"
             android:paddingRight="15dp"
-            android:text="CLOSE"
+            android:text="@string/CLOSE"
             android:textColor="#000000"
             android:textSize="14sp" >
         </TextView>
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="right"
                 android:paddingTop="5dp"
-                android:text="MANUAL INPUT ENABLED"
+                android:text="@string/MANUAL_INPUT_ENABLED"
                 android:textColor="#999999"
                 android:textSize="20sp" />
 
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="DIRECTIVE"
+                android:text="@string/DIRECTIVE"
                 android:textColor="#999999" />
 
             <EditText
@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
-                android:text="DETAILS"
+                android:text="@string/DETAILS"
                 android:textColor="#999999" />
 
             <EditText
@@ -141,7 +141,7 @@
                     android:background="@drawable/yellow_button"
                     android:gravity="right|center_vertical"
                     android:paddingRight="15dp"
-                    android:text="EDIT"
+                    android:text="@string/EDIT"
                     android:textColor="#000000"
                     android:textSize="14sp" />
 
@@ -153,7 +153,7 @@
                     android:background="@drawable/yellow_button"
                     android:gravity="right|center_vertical"
                     android:paddingRight="15dp"
-                    android:text="CANCEL"
+                    android:text="@string/CANCEL"
                     android:textColor="#000000"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -191,7 +191,7 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/lg_orange_button"
                     android:gravity="right"
-                    android:text="Cancel Reminder"
+                    android:text="@string/Cancel_Reminder"
                     android:textColor="#000000" />
             </LinearLayout>
 
@@ -200,7 +200,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="SYSTEM ENTRY"
+                android:text="@string/SYSTEM_ENTRY"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -223,7 +223,7 @@
                     android:minHeight="35dp"
                     android:minWidth="90dp"
                     android:paddingRight="18dp"
-                    android:text="SAVE"
+                    android:text="@string/SAVE"
                     android:textColor="#000000"
                     android:textSize="15sp" />
 
@@ -240,7 +240,7 @@
                     android:minHeight="35dp"
                     android:minWidth="90dp"
                     android:paddingRight="18dp"
-                    android:text="ARCHIVE"
+                    android:text="@string/ARCHIVE"
                     android:textColor="#000000"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -265,7 +265,7 @@
                     android:minHeight="35dp"
                     android:minWidth="90dp"
                     android:paddingRight="18dp"
-                    android:text="REMIND"
+                    android:text="@string/REMIND"
                     android:textColor="#000000"
                     android:textSize="15sp" />
 
@@ -282,7 +282,7 @@
                     android:minHeight="35dp"
                     android:minWidth="90dp"
                     android:paddingRight="18dp"
-                    android:text="DELETE"
+                    android:text="@string/DELETE"
                     android:textColor="#000000"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -292,7 +292,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="EMAIL PROTOCOL"
+                android:text="@string/EMAIL_PROTOCOL"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -314,7 +314,7 @@
                     android:minHeight="35dp"
                     android:minWidth="200dp"
                     android:paddingRight="15dp"
-                    android:text="YOURSELF"
+                    android:text="@string/YOURSELF"
                     android:textColor="#000000"
                     android:textSize="15sp" />
 
@@ -330,7 +330,7 @@
                     android:minHeight="35dp"
                     android:minWidth="200dp"
                     android:paddingRight="15dp"
-                    android:text="STARFLEET"
+                    android:text="@string/STARFLEET"
                     android:textColor="#000000"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -340,7 +340,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:text="SMS PROTOCOL"
+                android:text="@string/SMS_PROTOCOL"
                 android:textColor="#999999" />
 
             <LinearLayout
@@ -362,7 +362,7 @@
                     android:minHeight="35dp"
                     android:minWidth="200dp"
                     android:paddingRight="15dp"
-                    android:text="YOURSELF"
+                    android:text="@string/YOURSELF"
                     android:textColor="#000000"
                     android:textSize="15sp" />
 
@@ -378,7 +378,7 @@
                     android:minHeight="35dp"
                     android:minWidth="200dp"
                     android:paddingRight="15dp"
-                    android:text="STARFLEET"
+                    android:text="@string/STARFLEET"
                     android:textColor="#000000"
                     android:textSize="15sp" />
             </LinearLayout>

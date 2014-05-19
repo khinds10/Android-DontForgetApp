@@ -54,6 +54,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="20dp"
+            android:contentDescription="@string/app_name"
             android:paddingLeft="4dp"
             android:scaleType="fitXY"
             android:src="@drawable/corner" />
@@ -61,6 +62,7 @@
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="4dp"
+            android:contentDescription="@string/app_name"
             android:paddingLeft="4dp"
             android:src="@drawable/dk_pink_square" />
     </LinearLayout>
@@ -74,6 +76,7 @@
         <ImageView
             android:layout_width="25dp"
             android:layout_height="fill_parent"
+            android:contentDescription="@string/app_name"
             android:paddingBottom="4dp"
             android:paddingLeft="4dp"
             android:src="@drawable/dk_blue_square" />
@@ -94,7 +97,7 @@
                 <LinearLayout
                     android:id="@+id/itemsLayout"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_height="wrap_content"
                     android:baselineAligned="false" >
 
                     <LinearLayout
@@ -109,7 +112,7 @@
                             android:id="@+id/emailTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Gmail Address"
+                            android:text="@string/Gmail_Address"
                             android:textColor="#FFFFFF" />
 
                         <EditText
@@ -124,7 +127,7 @@
                             android:id="@+id/passwordTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Gmail Password"
+                            android:text="@string/Gmail_Password"
                             android:textColor="#FFFFFF" />
 
                         <EditText
@@ -139,7 +142,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:text="Phone Number"
+                            android:text="@string/Phone_Number"
                             android:textColor="#FFFFFF" />
 
                         <EditText
@@ -154,7 +157,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:text="Morning Reminder"
+                            android:text="@string/Morning_Notify"
                             android:textColor="#FFFFFF" />
 
                         <Spinner
@@ -168,7 +171,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:text="Afternoon Reminder"
+                            android:text="@string/Afternoon_Notify"
                             android:textColor="#FFFFFF" />
 
                         <Spinner
@@ -182,7 +185,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingTop="10dp"
-                            android:text="Evening Reminder"
+                            android:text="@string/Evening_Notify"
                             android:textColor="#FFFFFF" />
 
                         <Spinner
@@ -201,7 +204,7 @@
                             android:gravity="right"
                             android:maxLines="1"
                             android:paddingRight="15dp"
-                            android:text="SAVE"
+                            android:text="@string/SAVE"
                             android:textColor="#000000"
                             android:textSize="22sp" />
                     </LinearLayout>
@@ -219,6 +222,7 @@
                             android:layout_height="175dp"
                             android:layout_gravity="top|right"
                             android:background="@drawable/lcars"
+                            android:contentDescription="@string/app_name"
                             android:gravity="top|right"
                             android:scaleType="fitXY" >
                         </ImageView>
@@ -243,6 +247,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="20dp"
+            android:contentDescription="@string/app_name"
             android:paddingLeft="4dp"
             android:scaleType="fitXY"
             android:src="@drawable/corner_bottom" />
@@ -251,6 +256,7 @@
             android:layout_width="fill_parent"
             android:layout_height="4dp"
             android:layout_gravity="bottom"
+            android:contentDescription="@string/app_name"
             android:paddingLeft="4dp"
             android:src="@drawable/dk_blue_square" />
     </LinearLayout>

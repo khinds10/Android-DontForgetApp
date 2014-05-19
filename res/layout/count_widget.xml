@@ -27,9 +27,9 @@
             android:id="@+id/countItemsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Item Count"
-            android:textSize="18sp"
+            android:text="@string/Item_Count"
             android:textColor="#FF9966"
+            android:textSize="18sp"
             android:textStyle="italic" />
 
         <TextView

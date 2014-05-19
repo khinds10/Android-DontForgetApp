@@ -2,10 +2,12 @@
 == TODO
 ====================
 
+	[] double check the strings.xml
+		[] check to use all the right string resoures for all the activity text
+			[] check that it doesn't break the checks on like "morning reminder, etc"
+		
 	[] fix the stupid SMS problem
-
-	[] add the missing strings and all that in strings.xml
-
+	
 	[] finish the sounds mapping and test
 
 	[] finishing up

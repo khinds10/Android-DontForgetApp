@@ -111,20 +111,17 @@ public class ItemsActivity extends Activity {
 	protected boolean soundsTurnedOn;
 
 	/**
-	 * the current options for future reminders can change during the day, keep track of the current
-	 * list here
+	 * the current options for future reminders can change during the day, keep track of the current list here
 	 */
 	private CharSequence[] currentReminderOptions = null;
 
 	/**
-	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can
-	 * change the status to reflect as such
+	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can change the status to reflect as such
 	 */
 	protected long recentlyTriedItemID;
 
 	/**
-	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or
-	 * "edit" type of operation to reflect in the status if it fails
+	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or "edit" type of operation to reflect in the status if it fails
 	 */
 	protected String recentlyTriedEditType;
 
@@ -223,11 +220,11 @@ public class ItemsActivity extends Activity {
 		localTime.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
 		SimpleDateFormat localTimeDF = new SimpleDateFormat("D,F,W d.w", Locale.getDefault());
 		String localTimeValue = localTimeDF.format(Calendar.getInstance().getTime());
-		localTime.setText("Planetary Stats " + localTimeValue + " ");
+		localTime.setText(ItemsActivity.this.getString(R.string.Planetary_Stats) + " " + localTimeValue + " ");
 
 		/** set the stardate below */
 		TextView starDate = (TextView) findViewById(R.id.starDate);
-		starDate.setText("Stardate " + getStarDate());
+		starDate.setText(ItemsActivity.this.getString(R.string.Stardate) + " " + getStarDate());
 		starDate.setTypeface(Typeface.createFromAsset(this.getAssets(), titleFont));
 
 		/** apply font to add new button */
@@ -296,8 +293,7 @@ public class ItemsActivity extends Activity {
 		alertGif.addView(staticViewAlert);
 
 		/**
-		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the
-		 * future
+		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future
 		 */
 		alarm = new AlarmManagerBroadcastReceiver();
 
@@ -357,8 +353,8 @@ public class ItemsActivity extends Activity {
 		/**
 		 * the message count text fields should reflect how many archived / non-archived messages
 		 */
-		CurrentMessagesLabel.setText("STATUS [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "]");
-		ArchivedMessagesLabel.setText("STANDBY [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "]");
+		CurrentMessagesLabel.setText(ItemsActivity.this.getString(R.string.STATUS) + " [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "]");
+		ArchivedMessagesLabel.setText(ItemsActivity.this.getString(R.string.STANDBY) + " [" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "]");
 
 		/**
 		 * get all the itemlist items saved in the DB set to archived = false
@@ -542,7 +538,7 @@ public class ItemsActivity extends Activity {
 			if (reminder != null) {
 				TextView textReminder = new TextView(this);
 				textReminder.setTextSize(10);
-				textReminder.setText("REMINDER - " + (CharSequence) reminder.time.toUpperCase());
+				textReminder.setText(ItemsActivity.this.getString(R.string.REMINDER) + " - " + (CharSequence) reminder.time.toUpperCase());
 				textReminder.setLayoutParams(textFillContent);
 				textReminder.setTextColor(Color.parseColor("#FF9966"));
 				textReminder.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
@@ -646,8 +642,7 @@ public class ItemsActivity extends Activity {
 		final TextView reminderReminderInfo = (TextView) layout.findViewById(R.id.reminderReminderInfo);
 
 		/**
-		 * if we're editing an existing entry the other buttons are enabled, else you can't use them
-		 * yet
+		 * if we're editing an existing entry the other buttons are enabled, else you can't use them yet
 		 */
 		if (editMode) {
 
@@ -671,14 +666,14 @@ public class ItemsActivity extends Activity {
 			final Reminder currentReminder = checkReminderEntry(currentID);
 			if (currentReminder != null) {
 				reminderLayout.setVisibility(View.VISIBLE);
-				reminderReminderInfo.setText("REMINDER - " + currentReminder.getTime().toUpperCase());
+				reminderReminderInfo.setText(ItemsActivity.this.getString(R.string.REMINDER) + " - " + currentReminder.getTime().toUpperCase());
 			}
 			cancelReminderButton.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					soundEvent("click_cancel_timer");
 					reminderDataSource.deleteReminder(currentReminder);
 					cancelReminderButton.setVisibility(View.GONE);
-					reminderReminderInfo.setText("REMINDER CANCELLED");
+					reminderReminderInfo.setText(ItemsActivity.this.getString(R.string.REMINDER_CANCELLED));
 					alarm.cancelReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), currentID);
 					setupItemsList();
 				}
@@ -737,9 +732,9 @@ public class ItemsActivity extends Activity {
 		 * set the button text to Archived/Un-Archived by what you're able to do
 		 */
 		if (isArchivedMessageView == 1) {
-			archiveButton.setText("Un-Archive");
+			archiveButton.setText(ItemsActivity.this.getString(R.string.UnArchive));
 		} else {
-			archiveButton.setText("Archive");
+			archiveButton.setText(ItemsActivity.this.getString(R.string.Archive));
 		}
 
 		/** set button is pressed, set the timer and close the popup */
@@ -802,21 +797,22 @@ public class ItemsActivity extends Activity {
 			public void onClick(View v) {
 				soundEvent("click_delete_button");
 				AlertDialog.Builder builder = new AlertDialog.Builder(ItemsActivity.this);
-				builder.setTitle("Delete Message");
-				builder.setMessage("Are you sure you want to delete this message?").setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						soundEvent("click_confirm_delete");
-						deleteReminderEntry(currentID);
-						deleteEntryDB();
-						dialog.dismiss();
-						pw.dismiss();
-					}
-				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						soundEvent("click_cancel_delete");
-						dialog.cancel();
-					}
-				});
+				builder.setTitle(ItemsActivity.this.getString(R.string.Delete_Message));
+				builder.setMessage(ItemsActivity.this.getString(R.string.Are_you_sure_you_want_to_delete_this_message)).setCancelable(false)
+						.setPositiveButton(ItemsActivity.this.getString(R.string.Yes), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								soundEvent("click_confirm_delete");
+								deleteReminderEntry(currentID);
+								deleteEntryDB();
+								dialog.dismiss();
+								pw.dismiss();
+							}
+						}).setNegativeButton(ItemsActivity.this.getString(R.string.No), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								soundEvent("click_cancel_delete");
+								dialog.cancel();
+							}
+						});
 				builder.setIcon(R.drawable.ic_launcher);
 				AlertDialog alert = builder.create();
 				alert.show();
@@ -833,7 +829,7 @@ public class ItemsActivity extends Activity {
 					showEmptyTitleMessage();
 				} else {
 					soundEvent("sending_email_yourself");
-					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + usersEmail);
+					progressDialog = ProgressDialog.show(ItemsActivity.this, ItemsActivity.this.getString(R.string.Sending_Email), ItemsActivity.this.getString(R.string.Emailing) + "\n" + usersEmail);
 					String statusValue = "M," + getLastUpdateTime();
 					if (editMode) {
 						recentlyTriedItemID = editEntryDB(statusValue);
@@ -897,7 +893,8 @@ public class ItemsActivity extends Activity {
 					showEmptyTitleMessage();
 				} else {
 					soundEvent("sending_sms_yourself");
-					progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Message", "Texting...\n" + usersPhone);
+					progressDialog = ProgressDialog.show(ItemsActivity.this, ItemsActivity.this.getString(R.string.Sending_SMS_Message), ItemsActivity.this.getString(R.string.Texting) + "\n"
+							+ usersPhone);
 					String statusValue = "T," + getLastUpdateTime();
 					if (editMode) {
 						recentlyTriedItemID = editEntryDB(statusValue);
@@ -934,21 +931,20 @@ public class ItemsActivity extends Activity {
 						recentlyTriedEditType = "add";
 					}
 					AlertDialog.Builder alert = new AlertDialog.Builder(ItemsActivity.this);
-					alert.setTitle("Choose Reminder Time:");
+					alert.setTitle(ItemsActivity.this.getString(R.string.Choose_Reminder_Time));
 					alert.setIcon(R.drawable.ic_launcher);
 					/** setup the list of choices with click events */
 					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/**
-							 * based on the dialog selection either set the reminder or continue to
-							 * show the custom dialog if they chose "custom"
+							 * based on the dialog selection either set the reminder or continue to show the custom dialog if they chose "custom"
 							 */
 							String selectedItem = (String) currentReminderOptions[item];
 							if (selectedItem.equals("Custom...")) {
 								soundEvent("event_choose_reminder_time_custom_select");
 								final Dialog customDialog = new Dialog(ItemsActivity.this);
 								customDialog.setContentView(R.layout.custom_time_dialog);
-								customDialog.setTitle("Choose Custom Reminder:");
+								customDialog.setTitle(ItemsActivity.this.getString(R.string.Choose_Custom_Reminder));
 								customDialog.show();
 								TextView cancelCustomReminderButton = (TextView) customDialog.findViewById(R.id.cancelCustomReminderButton);
 								cancelCustomReminderButton.setOnClickListener(new OnClickListener() {
@@ -970,8 +966,7 @@ public class ItemsActivity extends Activity {
 												customTimePicker.getCurrentMinute());
 
 										/**
-										 * get the diff of the future custom time against the
-										 * current time to set the future reminder
+										 * get the diff of the future custom time against the current time to set the future reminder
 										 */
 										long diff = customDate.getTime() - currentTime.getTime();
 										setReminder(diff);
@@ -982,8 +977,7 @@ public class ItemsActivity extends Activity {
 								dialog.dismiss();
 							} else {
 								/**
-								 * get the amount of time until the future selected reminder
-								 * datetime
+								 * get the amount of time until the future selected reminder datetime
 								 */
 								soundEvent("event_choose_reminder_time_standard");
 								long diff = getFutureTime(currentReminderOptions[item]);
@@ -992,7 +986,7 @@ public class ItemsActivity extends Activity {
 							}
 						}
 					});
-					alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					alert.setNegativeButton(ItemsActivity.this.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
 							dialog.cancel();
 						}
@@ -1023,8 +1017,7 @@ public class ItemsActivity extends Activity {
 		currentID = editEntryDB("E," + getLastUpdateTime());
 
 		/**
-		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been
-		 * added/updated
+		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated
 		 */
 		alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, currentID);
 		deleteReminderEntry(currentID);
@@ -1047,8 +1040,7 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * add the existing reminder entry table for this particular item "id" and setup the items list
-	 * with the new situation
+	 * add the existing reminder entry table for this particular item "id" and setup the items list with the new situation
 	 * 
 	 * @param recentlyTriedItemID
 	 * @param todaysDate
@@ -1061,9 +1053,7 @@ public class ItemsActivity extends Activity {
 	/**
 	 * get the reminder options as CharSequence[] to pass to the dialog as choice items list
 	 * 
-	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't
-	 *          set "This Morning" if it's already passed the time that "This Morning" is supposed
-	 *          to remind you at
+	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't set "This Morning" if it's already passed the time that "This Morning" is supposed to remind you at
 	 * @return
 	 */
 	@SuppressLint("SimpleDateFormat")
@@ -1120,7 +1110,7 @@ public class ItemsActivity extends Activity {
 				finalItemsIteratorCount = finalItemsIteratorCount + 1;
 			}
 		}
-		String customOption = "Custom...";
+		String customOption = ItemsActivity.this.getString(R.string.Custom);
 		finalItems[finalItemsIteratorCount] = customOption;
 		currentReminderOptions[finalItemsIteratorCount] = customOption;
 		return finalItems;
@@ -1175,8 +1165,7 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of
-	 * "AM" / "PM"
+	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of "AM" / "PM"
 	 * 
 	 * @param hour
 	 * @return
@@ -1196,12 +1185,13 @@ public class ItemsActivity extends Activity {
 	 */
 	private void sendSMSConfirm() {
 		AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-		alertDialog.setTitle("Send Reminder to Friend");
-		alertDialog.setMessage("Send text to contact's number -> " + friendsSMS);
+		alertDialog.setTitle(ItemsActivity.this.getString(R.string.Send_Reminder_to_Friend));
+		alertDialog.setMessage(ItemsActivity.this.getString(R.string.Send_text_to_contacts_number) + friendsSMS);
 		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				soundEvent("click_sms_contact_confirm");
-				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending SMS Text Message", "Texting contact's primary number: \n" + friendsSMS);
+				progressDialog = ProgressDialog.show(ItemsActivity.this, ItemsActivity.this.getString(R.string.Sending_SMS_Text_Message),
+						ItemsActivity.this.getString(R.string.Texting_contacts_primary_number) + "\n" + friendsSMS);
 				String statusValue = "T," + getLastUpdateTime() + "," + friendsSMS;
 				if (currentEditMode) {
 					recentlyTriedItemID = editEntryDB(statusValue);
@@ -1218,7 +1208,7 @@ public class ItemsActivity extends Activity {
 				dialog.dismiss();
 			}
 		});
-		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+		alertDialog.setButton2(ItemsActivity.this.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				soundEvent("click_sms_contact_cancel");
 				dialog.dismiss();
@@ -1233,12 +1223,12 @@ public class ItemsActivity extends Activity {
 	 */
 	private void showEmailConfirm() {
 		AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-		alertDialog.setTitle("Send Reminder to Friend");
-		alertDialog.setMessage("Send Message to -> " + friendsEmail);
+		alertDialog.setTitle(ItemsActivity.this.getString(R.string.Send_Reminder_to_Friend));
+		alertDialog.setMessage(ItemsActivity.this.getString(R.string.Send_Message_to) + friendsEmail);
 		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				soundEvent("click_email_contact_confirm");
-				progressDialog = ProgressDialog.show(ItemsActivity.this, "Sending Email", "Emailing...\n" + friendsEmail);
+				progressDialog = ProgressDialog.show(ItemsActivity.this, ItemsActivity.this.getString(R.string.Sending_Email), ItemsActivity.this.getString(R.string.Emailing) + "\n" + friendsEmail);
 				String statusValue = "M," + getLastUpdateTime() + "," + friendsEmail;
 				if (currentEditMode) {
 					recentlyTriedItemID = editEntryDB(statusValue);
@@ -1255,7 +1245,7 @@ public class ItemsActivity extends Activity {
 				dialog.dismiss();
 			}
 		});
-		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+		alertDialog.setButton2(ItemsActivity.this.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				soundEvent("click_email_contact_cancel");
 				dialog.dismiss();
@@ -1344,8 +1334,7 @@ public class ItemsActivity extends Activity {
 		}
 
 		/**
-		 * remove the duplicate values from the array that may have come back from the contact
-		 * selection
+		 * remove the duplicate values from the array that may have come back from the contact selection
 		 */
 		friendsSMSList = getDistinct(friendsSMSList);
 		friendsEmailList = getDistinct(friendsEmailList);
@@ -1356,28 +1345,26 @@ public class ItemsActivity extends Activity {
 		if (activityForResultType.equals("SMS")) {
 
 			/**
-			 * if we have an primary phone number for our friend, then send it out to them, else
-			 * show the error
+			 * if we have an primary phone number for our friend, then send it out to them, else show the error
 			 */
 			if (friendsSMSList.length != 0) {
 				if (friendsSMSList.length == 1) {
 					friendsSMS = (String) friendsSMSList[0];
-					friendsSMS = friendsSMS.replace(" [primary]", "");
+					friendsSMS = friendsSMS.replace(" [" + ItemsActivity.this.getString(R.string.primary) + "]", "");
 					sendSMSConfirm();
 				} else {
 					AlertDialog.Builder chooseAlert = new AlertDialog.Builder(ItemsActivity.this);
-					chooseAlert.setTitle("Choose Number:");
+					chooseAlert.setTitle(ItemsActivity.this.getString(R.string.Choose_Number));
 					chooseAlert.setIcon(R.drawable.ic_launcher);
 					/** setup the list of choices with click events */
 					chooseAlert.setSingleChoiceItems(friendsSMSList, -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							/**
-							 * friends SMS becomes what was selected from the dialog removing the
-							 * message about if the phone number is primary
+							 * friends SMS becomes what was selected from the dialog removing the message about if the phone number is primary
 							 */
 							soundEvent("click_choose_which_number_sms");
 							friendsSMS = (String) friendsSMSList[item];
-							friendsSMS = friendsSMS.replace(" [primary]", "");
+							friendsSMS = friendsSMS.replace(" [" + ItemsActivity.this.getString(R.string.primary) + "]", "");
 							sendSMSConfirm();
 							dialog.dismiss();
 						}
@@ -1388,13 +1375,12 @@ public class ItemsActivity extends Activity {
 				}
 			} else {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-				alertDialog.setTitle("Send Reminder to Friend");
-				alertDialog.setMessage("Phone number couldn't be located for contact");
+				alertDialog.setTitle(ItemsActivity.this.getString(R.string.Send_Reminder_to_Friend));
+				alertDialog.setMessage(ItemsActivity.this.getString(R.string.Phone_number_couldnt_be_located_for_contact));
 				soundEvent("event_no_phone_number_found_sms");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it
-				 * couldn't be sent via SMS
+				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS
 				 */
 				addEditItemStatus();
 
@@ -1418,7 +1404,7 @@ public class ItemsActivity extends Activity {
 					showEmailConfirm();
 				} else {
 					AlertDialog.Builder chooseEmailAlert = new AlertDialog.Builder(ItemsActivity.this);
-					chooseEmailAlert.setTitle("Choose Email:");
+					chooseEmailAlert.setTitle(ItemsActivity.this.getString(R.string.Choose_Email));
 					chooseEmailAlert.setIcon(R.drawable.ic_launcher);
 					/** setup the list of choices with click events */
 					chooseEmailAlert.setSingleChoiceItems(friendsEmailList, -1, new DialogInterface.OnClickListener() {
@@ -1438,17 +1424,16 @@ public class ItemsActivity extends Activity {
 				}
 			} else {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-				alertDialog.setTitle("Send Reminder to Friend");
+				alertDialog.setTitle(ItemsActivity.this.getString(R.string.Send_Reminder_to_Friend));
 				alertDialog.setMessage("Email address couldn't be located for contact");
 				soundEvent("event_email_not_found_contact");
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it
-				 * couldn't be sent via email
+				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email
 				 */
 				addEditItemStatus();
 
-				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+				alertDialog.setButton(ItemsActivity.this.getString(R.string.OK), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						soundEvent("event_email_not_found_contact_confirm");
 						dialog.dismiss();
@@ -1475,8 +1460,7 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * get a nicely formated datetime string with pipe separated date and time values to later
-	 * render in the item rows formatted to: MM.d|H:m
+	 * get a nicely formated datetime string with pipe separated date and time values to later render in the item rows formatted to: MM.d|H:m
 	 * 
 	 * @return
 	 */
@@ -1504,7 +1488,7 @@ public class ItemsActivity extends Activity {
 		String displayEmail = "";
 		if (usersEmail.equals("")) {
 			userGmail.setTextColor(Color.WHITE);
-			displayEmail = "(press to configure)";
+			displayEmail = "(" + ItemsActivity.this.getString(R.string.press_to_configure) + ")";
 		} else {
 			displayEmail = usersEmail;
 		}
@@ -1516,7 +1500,7 @@ public class ItemsActivity extends Activity {
 		String displayPhone = "";
 		if (usersPhone.equals("")) {
 			userPhoneNumber.setTextColor(Color.WHITE);
-			displayPhone = "(press to configure)";
+			displayPhone = "(" + ItemsActivity.this.getString(R.string.press_to_configure) + ")";
 		} else {
 			displayPhone = usersPhone;
 		}
@@ -1598,7 +1582,7 @@ public class ItemsActivity extends Activity {
 				switch (getResultCode()) {
 				case Activity.RESULT_OK:
 					if (!textSentNotify) {
-						Toast.makeText(getBaseContext(), "SMS sent", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getBaseContext(), ItemsActivity.this.getString(R.string.SMS_sent), Toast.LENGTH_SHORT).show();
 						textSentNotify = true;
 					}
 					break;
@@ -1625,7 +1609,7 @@ public class ItemsActivity extends Activity {
 				switch (getResultCode()) {
 				case Activity.RESULT_OK:
 					if (!textDeliveredNotify) {
-						Toast.makeText(getBaseContext(), "SMS delivered", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getBaseContext(), ItemsActivity.this.getString(R.string.SMS_delivered), Toast.LENGTH_SHORT).show();
 						textDeliveredNotify = true;
 					}
 					break;
@@ -1652,7 +1636,7 @@ public class ItemsActivity extends Activity {
 			try {
 				String currentTitle = editTextTitle.getText().toString();
 				String currentMessage = messageContent.getText().toString();
-				sendSMS(recipient, currentTitle + "\n" + currentMessage + "\n\n--\nDon't Forget! for Android");
+				sendSMS(recipient, currentTitle + "\n" + currentMessage + "\n\n--\n" + ItemsActivity.this.getString(R.string.Captains_Log_for_Android));
 			} catch (Exception e) {
 				textSent = false;
 			}
@@ -1665,12 +1649,11 @@ public class ItemsActivity extends Activity {
 			progressDialog.dismiss();
 			if (!success) {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-				alertDialog.setTitle("SMS could not be sent.");
-				alertDialog.setMessage("Check your settings and try again.");
+				alertDialog.setTitle(ItemsActivity.this.getString(R.string.SMS_could_not_be_sent));
+				alertDialog.setMessage(ItemsActivity.this.getString(R.string.Check_your_settings_and_try_again));
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it
-				 * couldn't be sent via SMS
+				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS
 				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1682,12 +1665,12 @@ public class ItemsActivity extends Activity {
 				statusDataSource.editStatus(itemStatus);
 				setupItemsList();
 
-				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+				alertDialog.setButton(ItemsActivity.this.getString(R.string.OK), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 					}
 				});
-				alertDialog.setButton2("Settings...", new DialogInterface.OnClickListener() {
+				alertDialog.setButton2(ItemsActivity.this.getString(R.string.Settings), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
 						startActivity(intent);
@@ -1709,7 +1692,8 @@ public class ItemsActivity extends Activity {
 				String currentTitle = editTextTitle.getText().toString();
 				String currentMessage = messageContent.getText().toString();
 				GMailSender sender = new GMailSender(usersEmail, usersPassword);
-				sender.sendMail(currentTitle + "   (Captain's Log for Android)", currentMessage + "\n\n--\nCaptain's Log for Android", usersEmail, recipient);
+				sender.sendMail(currentTitle + "   (" + ItemsActivity.this.getString(R.string.Captains_Log_for_Android) + ")",
+						currentMessage + "\n\n--\n" + ItemsActivity.this.getString(R.string.Captains_Log_for_Android) + "", usersEmail, recipient);
 			} catch (Exception e) {
 				emailSent = false;
 			}
@@ -1722,12 +1706,11 @@ public class ItemsActivity extends Activity {
 			progressDialog.dismiss();
 			if (!success) {
 				AlertDialog alertDialog = new AlertDialog.Builder(ItemsActivity.this).create();
-				alertDialog.setTitle("Email could not be sent.");
-				alertDialog.setMessage("Check your settings and try again.");
+				alertDialog.setTitle(ItemsActivity.this.getString(R.string.Email_could_not_be_sent));
+				alertDialog.setMessage(ItemsActivity.this.getString(R.string.Check_your_settings_and_try_again));
 
 				/**
-				 * Update status to reflect that the entry was simply "edited" or "added" it
-				 * couldn't be sent via Email
+				 * Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via Email
 				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1739,12 +1722,12 @@ public class ItemsActivity extends Activity {
 				statusDataSource.editStatus(itemStatus);
 				setupItemsList();
 
-				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+				alertDialog.setButton(ItemsActivity.this.getString(R.string.OK), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 					}
 				});
-				alertDialog.setButton2("Settings...", new DialogInterface.OnClickListener() {
+				alertDialog.setButton2(ItemsActivity.this.getString(R.string.Settings), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
 						startActivity(intent);
@@ -1753,14 +1736,13 @@ public class ItemsActivity extends Activity {
 				alertDialog.setIcon(R.drawable.ic_launcher);
 				alertDialog.show();
 			} else {
-				Toast.makeText(getBaseContext(), "Email Sent", Toast.LENGTH_LONG).show();
+				Toast.makeText(getBaseContext(), ItemsActivity.this.getString(R.string.Email_Sent), Toast.LENGTH_LONG).show();
 			}
 		}
 	}
 
 	/**
-	 * update any currently running widgets with the latest and greatest from this activity that was
-	 * loaded
+	 * update any currently running widgets with the latest and greatest from this activity that was loaded
 	 */
 	private void updateWidgets() {
 
@@ -1768,8 +1750,8 @@ public class ItemsActivity extends Activity {
 
 		/** update the count widget */
 		RemoteViews countViews = new RemoteViews(this.getPackageName(), R.layout.count_widget);
-		countViews.setTextViewText(R.id.messageCount, "[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "] Messages");
-		countViews.setTextViewText(R.id.archiveCount, "[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "] Archived");
+		countViews.setTextViewText(R.id.messageCount, "[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(0)) + "] " + ItemsActivity.this.getString(R.string.Messages));
+		countViews.setTextViewText(R.id.archiveCount, "[" + Integer.toString(itemsDataSource.getCountItemsbyArchiveType(1)) + "] " + ItemsActivity.this.getString(R.string.Archived));
 		appWidgetManager.updateAppWidget(new ComponentName(this.getPackageName(), CountWidget.class.getName()), countViews);
 
 		/** update the list widget */
@@ -1821,8 +1803,8 @@ public class ItemsActivity extends Activity {
 	 */
 	protected void showEmptyTitleMessage() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(ItemsActivity.this);
-		builder.setTitle("Please enter a title");
-		builder.setMessage("You must enter a title for your reminder item.").setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setTitle(ItemsActivity.this.getString(R.string.Please_enter_a_title));
+		builder.setMessage(ItemsActivity.this.getString(R.string.You_must_enter_a_title_for_your_reminder_item)).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.cancel();
 			}
@@ -1860,8 +1842,7 @@ public class ItemsActivity extends Activity {
 		getTwentyFourHourTimeForPreferences();
 
 		/**
-		 * build datetime string out of the current date plus the hour in the future the reminder is
-		 * scheduled for
+		 * build datetime string out of the current date plus the hour in the future the reminder is scheduled for
 		 */
 		String reminderDateString = "";
 		if (currentReminderOption.equals("This Morning") || currentReminderOption.equals("Tomorrow Morning")) {
@@ -2163,10 +2144,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * According to Roberto Orci, stardates were revised again for the 2009 film Star Trek so that
-	 * the first four digits correspond to the year, while the remainder was intended to stand for
-	 * the day of the year. For example, stardate 2233.04 would be January 4, 2233. Star Trek Into
-	 * Darkness begins on stardate 2259.55, or February 24, 2259.
+	 * According to Roberto Orci, stardates were revised again for the 2009 film Star Trek so that the first four digits correspond to the year, while the remainder was intended to stand for the day
+	 * of the year. For example, stardate 2233.04 would be January 4, 2233. Star Trek Into Darkness begins on stardate 2259.55, or February 24, 2259.
 	 * 
 	 * @return
 	 */
@@ -2257,7 +2236,7 @@ public class ItemsActivity extends Activity {
 		silentModeMessage.setTypeface(Typeface.createFromAsset(this.getAssets(), buttonFont));
 		silentModeMessage.setText("");
 		if (!soundsTurnedOn) {
-			silentModeMessage.setText("Silent Mode - On -");
+			silentModeMessage.setText(ItemsActivity.this.getString(R.string.Silent_Mode));
 		}
 	}
 }

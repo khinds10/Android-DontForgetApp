@@ -27,7 +27,7 @@
             android:id="@+id/recentItemsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recent Items"
+            android:text="@string/Recent_Items"
             android:textColor="#FF9966"
             android:textSize="18sp"
             android:textStyle="italic" />
