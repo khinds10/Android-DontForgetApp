@@ -9,6 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.pollfish.main.PollFish;
+import com.pollfish.constants.Position;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.res.Configuration;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import com.kevinhinds.dontforget.alarmmanager.AlarmManagerBroadcastReceiver;
 import com.kevinhinds.dontforget.email.GMailSender;
 import com.kevinhinds.dontforget.item.Item;
@@ -22,7 +31,6 @@ import com.kevinhinds.dontforget.updates.LatestUpdates;
 import com.kevinhinds.dontforget.widget.CountWidget;
 import com.kevinhinds.dontforget.widget.ListWidget;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
@@ -41,14 +49,11 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -93,16 +98,21 @@ public class ItemsActivity extends Activity {
 
 	private AlarmManagerBroadcastReceiver alarm;
 
-	/** the current options for future reminders can change during the day, keep track of the current list here */
+	/**
+	 * the current options for future reminders can change during the day, keep track of the current
+	 * list here
+	 */
 	private CharSequence[] currentReminderOptions = null;
 
 	/**
-	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can change the status to reflect as such
+	 * save the most recently tried to email / SMS item's ID, so if it didn't go through we can
+	 * change the status to reflect as such
 	 */
 	protected long recentlyTriedItemID;
 
 	/**
-	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or "edit" type of operation to reflect in the status if it fails
+	 * save the most recently tried to email / SMS item's edit type either if it was a "add" or
+	 * "edit" type of operation to reflect in the status if it fails
 	 */
 	protected String recentlyTriedEditType;
 
@@ -221,11 +231,30 @@ public class ItemsActivity extends Activity {
 			}
 		});
 
-		/** setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the future */
+		/**
+		 * setup the AlarmManagerBroadcastReceiver for the ability to set an alarm item in the
+		 * future
+		 */
 		alarm = new AlarmManagerBroadcastReceiver();
 
 		/** show the latest update notes if the application was just installed */
 		LatestUpdates.showFirstInstalledNotes(this);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (Boolean.parseBoolean(getResources().getString(R.string.pollfish_enabled))) {
+			PollFish.init(this, getString(R.string.pollfish_api_key), Position.BOTTOM_RIGHT, 5);
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (Boolean.parseBoolean(getResources().getString(R.string.pollfish_enabled))) {
+			PollFish.init(this, getString(R.string.pollfish_api_key), Position.BOTTOM_RIGHT, 5);
+		}
 	}
 
 	/**
@@ -383,7 +412,10 @@ public class ItemsActivity extends Activity {
 		final TextView reminderReminderInfo = (TextView) layout.findViewById(R.id.reminderReminderInfo);
 		final ImageView reminderImage = (ImageView) layout.findViewById(R.id.reminderImage);
 
-		/** if we're editing an existing entry the other buttons are enabled, else you can't use them yet */
+		/**
+		 * if we're editing an existing entry the other buttons are enabled, else you can't use them
+		 * yet
+		 */
 		if (editMode) {
 
 			deleteButton.setVisibility(View.VISIBLE);
@@ -645,7 +677,10 @@ public class ItemsActivity extends Activity {
 					alert.setSingleChoiceItems(getReminderOptions(), -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 
-							/** based on the dialog selection either set the reminder or continue to show the custom dialog if they chose "custom" */
+							/**
+							 * based on the dialog selection either set the reminder or continue to
+							 * show the custom dialog if they chose "custom"
+							 */
 							String selectedItem = (String) currentReminderOptions[item];
 							if (selectedItem.equals("Custom...")) {
 								final Dialog customDialog = new Dialog(ItemsActivity.this);
@@ -669,7 +704,10 @@ public class ItemsActivity extends Activity {
 										Date customDate = new Date(customDatePicker.getYear() - 1900, customDatePicker.getMonth(), customDatePicker.getDayOfMonth(), customTimePicker.getCurrentHour(),
 												customTimePicker.getCurrentMinute());
 
-										/** get the diff of the future custom time against the current time to set the future reminder */
+										/**
+										 * get the diff of the future custom time against the
+										 * current time to set the future reminder
+										 */
 										long diff = customDate.getTime() - currentTime.getTime();
 										setReminder(diff);
 										customDialog.dismiss();
@@ -678,7 +716,10 @@ public class ItemsActivity extends Activity {
 
 								dialog.dismiss();
 							} else {
-								/** get the amount of time until the future selected reminder datetime */
+								/**
+								 * get the amount of time until the future selected reminder
+								 * datetime
+								 */
 								long diff = getFutureTime(currentReminderOptions[item]);
 								setReminder(diff);
 								dialog.dismiss();
@@ -712,7 +753,10 @@ public class ItemsActivity extends Activity {
 		String todaysDate = todaysDateFormat.format(futureDate);
 		currentID = editEntryDB("[edited] " + getLastUpdateTime());
 
-		/** set the reminder for this item, and add/update the flag in the reminder DB that it's been added/updated */
+		/**
+		 * set the reminder for this item, and add/update the flag in the reminder DB that it's been
+		 * added/updated
+		 */
 		alarm.setReminder(getBaseContext(), editTextTitle.getText().toString(), messageContent.getText().toString(), futureDateTime, currentID);
 		deleteReminderEntry(currentID);
 		addReminderEntry(currentID, todaysDate);
@@ -734,7 +778,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * add the existing reminder entry table for this particular item "id" and setup the items list with the new situation
+	 * add the existing reminder entry table for this particular item "id" and setup the items list
+	 * with the new situation
 	 * 
 	 * @param recentlyTriedItemID
 	 * @param todaysDate
@@ -747,7 +792,9 @@ public class ItemsActivity extends Activity {
 	/**
 	 * get the reminder options as CharSequence[] to pass to the dialog as choice items list
 	 * 
-	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't set "This Morning" if it's already passed the time that "This Morning" is supposed to remind you at
+	 * @example get the reminder options but only the ones that haven't transpired i.e. you can't
+	 *          set "This Morning" if it's already passed the time that "This Morning" is supposed
+	 *          to remind you at
 	 * @return
 	 */
 	private CharSequence[] getReminderOptions() {
@@ -858,7 +905,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of "AM" / "PM"
+	 * parse the special cases for string "hours" which may have a "noon" or "midnight" instead of
+	 * "AM" / "PM"
 	 * 
 	 * @param hour
 	 * @return
@@ -1017,14 +1065,20 @@ public class ItemsActivity extends Activity {
 			}
 		}
 
-		/** remove the duplicate values from the array that may have come back from the contact selection */
+		/**
+		 * remove the duplicate values from the array that may have come back from the contact
+		 * selection
+		 */
 		friendsSMSList = getDistinct(friendsSMSList);
 		friendsEmailList = getDistinct(friendsEmailList);
 
 		/** based on recent activityForResultType requested, send an SMS or Email respectively */
 		if (activityForResultType.equals("SMS")) {
 
-			/** if we have an primary phone number for our friend, then send it out to them, else show the error */
+			/**
+			 * if we have an primary phone number for our friend, then send it out to them, else
+			 * show the error
+			 */
 			if (friendsSMSList.length != 0) {
 				if (friendsSMSList.length == 1) {
 					friendsSMS = (String) friendsSMSList[0];
@@ -1037,7 +1091,10 @@ public class ItemsActivity extends Activity {
 					/** setup the list of choices with click events */
 					chooseAlert.setSingleChoiceItems(friendsSMSList, -1, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
-							/** friends SMS becomes what was selected from the dialog removing the message about if the phone number is primary */
+							/**
+							 * friends SMS becomes what was selected from the dialog removing the
+							 * message about if the phone number is primary
+							 */
 							friendsSMS = (String) friendsSMSList[item];
 							friendsSMS = friendsSMS.replace(" [primary]", "");
 							sendSMSConfirm();
@@ -1053,7 +1110,10 @@ public class ItemsActivity extends Activity {
 				alertDialog.setTitle("Send Reminder to Friend");
 				alertDialog.setMessage("Phone number couldn't be located for contact");
 
-				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
+				/**
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via SMS
+				 */
 				Status status = getStatus();
 				status.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1101,7 +1161,10 @@ public class ItemsActivity extends Activity {
 				alertDialog.setTitle("Send Reminder to Friend");
 				alertDialog.setMessage("Email address couldn't be located for contact");
 
-				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via email */
+				/**
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via email
+				 */
 				Status status = getStatus();
 				status.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
@@ -1374,7 +1437,10 @@ public class ItemsActivity extends Activity {
 				alertDialog.setTitle("SMS could not be sent.");
 				alertDialog.setMessage("Check your settings and try again.");
 
-				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via SMS */
+				/**
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via SMS
+				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
 				if (recentlyTriedEditType.equals("edit")) {
@@ -1428,7 +1494,10 @@ public class ItemsActivity extends Activity {
 				alertDialog.setTitle("Email could not be sent.");
 				alertDialog.setMessage("Check your settings and try again.");
 
-				/** Update status to reflect that the entry was simply "edited" or "added" it couldn't be sent via Email */
+				/**
+				 * Update status to reflect that the entry was simply "edited" or "added" it
+				 * couldn't be sent via Email
+				 */
 				itemStatus.setId(recentlyTriedItemID);
 				String statusDate = getLastUpdateTime();
 				if (recentlyTriedEditType.equals("edit")) {
@@ -1459,7 +1528,8 @@ public class ItemsActivity extends Activity {
 	}
 
 	/**
-	 * update any currently running widgets with the latest and greatest from this activity that was loaded
+	 * update any currently running widgets with the latest and greatest from this activity that was
+	 * loaded
 	 */
 	private void updateWidgets() {
 
@@ -1557,7 +1627,10 @@ public class ItemsActivity extends Activity {
 		/** get preference 24 hour time values without the "AM"/"PM" */
 		getTwentyFourHourTimeForPreferences();
 
-		/** build datetime string out of the current date plus the hour in the future the reminder is scheduled for */
+		/**
+		 * build datetime string out of the current date plus the hour in the future the reminder is
+		 * scheduled for
+		 */
 		String reminderDateString = "";
 		if (currentReminderOption.equals("This Morning") || currentReminderOption.equals("Tomorrow Morning")) {
 			reminderDateString = todaysDate + " " + Integer.toString(morningTime) + ":00:00";
@@ -1583,60 +1656,36 @@ public class ItemsActivity extends Activity {
 		return reminderTimeMilleseconds - currentTime.getTime();
 	}
 
+	/** make parts of the menu invisible based on settings */
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		menu.findItem(R.id.menu_fullversion).setVisible(!Boolean.parseBoolean(getResources().getString(R.string.is_full_version)));
+		menu.findItem(R.id.menu_suggested).setVisible(Boolean.parseBoolean(getResources().getString(R.string.has_suggested_app)));
+		return true;
+	}
+
 	/** create the main menu based on if the app is the full version or not */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
-		String isFullVersion = getResources().getString(R.string.is_full_version);
-		if (isFullVersion.toLowerCase().equals("true")) {
-			getMenuInflater().inflate(R.menu.main_full, menu);
-		} else {
-			getMenuInflater().inflate(R.menu.main, menu);
-		}
+		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
 	/** handle user selecting a menu item */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-
-		/** Handle item selection */
 		switch (item.getItemId()) {
-		case R.id.menu_settings:
-			Intent intent = new Intent(ItemsActivity.this, SettingsActivity.class);
-			startActivity(intent);
-			return true;
 		case R.id.menu_bitstreet:
-			viewAllPublisherApps();
+			MarketPlace.viewAllPublisherApps(this);
 			break;
 		case R.id.menu_fullversion:
-			viewPremiumApp();
+			MarketPlace.viewPremiumApp(this);
 			break;
-		default:
-			return super.onOptionsItemSelected(item);
+		case R.id.menu_suggested:
+			MarketPlace.viewSuggestedApp(this);
+			break;
 		}
 		return true;
-	}
-
-	/**
-	 * view all apps on the device marketplace for current publisher
-	 */
-	public void viewAllPublisherApps() {
-		MarketPlace marketPlace = new MarketPlace(this);
-		Intent intent = marketPlace.getViewAllPublisherAppsIntent(this);
-		if (intent != null) {
-			startActivity(intent);
-		}
-	}
-
-	/**
-	 * view the premium version of this app
-	 */
-	public void viewPremiumApp() {
-		MarketPlace marketPlace = new MarketPlace(this);
-		Intent intent = marketPlace.getViewPremiumAppIntent(this);
-		if (intent != null) {
-			startActivity(intent);
-		}
 	}
 }

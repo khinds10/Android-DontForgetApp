@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application Name -->
+    <string name="app_name">Don\'t Forget!</string>
+
+    <!-- Freemium Config -->
+    <string name="is_full_version">true</string>
+    <string name="app_full_version_package">com.kevinhinds.dontforget</string>
+
+    <!-- remember when not deploying to Google, you need the special pollfish JAR! -->
+    <string name="marketplace_name">Google</string> <!-- Amazon|Nook|Google -->
+
+    <!-- PollFish -->
+    <string name="pollfish_enabled">true</string>
+    <string name="pollfish_api_key">8151b8cd-ace6-402c-b360-e4b7d360cb97</string>
+
+    <!-- Suggested App Package -->
+    <string name="has_suggested_app">false</string>
+    <string name="suggested_app_menu">New Free App!</string>
+    <string name="suggested_app_package">com.kevinhinds.sleeptube</string>
+
+    <!-- Example: Latest Updates\n\nItem #1\nItem #2\n\nThanks for downloading! -->
+    <string name="latest_update_notes">Thanks for downloading!</string>
+
+    <!-- Freemium Standard Config -->
+    <string name="app_publisher_name">Kevin Hinds</string>
+    <string name="app_publisher_package">com.kevinhinds</string>
+    <string name="menu_bitstreet">Bitstreet Apps</string>
+    <string name="menu_fullversion">Ads Free Version</string>
+    <string name="device_nook_ean_number">9999999999999</string>
+
+</resources>

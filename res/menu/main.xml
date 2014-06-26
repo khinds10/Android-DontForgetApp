@@ -1,4 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
     <item android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:orderInCategory="100" />
@@ -10,5 +11,9 @@
         android:id="@+id/menu_fullversion"
         android:orderInCategory="100"
         android:title="@string/menu_fullversion"/>
+    <item
+        android:id="@+id/menu_suggested"
+        android:orderInCategory="100"
+        android:title="@string/suggested_app_menu"/>
 
 </menu>
