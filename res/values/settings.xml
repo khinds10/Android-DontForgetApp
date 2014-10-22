@@ -8,7 +8,7 @@
     <string name="is_full_version">true</string>
     <string name="app_full_version_package">com.kevinhinds.dontforget</string>
 
-    <!-- remember when not deploying to Google, you need the special pollfish JAR! -->
+    <!-- (Not deploying to Google? you need the special pollfish JAR) -->
     <string name="marketplace_name">Google</string> <!-- Amazon|Nook|Google -->
 
     <!-- PollFish -->
